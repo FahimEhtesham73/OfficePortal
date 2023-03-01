@@ -141,6 +141,8 @@ const Topnavbar = (props) => {
   )
 
   useEffect(() => {
+
+    
     // Tracking Browser Width
     window.addEventListener('resize',()=>{
       setWidth(window.innerWidth)
