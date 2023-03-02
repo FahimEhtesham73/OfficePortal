@@ -31,9 +31,10 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 // Importing Component
 import Dashboard from '../Dashboard';
+import Attendancesheet from '../Attendancesheet';
 
 const drawerWidth = 240;
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Settings','Logout'];
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -68,9 +69,9 @@ const Topnavbar = (props) => {
   // const { window } = props;
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [menuData, setMenuData] = useState('Home')
+  const [menuData, setMenuData] = useState('All Employees')
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [openLeave, setOpenLeave] = useState(true)
+  const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
 
 
@@ -91,6 +92,10 @@ const Topnavbar = (props) => {
     setAnchorElUser(null);
   };
 
+  const saveMenuData = (text)=>{
+    setMenuData(text)
+  }
+
 
   const drawer = (
     <div>
@@ -101,7 +106,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+        {['All Employees', 'Attendance Sheet', 'Send email', 'Drafts'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -109,7 +114,7 @@ const Topnavbar = (props) => {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={text === 'Drafts' ? handleClick : ""}
+              onClick={()=>{text === 'Drafts' ? handleClick() : saveMenuData(text)}}
             >
               <ListItemIcon
                 sx={{
@@ -141,8 +146,6 @@ const Topnavbar = (props) => {
   )
 
   useEffect(() => {
-
-    
     // Tracking Browser Width
     window.addEventListener('resize',()=>{
       setWidth(window.innerWidth)
@@ -239,10 +242,13 @@ const Topnavbar = (props) => {
           {drawer}
         </Drawer>
       </Box>
+
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {menuData === 'Home' && <Dashboard />}
+        {menuData === 'All Employees' && <Dashboard />}
+        {menuData === 'Attendance Sheet' && <Attendancesheet />}
       </Box>
+
     </Box>
   )
 }
