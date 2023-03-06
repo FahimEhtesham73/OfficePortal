@@ -64,7 +64,7 @@ const Dashboard = () => {
 
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography>
-          <Button variant="contained" startIcon={<AddIcon />}>
+          <Button variant="contained" startIcon={<AddIcon />} sx={{borderRadius:"50px"}}>
             Add Employee
           </Button>
         </Box>
@@ -73,7 +73,7 @@ const Dashboard = () => {
           <TextField id="outlined-search" label="Employee ID" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
           <TextField id="outlined-search" label="Employee Name" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
           <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+            <InputLabel id="demo-simple-select-label">Designation</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -81,9 +81,11 @@ const Dashboard = () => {
               label="Age"
               // onChange={handleChange}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              <MenuItem value={10}>Associate Software Engineer</MenuItem>
+              <MenuItem value={20}>Associate AI Engineer</MenuItem>
+              <MenuItem value={30}>Team Lead</MenuItem>
+              <MenuItem value={30}>Senior AI Engineer</MenuItem>
+              <MenuItem value={30}>Facility Manager</MenuItem>
             </Select>
           </FormControl>
           <Button variant="contained" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>Search</Button>
@@ -91,7 +93,7 @@ const Dashboard = () => {
 
         <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
 
-          <Card elevation='12' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
+          <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
             <CardHeader
               action={
                 <IconButton aria-label="settings" onClick={handleClick}>
@@ -109,7 +111,7 @@ const Dashboard = () => {
             </Box>
           </Card>
 
-          <Card elevation='12' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
+          <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
             <CardHeader
               action={
                 <IconButton aria-label="settings" onClick={handleClick}>
@@ -127,7 +129,7 @@ const Dashboard = () => {
             </Box>
           </Card>
 
-          <Card elevation='12' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
+          <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
             <CardHeader
               action={
                 <IconButton aria-label="settings">
@@ -145,7 +147,7 @@ const Dashboard = () => {
             </Box>
           </Card>
 
-          <Card elevation='12' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
+          <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "40px 20px 40px 0px" }}>
             <CardHeader
               action={
                 <IconButton aria-label="settings">

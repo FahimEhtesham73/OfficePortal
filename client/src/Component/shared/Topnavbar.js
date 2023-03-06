@@ -28,10 +28,16 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
+import PeopleIcon from '@mui/icons-material/People';
+import GridOnIcon from '@mui/icons-material/GridOn';
 // Importing Component
 import Dashboard from '../Dashboard';
 import Attendancesheet from '../Attendancesheet';
+import Holidays from '../Holidays';
+import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
+import LeaveEmployee from '../Leave/LeaveEmployee';
+import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
+
 
 const drawerWidth = 240;
 const settings = ['Profile', 'Settings','Logout'];
@@ -106,7 +112,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['All Employees', 'Attendance Sheet', 'Send email', 'Drafts'].map((text, index) => (
+        {['All Employees', 'Attendance Sheet', 'Holidays','Leaves'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -123,13 +129,13 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index === 0 && <PeopleIcon/> || index===1 && <GridOnIcon/> || index===2 && <HolidayVillageIcon/> || index ===3 && <EmojiTransportationIcon/>}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""}
+              {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
             </ListItemButton>
-
-            {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
+                {/* Nested List */}
+            {/* {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItemButton sx={{ pl: 4 }}>
                   <ListItemIcon>
@@ -138,7 +144,7 @@ const Topnavbar = (props) => {
                   <ListItemText primary="Starred" />
                 </ListItemButton>
               </List>
-            </Collapse>}
+            </Collapse>} */}
           </ListItem>
         ))}
       </List>
@@ -247,6 +253,8 @@ const Topnavbar = (props) => {
         <DrawerHeader />
         {menuData === 'All Employees' && <Dashboard />}
         {menuData === 'Attendance Sheet' && <Attendancesheet />}
+        {menuData === 'Holidays' && <Holidays/>}
+        {menuData === 'Leaves' && <LeaveEmployee/>}
       </Box>
 
     </Box>
