@@ -30,6 +30,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
+import BallotIcon from '@mui/icons-material/Ballot';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 // Importing Component
 import Dashboard from '../Dashboard';
 import Attendancesheet from '../Attendancesheet';
@@ -37,6 +39,8 @@ import Holidays from '../Holidays';
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import LeaveEmployee from '../Leave/LeaveEmployee';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
+import LeaveStatusLead from '../Leave/LeaveStatusLead';
+import Teamlead from '../TeamLead/Teamlead';
 
 
 const drawerWidth = 240;
@@ -112,7 +116,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['All Employees', 'Attendance Sheet', 'Holidays','Leaves'].map((text, index) => (
+        {['All Employees', 'Attendance Sheet', 'Holidays','Leaves','Leave Status','Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -129,7 +133,7 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {index === 0 && <PeopleIcon/> || index===1 && <GridOnIcon/> || index===2 && <HolidayVillageIcon/> || index ===3 && <EmojiTransportationIcon/>}
+                {(index === 0 && <PeopleIcon/>) || (index===1 && <GridOnIcon/>) || (index===2 && <HolidayVillageIcon/>) || (index ===3 && <EmojiTransportationIcon/>) || (index === 4 && <BallotIcon/> || (index === 5 &&<EngineeringIcon/> ))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
@@ -255,6 +259,8 @@ const Topnavbar = (props) => {
         {menuData === 'Attendance Sheet' && <Attendancesheet />}
         {menuData === 'Holidays' && <Holidays/>}
         {menuData === 'Leaves' && <LeaveEmployee/>}
+        {menuData === 'Leave Status' && <LeaveStatusLead/>}
+        {menuData === 'Team Leads' && <Teamlead/>}
       </Box>
 
     </Box>
