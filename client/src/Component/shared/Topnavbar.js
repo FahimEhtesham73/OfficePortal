@@ -28,12 +28,23 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
+import PeopleIcon from '@mui/icons-material/People';
+import GridOnIcon from '@mui/icons-material/GridOn';
+import BallotIcon from '@mui/icons-material/Ballot';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 // Importing Component
 import Dashboard from '../Dashboard';
+import Attendancesheet from '../Attendancesheet';
+import Holidays from '../Holidays';
+import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
+import LeaveEmployee from '../Leave/LeaveEmployee';
+import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
+import LeaveStatusLead from '../Leave/LeaveStatusLead';
+import Teamlead from '../TeamLead/Teamlead';
+
 
 const drawerWidth = 240;
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Settings','Logout'];
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -68,9 +79,9 @@ const Topnavbar = (props) => {
   // const { window } = props;
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [menuData, setMenuData] = useState('Home')
+  const [menuData, setMenuData] = useState('All Employees')
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [openLeave, setOpenLeave] = useState(true)
+  const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
 
 
@@ -91,6 +102,10 @@ const Topnavbar = (props) => {
     setAnchorElUser(null);
   };
 
+  const saveMenuData = (text)=>{
+    setMenuData(text)
+  }
+
 
   const drawer = (
     <div>
@@ -101,7 +116,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+        {['All Employees', 'Attendance Sheet', 'Holidays','Leaves','Leave Status','Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -109,7 +124,7 @@ const Topnavbar = (props) => {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={text === 'Drafts' ? handleClick : ""}
+              onClick={()=>{text === 'Drafts' ? handleClick() : saveMenuData(text)}}
             >
               <ListItemIcon
                 sx={{
@@ -118,13 +133,13 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {(index === 0 && <PeopleIcon/>) || (index===1 && <GridOnIcon/>) || (index===2 && <HolidayVillageIcon/>) || (index ===3 && <EmojiTransportationIcon/>) || (index === 4 && <BallotIcon/> || (index === 5 &&<EngineeringIcon/> ))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""}
+              {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
             </ListItemButton>
-
-            {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
+                {/* Nested List */}
+            {/* {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItemButton sx={{ pl: 4 }}>
                   <ListItemIcon>
@@ -133,7 +148,7 @@ const Topnavbar = (props) => {
                   <ListItemText primary="Starred" />
                 </ListItemButton>
               </List>
-            </Collapse>}
+            </Collapse>} */}
           </ListItem>
         ))}
       </List>
@@ -141,8 +156,6 @@ const Topnavbar = (props) => {
   )
 
   useEffect(() => {
-
-    
     // Tracking Browser Width
     window.addEventListener('resize',()=>{
       setWidth(window.innerWidth)
@@ -239,10 +252,17 @@ const Topnavbar = (props) => {
           {drawer}
         </Drawer>
       </Box>
+
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {menuData === 'Home' && <Dashboard />}
+        {menuData === 'All Employees' && <Dashboard />}
+        {menuData === 'Attendance Sheet' && <Attendancesheet />}
+        {menuData === 'Holidays' && <Holidays/>}
+        {menuData === 'Leaves' && <LeaveEmployee/>}
+        {menuData === 'Leave Status' && <LeaveStatusLead/>}
+        {menuData === 'Team Leads' && <Teamlead/>}
       </Box>
+
     </Box>
   )
 }
