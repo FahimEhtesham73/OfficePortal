@@ -70,8 +70,7 @@ const Attendancesheet = () => {
             </Box>
 
             <Box sx={{ display: "flex", flexWrap: "wrap",  marginTop: "40px" }}>
-                {/* <TextField id="outlined-search" label="Employee ID" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
-                <TextField id="outlined-search" label="Employee Name" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
+                
                 <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
                     <InputLabel id="demo-simple-select-label">Select Month</InputLabel>
                     <Select

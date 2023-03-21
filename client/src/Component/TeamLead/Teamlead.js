@@ -97,7 +97,6 @@ const Teamlead = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const open = Boolean(anchorEl);
 
-
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };

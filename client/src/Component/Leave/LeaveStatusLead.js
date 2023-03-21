@@ -31,7 +31,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import Grid from '@mui/material/Grid';
 
 
 // table cell styling
@@ -92,7 +92,7 @@ function BootstrapDialogTitle(props) {
 const leaveStat = [
     {
         name: 'Today Present',
-        amount: 20 
+        amount: 20
     },
     {
         name: 'Today Leave',
@@ -110,9 +110,9 @@ const leaveStat = [
 
 const LeaveStatusLead = () => {
     const [open, setOpen] = useState(false);
-    const [statusOpen,setStatusOpen] = useState(false)
+    const [statusOpen, setStatusOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
-    const [statusachorEl,setStatusAnchorEl] = useState(null)
+    const [statusachorEl, setStatusAnchorEl] = useState(null)
 
     // For Action icon open
     const handleClick = (event) => {
@@ -123,7 +123,7 @@ const LeaveStatusLead = () => {
         setAnchorEl(null);
     };
     // For Leave Status Option
-    const statusHandleClick =(event)=>{
+    const statusHandleClick = (event) => {
         setStatusAnchorEl(event.currentTarget)
     }
     // For Leave Status Option Close
@@ -138,27 +138,27 @@ const LeaveStatusLead = () => {
     const handleClickClose = () => {
         setOpen(false);
     };
-     // For Leave Status Modal open
-     const statusHandleClickOpen = () => {
+    // For Leave Status Modal open
+    const statusHandleClickOpen = () => {
         setStatusOpen(true);
     };
     // For Modal Close
     const statusHandleClickClose = () => {
         setStatusOpen(false);
     };
-    function createData(name,type, from, to, day, reason, status) {
-        return { name,type, from, to, day, reason, status,};
+    function createData(name, type, from, to, day, reason, status) {
+        return { name, type, from, to, day, reason, status, };
     }
 
     const rows = [
-        createData('Aminul','Casual Leave', "1 Jan 2023", '2 Jan 2023', '2 days', 'Going To Hospital', 'Approved'),
+        createData('Aminul', 'Casual Leave', "1 Jan 2023", '2 Jan 2023', '2 days', 'Going To Hospital', 'Approved'),
         createData('Abir', 'Casual Leave', "18 Mar 2023", '18 Mar 2023', '1 day', 'Personal Leave', 'Approved'),
-        createData('Jahid','Sick Leave', "2 Feb 2023", '2 Feb 2023', '1 day', 'Fever', 'Approved',),
-        createData('Faysal','Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved'),
-        createData('Abir','Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved'),
+        createData('Jahid', 'Sick Leave', "2 Feb 2023", '2 Feb 2023', '1 day', 'Fever', 'Approved',),
+        createData('Faysal', 'Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved'),
+        createData('Abir', 'Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved'),
     ];
     const settings = ['Edit', 'Delete'];
-    const leaveStatusSettings = ['New','Pending','Approved','Declined']
+    const leaveStatusSettings = ['New', 'Pending', 'Approved', 'Declined']
 
     // For Action icon menu open
     const menu = (
@@ -215,7 +215,7 @@ const LeaveStatusLead = () => {
                 </MenuItem>
             ))}
         </Menu>
-    ) 
+    )
     return (
         <>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -225,70 +225,93 @@ const LeaveStatusLead = () => {
                 </Button>
             </Box>
             {/* Card For leave Information */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
-                {leaveStat.map((val, ind) => {
-                    return (
-                        <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 20px 0px", padding: "10px 0px 10px 0px" }}>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
-                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
-                            </Box>
-                        </Card>
-                    )
-                })}
 
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth:'2618px' }}>
+                <Grid container spacing={3}>
+                    {leaveStat.map((val, ind) => {
+                        return (
+                            <Grid item xs={12} sm={6} md={3}>
+                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
+                                    </Box>
+                                </Card>
+                            </Grid>
+                        )
+                    })}
+
+                </Grid>
             </Box>
+
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
-                <TextField id="outlined-search" label="Employee ID" type="search" sx={{ minWidth: 220, maxHeight: 200, margin: "10px 20px 40px 0px" }} />
-                {/* Leave type */}
-                <FormControl sx={{ minWidth: 220, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
-                    <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={age}
-                        label="Select leave type"
-                    // onChange={handleChange}
-                    >
-                        <MenuItem value={10}>Casual</MenuItem>
-                        <MenuItem value={20}>Half day</MenuItem>
-                        <MenuItem value={30}>Sick</MenuItem>
-                        <MenuItem value={30}>Special Leave</MenuItem>
-                    </Select>
-                </FormControl>
-                {/* Leave Status */}
-                <FormControl sx={{ minWidth: 220, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
-                    <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        // value={age}
-                        label="Select leave type"
-                    // onChange={handleChange}
-                    >
-                        <MenuItem value={10}>Pending</MenuItem>
-                        <MenuItem value={20}>Accepted</MenuItem>
-                        <MenuItem value={30}>Declined</MenuItem>
-                        <MenuItem value={30}>New</MenuItem>
-                    </Select>
-                </FormControl>
-                {/* Date From */}
-                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                        <DemoContainer components={['DatePicker']} sx={{ margin: "2px 20px 40px 0px"}}>
-                            <DatePicker label="From" sx={{ width: 200, maxHeight: 345,}} />
-                        </DemoContainer>
-                </LocalizationProvider>
-                {/* date To */}
-                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                        <DemoContainer components={['DatePicker']} sx={{ margin: "2px 20px 40px 0px"}}>
-                            <DatePicker label="To" sx={{ width: 200, maxHeight: 345,}} />
-                        </DemoContainer>
-                </LocalizationProvider>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px",maxWidth:'2618px' }}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={4} md={2} >
+                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200,width:'100%' }} />
+                    </Grid>
+                    {/* Leave type */}
+                    <Grid item xs={12} sm={4} md={2} >
+                        <FormControl sx={{width:'100%'}}>
+                            <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                label="Select leave type"
+                            // onChange={handleChange}
+                            >
+                                <MenuItem value={10}>Casual</MenuItem>
+                                <MenuItem value={20}>Half day</MenuItem>
+                                <MenuItem value={30}>Sick</MenuItem>
+                                <MenuItem value={30}>Special Leave</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* Leave Status */}
+                    <Grid item xs={12} sm={4} md={2} >
+                        
+                        <FormControl sx={{ maxHeight: 345, width:'100%' }}>
+                            <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                label="Select leave type"
+                            // onChange={handleChange}
+                            >
+                                <MenuItem value={10}>Pending</MenuItem>
+                                <MenuItem value={20}>Accepted</MenuItem>
+                                <MenuItem value={30}>Declined</MenuItem>
+                                <MenuItem value={30}>New</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* Date From */}
+                    <Grid item xs={12} sm={4} md={2} >
+                        
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px"}}>
+                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345}} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                    </Grid>
+                     {/* date To */}
+                    <Grid item xs={12} sm={4} md={2} >
+                       
+                        <LocalizationProvider dateAdapter={AdapterDayjs} sx={{width:'100%'}}>
+                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
+                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }} />
+                            </DemoContainer>
+                        </LocalizationProvider>
 
-                <Button variant="contained" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>Search</Button>
+                    </Grid>
+                    <Grid item xs={12} sm={4} md={2} >
+                        <Button variant="contained" sx={{ height: '50px', width:'100%' }}>Search</Button>
+                    </Grid>
+                </Grid>
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', maxWidth:'2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -327,7 +350,7 @@ const LeaveStatusLead = () => {
                                     {row.reason}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    <div style={{border:'1px solid black',width:'100px',height:'20px',borderRadius:"50px",display:"flex",justifyContent:'center',alignItems:"center",cursor:"pointer"}} onClick={statusHandleClick}>{row.status} <ArrowDropDownIcon/></div>
+                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={statusHandleClick}>{row.status} <ArrowDropDownIcon /></div>
                                     {statusMenu}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import {useNavigate} from 'react-router-dom'
 // Importing from MUI
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
@@ -21,30 +21,27 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Collapse from '@mui/material/Collapse';
-import StarBorder from '@mui/icons-material/StarBorder';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 // Importing Component
-import Dashboard from '../Dashboard';
-import Attendancesheet from '../Attendancesheet';
-import Holidays from '../Holidays';
+import AllEmployees from '../AllEmployees';
+import Attendancesheet from '../Attendance/Attendancesheet';
+import Holidays from '../Leave/Holidays';
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import LeaveEmployee from '../Leave/LeaveEmployee';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
+import PunchClockIcon from '@mui/icons-material/PunchClock';
 import LeaveStatusLead from '../Leave/LeaveStatusLead';
 import Teamlead from '../TeamLead/Teamlead';
+import Profile from '../Profile/Profile';
+import Punch from '../Attendance/Punch';
 
 
 const drawerWidth = 240;
-const settings = ['Profile', 'Settings','Logout'];
+const settings = ['Profile', 'Settings', 'Logout'];
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -77,6 +74,7 @@ const AppBar = styled(MuiAppBar, {
 
 const Topnavbar = (props) => {
   // const { window } = props;
+  const navigate = useNavigate()
   const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [menuData, setMenuData] = useState('All Employees')
@@ -100,10 +98,17 @@ const Topnavbar = (props) => {
   };
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+    localStorage.setItem('sidebar','profile')
+    // navigate('/profile')
   };
 
-  const saveMenuData = (text)=>{
+  const saveMenuData = (text) => {
     setMenuData(text)
+    localStorage.setItem('sidebar', text)
+  }
+
+  const getMenuData = () => {
+    return localStorage.getItem('sidebar')?localStorage.getItem('sidebar'):localStorage.setItem('sidebar', 'All Employees')
   }
 
 
@@ -116,7 +121,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['All Employees', 'Attendance Sheet', 'Holidays','Leaves','Leave Status','Team Leads'].map((text, index) => (
+        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -124,7 +129,7 @@ const Topnavbar = (props) => {
                 justifyContent: open ? 'initial' : 'center',
                 px: 2.5,
               }}
-              onClick={()=>{text === 'Drafts' ? handleClick() : saveMenuData(text)}}
+              onClick={() => { text === 'Drafts' ? handleClick() : saveMenuData(text) }}
             >
               <ListItemIcon
                 sx={{
@@ -133,12 +138,12 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {(index === 0 && <PeopleIcon/>) || (index===1 && <GridOnIcon/>) || (index===2 && <HolidayVillageIcon/>) || (index ===3 && <EmojiTransportationIcon/>) || (index === 4 && <BallotIcon/> || (index === 5 &&<EngineeringIcon/> ))}
+                {(index === 0 && <PunchClockIcon/>) ||(index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <EngineeringIcon />))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
             </ListItemButton>
-                {/* Nested List */}
+            {/* Nested List */}
             {/* {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItemButton sx={{ pl: 4 }}>
@@ -157,17 +162,17 @@ const Topnavbar = (props) => {
 
   useEffect(() => {
     // Tracking Browser Width
-    window.addEventListener('resize',()=>{
+    window.addEventListener('resize', () => {
       setWidth(window.innerWidth)
     })
-    if (width>=600) {
+    if (width >= 600) {
       setOpen(true)
     }
-    return () => window.removeEventListener("resize", ()=>{
+    return () => window.removeEventListener("resize", () => {
       setWidth(window.innerWidth)
     })
-  
-  },[width])
+
+  }, [width])
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -177,7 +182,7 @@ const Topnavbar = (props) => {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={() => {width < 600 && setOpen(!open) }}
+            onClick={() => { width < 600 && setOpen(!open) }}
             edge="start"
           >
             {width < 600 && <MenuIcon />}
@@ -255,12 +260,15 @@ const Topnavbar = (props) => {
 
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {menuData === 'All Employees' && <Dashboard />}
-        {menuData === 'Attendance Sheet' && <Attendancesheet />}
-        {menuData === 'Holidays' && <Holidays/>}
-        {menuData === 'Leaves' && <LeaveEmployee/>}
-        {menuData === 'Leave Status' && <LeaveStatusLead/>}
-        {menuData === 'Team Leads' && <Teamlead/>}
+        {getMenuData() === 'All Employees' && <AllEmployees />}
+        {getMenuData() === 'Attendance Sheet' && <Attendancesheet />}
+        {getMenuData() === 'Holidays' && <Holidays />}
+        {getMenuData() === 'Leaves' && <LeaveEmployee />}
+        {getMenuData() === 'Leave Status' && <LeaveStatusLead />}
+        {getMenuData() === 'Team Leads' && <Teamlead />}
+        {getMenuData() === 'profile' && <Profile />}
+        {getMenuData() === 'In And Out' && <Punch />}
+
       </Box>
 
     </Box>
