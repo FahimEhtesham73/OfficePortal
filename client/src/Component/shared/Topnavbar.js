@@ -26,6 +26,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
+import SettingsIcon from '@mui/icons-material/Settings';
 // Importing Component
 import AllEmployees from '../AllEmployees';
 import Attendancesheet from '../Attendance/Attendancesheet';
@@ -38,6 +39,7 @@ import LeaveStatusLead from '../Leave/LeaveStatusLead';
 import Teamlead from '../TeamLead/Teamlead';
 import Profile from '../Profile/Profile';
 import Punch from '../Attendance/Punch';
+import Leavesetting from '../Leave/Leavesetting';
 
 
 const drawerWidth = 240;
@@ -121,7 +123,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
+        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status','Leave Setting', 'Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -138,7 +140,7 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {(index === 0 && <PunchClockIcon/>) ||(index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <EngineeringIcon />))}
+                {(index === 0 && <PunchClockIcon/>) ||(index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <SettingsIcon />)||(index === 7 && <EngineeringIcon />))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
@@ -268,7 +270,7 @@ const Topnavbar = (props) => {
         {getMenuData() === 'Team Leads' && <Teamlead />}
         {getMenuData() === 'profile' && <Profile />}
         {getMenuData() === 'In And Out' && <Punch />}
-
+        {getMenuData() === 'Leave Setting' && <Leavesetting />}
       </Box>
 
     </Box>
