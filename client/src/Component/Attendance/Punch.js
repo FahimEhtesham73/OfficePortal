@@ -12,8 +12,18 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Grid from '@mui/material/Grid';
-import { makeStyles} from '@material-ui/core';
-import React from 'react'
+import PropTypes from 'prop-types';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { makeStyles } from '@material-ui/core';
+import React, { useState } from 'react'
 
 
 
@@ -76,18 +86,67 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
         border: 0,
     },
 }));
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
+
+function BootstrapDialogTitle(props) {
+    const { children, onClose, ...other } = props;
+
+    return (
+        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+            {children}
+            {onClose ? (
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </DialogTitle>
+    );
+}
+
+BootstrapDialogTitle.propTypes = {
+    children: PropTypes.node,
+    onClose: PropTypes.func.isRequired,
+};
+
+
 const Punch = () => {
     const classes = useStyles()
     function createData(name, date, punchin, punchout, totalhour, overtime) {
         return { name, date, punchin, punchout, totalhour, overtime };
     }
+    const [open, setOpen] = useState(false);
 
+    // For Modal open
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    // For Modal Close
+    const handleClickClose = () => {
+        setOpen(false);
+    };
     const rows = [
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
+        createData('Saimom', "1 Jan 2023", '8:30 AM', '6:00 PM', '9.5 hrs', '.5'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
+        createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
     return (
         <>
@@ -110,7 +169,7 @@ const Punch = () => {
                             </Box>
                         </Box>
                         <Box className={classes.button}>
-                            <Button variant="contained" >Punch In</Button>
+                            <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
                         </Box>
                     </CardContent>
                 </Card>
@@ -213,7 +272,31 @@ const Punch = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {/* Modal */}
+            <BootstrapDialog
+                onClose={handleClickClose}
+                aria-labelledby="customized-dialog-title"
+                open={open}
+            >
+                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
+                    Select Your Position
+                </BootstrapDialogTitle>
+                <DialogContent >
+                    {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
+                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
+                        <FormControlLabel control={<Checkbox />} label="Work From Home" />
+                        <FormControlLabel control={<Checkbox />} label="Work At Office" />
+                        <FormControlLabel control={<Checkbox />} label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} label="Half day" />
+                    </FormGroup>
 
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={handleClickClose}>
+                        Punch
+                    </Button>
+                </DialogActions>
+            </BootstrapDialog>
 
         </>
     )

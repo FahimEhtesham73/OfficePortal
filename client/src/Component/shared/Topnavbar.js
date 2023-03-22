@@ -39,7 +39,6 @@ import LeaveStatusLead from '../Leave/LeaveStatusLead';
 import Teamlead from '../TeamLead/Teamlead';
 import Profile from '../Profile/Profile';
 import Punch from '../Attendance/Punch';
-import Leavesetting from '../Leave/Leavesetting';
 
 
 const drawerWidth = 240;
@@ -123,7 +122,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status','Leave Setting', 'Team Leads'].map((text, index) => (
+        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -143,19 +142,7 @@ const Topnavbar = (props) => {
                 {(index === 0 && <PunchClockIcon/>) ||(index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <SettingsIcon />)||(index === 7 && <EngineeringIcon />))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              {/* {text === 'Drafts' ? openLeave ? <ArrowDropDownIcon /> : <ArrowRightIcon /> : ""} */}
             </ListItemButton>
-            {/* Nested List */}
-            {/* {text === 'Drafts' && <Collapse in={openLeave} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <ListItemText primary="Starred" />
-                </ListItemButton>
-              </List>
-            </Collapse>} */}
           </ListItem>
         ))}
       </List>
@@ -270,7 +257,7 @@ const Topnavbar = (props) => {
         {getMenuData() === 'Team Leads' && <Teamlead />}
         {getMenuData() === 'profile' && <Profile />}
         {getMenuData() === 'In And Out' && <Punch />}
-        {getMenuData() === 'Leave Setting' && <Leavesetting />}
+        {/* {getMenuData() === 'Leave Setting' && <Leavesetting />} */}
       </Box>
 
     </Box>
