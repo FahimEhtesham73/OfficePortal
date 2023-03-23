@@ -30,6 +30,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Grid from '@mui/material/Grid';
 
 
 
@@ -63,6 +64,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
         padding: theme.spacing(1),
     },
 }));
+
 
 function BootstrapDialogTitle(props) {
     const { children, onClose, ...other } = props;
@@ -115,6 +117,7 @@ const leaveStat = [
     },
 
 ]
+
 const LeaveEmployee = () => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -183,20 +186,27 @@ const LeaveEmployee = () => {
                 </Button>
             </Box>
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px",maxWidth:'2618px' }}>
+            <Grid container spacing={3} >
                 {leaveStat.map((val, ind) => {
+                    // margin: "10px 20px 20px 0px",
                     return (
-                        <Card elevation='4' sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 20px 0px", padding: "10px 0px 10px 0px" }}>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
-                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
-                            </Box>
-                        </Card>
+                        
+                            <Grid item xs={12} sm={6} md={4} sx={{width:'100%'}}>
+                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
+                                    </Box>
+                                </Card>
+                            </Grid>
+                    
                     )
                 })}
+            </Grid>
 
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: 435, maxWidth:'2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -266,7 +276,7 @@ const LeaveEmployee = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select leave type"
-                                // onChange={handleChange}
+                            // onChange={handleChange}
                             >
                                 <MenuItem value={10}>Casual</MenuItem>
                                 <MenuItem value={20}>Half day</MenuItem>
