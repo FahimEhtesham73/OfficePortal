@@ -1,20 +1,21 @@
 
-const {User} = require("../models/userModel");
+const User = require("../models/userModel");
+const Employee = require("../models/employeeModel");
 const jwt = require("jsonwebtoken");
 
 module.exports.createUser = async(req, res)=> {
     try{
 
-        const {username, password, role} = req.body;
-        const user = await User.findOne(username);
-        if(user) req.status(400).json("userid already exist");
+        const {email, password, role, name} = req.body;
+        const user = await User.findOne({email: email});
+        if(user) return res.status(400).json("userid already exist");
     
-        const data = {
-            username: username,
-            password: password,
-            role: role
-        }
-        const result = await new User(data);
+        const userData = {email, password, role}
+        const userInfo = await new User(userData).save();
+        
+
+        const employeeData = {name, userId: userInfo._id };
+        const result = await new Employee(employeeData).save();
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
@@ -23,14 +24,14 @@ module.exports.createUser = async(req, res)=> {
 }
 
 module.exports.signinUser = async(req, res)=> {
-    const {username, password} = req.body;
+    const {email, password} = req.body;
 
-    if(username && password){
-        const user = await User.findOne({username: username}).lean();
+    if(email && password){
+        const user = await User.findOne({email: email}).lean();
         if(!user) return res.status(400).json("wrong credential");
         if(!user.password === password) return res.status(400).json("wrong credential");
         const token = jwt.sign({
-            username,
+            
             id: user._id,
             role: user.role
         },'SECRET', {expiresIn: "7d"});

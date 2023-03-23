@@ -1,0 +1,8 @@
+[
+    {"name": "admin", "alias": "Admin"},
+    {"name": "maanger", "alias": "Manager"},
+    {"name": "teamlead", "alias": "Team Lead"},
+    {"name": "projectlead", "alias": "Project Lead"},
+    {"name": "user", "alias": "User"}
+
+]
