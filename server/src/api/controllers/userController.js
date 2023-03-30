@@ -1,7 +1,14 @@
 
 const User = require("../models/userModel");
-const Employee = require("../models/employeeModel");
+const Role = require("../models/roleModel");
+const Module = require("../models/moduleModel");
+const Permission = require("../models/rolePermissionModel");
+const Department = require("../models/departmentModel")
+// const SubModule = require("../models/subModule");
+
 const jwt = require("jsonwebtoken");
+const { verifyHash, tokenGeneration } = require("../services/userServices");
+
 
 module.exports.createUser = async(req, res)=> {
     try{
@@ -14,8 +21,8 @@ module.exports.createUser = async(req, res)=> {
         const userInfo = await new User(userData).save();
         
 
-        const employeeData = {name, userId: userInfo._id };
-        const result = await new Employee(employeeData).save();
+        const UserData = {name, userId: userInfo._id };
+        const result = await new User(UserData).save();
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
@@ -24,21 +31,32 @@ module.exports.createUser = async(req, res)=> {
 }
 
 module.exports.signinUser = async(req, res)=> {
-    const {email, password} = req.body;
+    try{
+        const {email, password} = req.body;
 
-    if(email && password){
-        const user = await User.findOne({email: email}).lean();
-        if(!user) return res.status(400).json("wrong credential");
-        if(!user.password === password) return res.status(400).json("wrong credential");
-        const token = jwt.sign({
-            
-            id: user._id,
-            role: user.role
-        },'SECRET', {expiresIn: "7d"});
-        return res.status(200).json({"token": token , "message": "successfully login"}); 
-    }else{
-        return res.status(401).json("userid and password needed")
+            const user = await User.findOne({email: email}).lean();
+            if(!user) return res.status(400).json("wrong credential");
+            let isValid = await verifyHash(password, user.password)
+            if(!isValid) return res.status(400).json("wrong credential");
+            const userTokenData = {
+                "_id": user._id,
+                "role": user.role,
+            };
+            const resourceInformation = {
+
+            }
+            const {password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation} = user;
+            const token = tokenGeneration(userTokenData);
+            const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
+            // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
+            res.setHeader("Set-Cookie", [cookie, anotherCookie])
+
+            return res.status(200).json({"userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login"}); 
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({"message": "Something went wrong"})
     }
+    
 }
 
 module.exports.deleteSingleUser = async(req, res)=> {

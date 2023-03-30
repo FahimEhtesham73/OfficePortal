@@ -4,7 +4,7 @@ const { hasPermission } = require("../middleware/commonMilddleware");
 
 router.route("/signin").post(signinUser); // get all user
 router.route("/create").post(hasPermission, createUser); // create a user
-router.route("/signin").post(allUser); 
+router.route("/signin").post(signinUser); 
 // router.route("/delete").delete(deleteSingleUser);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const file = require("node:fs");
 const { default: mongoose } = require("mongoose");
 const RolePermission = require("../models/rolePermissionModel");
 const User = require("../models/userModel");
@@ -19,6 +20,13 @@ async function hasPermission(req, res, next){
     }
     
     // if(userInformation.role)
+}
+
+
+// sign in token generation
+
+function generateJwtToken(data){
+    const privateKey = file.readFileSync(`${__dirname}/keys/`)
 }
 
 module.exports = {hasPermission}

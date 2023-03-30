@@ -1,8 +1,61 @@
-[
-    {"name": "admin", "alias": "Admin"},
-    {"name": "maanger", "alias": "Manager"},
-    {"name": "teamlead", "alias": "Team Lead"},
-    {"name": "projectlead", "alias": "Project Lead"},
-    {"name": "user", "alias": "User"}
-
-]
+[{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbec"
+  },
+  "name": "admin",
+  "alias": "Admin",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "name": "maanger",
+  "alias": "Manager",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "name": "teamlead",
+  "alias": "Team Lead",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbef"
+  },
+  "name": "projectlead",
+  "alias": "Project Lead",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "name": "user",
+  "alias": "User",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+}]

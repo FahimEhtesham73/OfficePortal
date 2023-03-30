@@ -1,11 +1,10 @@
 [
     {
-        "name": "/api/v1/users/create",
-        "module": "users",
-        "alias": "user creation",
-        "roles": ["641bc3cf13941c75c3a35daf", "641bc3cf13941c75c3a35db0"],
-        "isPublic": false,
-        "individualAccess": []
-
-    }
+    "name": "api/v1/users/create",
+    "moduleName": "User",
+    "alias": "user create api",
+    "description": "user profile ceation",
+    "roles": ["64227b89852c6ed8da49bbec"],
+    "isPublic": false
+}
 ]

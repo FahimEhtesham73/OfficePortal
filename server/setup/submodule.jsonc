@@ -1,0 +1,188 @@
+[
+    //  employee module: sub
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "allEmployeesProfile",
+        "alias": "View All Employee",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "addEmployee" ,
+        "alias": "Create Employee",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "singleEmployeeProfile",
+        "alias": "Employee Profile",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "profileUpadate",
+        "alias": "Employee Profile Update",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "employeeDelete",
+        "alias": "Employee Profile Delete",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "employee",
+        "subModuleName": "employeeDelete",
+        "alias": "Employee Profile Delete",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+
+
+    // role
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "role",
+        "subModuleName": "viewRoles",
+        "alias": "View All Roles",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "role",
+        "subModuleName": "createRole" ,
+        "alias": "Create Role",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "role",
+        "subModuleName": "updateRole",
+        "alias": "Update Role",
+        "accessRoles": [""],
+        "isPublic": false
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "role",
+        "subModuleName": "deleteRole",
+        "alias": "Delete Role",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+
+    //resourec_permission <<<<<<<<<<<<<<<<<<<< only admin >>>>>>>>>>>>>>>>>>>>>>>
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "permission",
+        "subModuleName": "createPermission",
+        "alias": "Create Permission",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "permission",
+        "subModuleName": "viewPermission",
+        "alias": "View Permission",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "permission",
+        "subModuleName": "updatePermission",
+        "alias": "Update Permission",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "permission",
+        "subModuleName": "deletePermission",
+        "alias": "Delete Permission",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "permission",
+        "subModuleName": "searchPermission",
+        "alias": "Search Permission",
+        "accessRoles": [""],
+        "isPublic": false
+
+    },
+
+    // attendence module
+
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "attendence",
+        "subModuleName": "punchInOut",
+        "alias": "In and Out",
+        "accessRoles": [""],
+        "isPublic": true
+        
+    },
+
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "attendence",
+        "subModuleName": "attendenceSheet",
+        "alias": "Attendence Sheet",
+        "accessRoles": [""],
+        "isPublic": true
+        
+    },
+
+    //leave
+
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "leave",
+        "subModuleName": "Leaves",
+        "alias": "All Leaves",
+        "accessRoles": [""],
+        "isPublic": true
+        
+    },
+
+    {
+        "moduleId": "ObjectId('')",
+        "moduleName": "leave",
+        "subModuleName": "Leave Status",
+        "alias": "Attendence Sheet",
+        "accessRoles": [""],
+        "isPublic": false
+        
+    },
+   
+]
