@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "name": "AI",
+  "alias": "A I",
+  "head": "",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642509b165069cb4d7accc44"
+  },
+  "name": "Testing",
+  "alias": "Testing",
+  "head": "",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642509b165069cb4d7accc45"
+  },
+  "name": "Web Development",
+  "alias": "Web Development",
+  "head": "",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+}]

@@ -1,0 +1,43 @@
+[
+    {
+        "name": "api/v1/users/create",
+        "module": "user",
+        "alias": "user create api",
+        "description": "user profile ceation",
+        "roles": ["64227b89852c6ed8da49bbec"],
+        "isPublic": false
+    },
+    {
+        "name": "api/v1/users/search",
+        "module": "user",
+        "alias": "user search api",
+        "description": "user search",
+        "roles": [""],
+        "isPublic": false
+    },
+    {
+        "name": "api/v1/users/update",
+        "module": "user",
+        "alias": "user update api",
+        "description": "user profile update",
+        "roles": [""],
+        "isPublic": false
+    },
+    {
+        "name": "api/v1/users/delete",
+        "module": "user",
+        "alias": "user delete Api",
+        "description": "user delete",
+        "roles": [""],
+        "isPublic": false
+    },
+    {
+        "name": "api/v1/users/profile",
+        "module": "user",
+        "alias": "user View api",
+        "description": "user View",
+        "roles": [""],
+        "isPublic": true
+    }
+
+]

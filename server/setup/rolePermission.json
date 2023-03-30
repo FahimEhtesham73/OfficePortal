@@ -1,0 +1,10 @@
+[
+    {
+    "name": "api/v1/users/create",
+    "moduleName": "User",
+    "alias": "user create api",
+    "description": "user profile ceation",
+    "roles": ["64227b89852c6ed8da49bbec"],
+    "isPublic": false
+}
+]

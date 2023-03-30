@@ -1,0 +1,157 @@
+[{
+  "_id": {
+    "$oid": "64250fae65069cb4d7accc55"
+  },
+  "email": "shuvo@nextsolutionlab.com",
+  "password": "12345",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "lastLogin": "",
+  "lastPasswordChanged": "",
+  "isPermissionChanged": "false",
+  "isActive": "true",
+  "isMFAEnabled": "false",
+  "isEmailVerified": "true",
+  "empId": "100040",
+  "firstName": "Touhedur",
+  "middleName": "",
+  "lastName": "Rahman",
+  "nickName": "Shuvo",
+  "nid": "111111111111111111",
+  "gender": "Male",
+  "designation": "Associate SWE",
+  "department": {
+    "$oid": "642509b165069cb4d7accc45"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642512f865069cb4d7accc67"
+  },
+  "email": "nahid@nextsolutionlab.com",
+  "password": "12345",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "lastLogin": "",
+  "lastPasswordChanged": "",
+  "isPermissionChanged": "false",
+  "isActive": "true",
+  "isMFAEnabled": "false",
+  "isEmailVerified": "true",
+  "empId": "100040",
+  "firstName": "Nahid",
+  "middleName": "",
+  "lastName": "",
+  "nickName": "",
+  "nid": "111111111111111111",
+  "gender": "Male",
+  "designation": "Senior AI",
+  "department": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642512f865069cb4d7accc68"
+  },
+  "email": "admin@nextsolutionlab.com",
+  "password": "12345",
+  "role": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "lastLogin": "",
+  "lastPasswordChanged": "",
+  "isPermissionChanged": "false",
+  "isActive": "true",
+  "isMFAEnabled": "false",
+  "isEmailVerified": "true",
+  "empId": "100040",
+  "firstName": "admin",
+  "middleName": "",
+  "lastName": "admin",
+  "nickName": "",
+  "nid": "111111111111111111",
+  "gender": "Male",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642512f865069cb4d7accc69"
+  },
+  "email": "shafi@nextsolutionlab.com",
+  "password": "12345",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "lastLogin": "",
+  "lastPasswordChanged": "",
+  "isPermissionChanged": "false",
+  "isActive": "true",
+  "isMFAEnabled": "false",
+  "isEmailVerified": "true",
+  "empId": "100040",
+  "firstName": "Shafi",
+  "middleName": "Ud",
+  "lastName": "Doula",
+  "nickName": "",
+  "nid": "111111111111111111",
+  "gender": "Male",
+  "designation": "",
+  "department": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "642512f865069cb4d7accc6a"
+  },
+  "email": "sazzad@nextsolutionlab.com",
+  "password": "12345",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "lastLogin": "",
+  "lastPasswordChanged": "",
+  "isPermissionChanged": "false",
+  "isActive": "true",
+  "isMFAEnabled": "false",
+  "isEmailVerified": "true",
+  "empId": "100040",
+  "firstName": "Sazzad",
+  "middleName": "",
+  "lastName": "",
+  "nickName": "",
+  "nid": "111111111111111111",
+  "gender": "Male",
+  "designation": "",
+  "department": {
+    "$oid": "642509b165069cb4d7accc44"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+}]

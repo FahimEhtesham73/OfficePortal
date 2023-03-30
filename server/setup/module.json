@@ -1,0 +1,85 @@
+[{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbf6"
+  },
+  "name": "employee",
+  "alias": "Employee",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbf7"
+  },
+  "name": "leave",
+  "alias": "Leave",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbf8"
+  },
+  "name": "role",
+  "alias": "Role",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbf9"
+  },
+  "name": "module",
+  "alias": "Module",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbfa"
+  },
+  "name": "permission",
+  "alias": "Permission",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbfb"
+  },
+  "name": "attendence",
+  "alias": "Attendence",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227e50852c6ed8da49bbfc"
+  },
+  "name": "project",
+  "alias": "Project",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+}]
