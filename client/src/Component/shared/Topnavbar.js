@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 // Importing from MUI
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -99,7 +99,7 @@ const Topnavbar = (props) => {
   };
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-    localStorage.setItem('sidebar','profile')
+    localStorage.setItem('sidebar', 'profile')
     // navigate('/profile')
   };
 
@@ -109,7 +109,7 @@ const Topnavbar = (props) => {
   }
 
   const getMenuData = () => {
-    return localStorage.getItem('sidebar')?localStorage.getItem('sidebar'):localStorage.setItem('sidebar', 'All Employees')
+    return localStorage.getItem('sidebar') ? localStorage.getItem('sidebar') : localStorage.setItem('sidebar', 'All Employees')
   }
 
 
@@ -122,7 +122,7 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['In And Out','All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
+        {['In And Out', 'All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: 'block' }}>
             <ListItemButton
               sx={{
@@ -139,7 +139,7 @@ const Topnavbar = (props) => {
                   justifyContent: 'center',
                 }}
               >
-                {(index === 0 && <PunchClockIcon/>) ||(index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <SettingsIcon />)||(index === 7 && <EngineeringIcon />))}
+                {(index === 0 && <PunchClockIcon />) || (index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <EngineeringIcon />) || (index === 7 && <EngineeringIcon />))}
               </ListItemIcon>
               <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
