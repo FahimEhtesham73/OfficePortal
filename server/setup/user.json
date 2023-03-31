@@ -3,7 +3,7 @@
     "$oid": "64250fae65069cb4d7accc55"
   },
   "email": "shuvo@nextsolutionlab.com",
-  "password": "12345",
+  "password": "$2a$12$zYFqliLls1FZ2wsoxRDl8.qEZpy0HCxsbtmzqfMm9rLYIVeI6dvNe",
   "role": {
     "$oid": "64227b89852c6ed8da49bbf0"
   },
@@ -35,7 +35,7 @@
     "$oid": "642512f865069cb4d7accc67"
   },
   "email": "nahid@nextsolutionlab.com",
-  "password": "12345",
+  "password": "$2a$12$zYFqliLls1FZ2wsoxRDl8.qEZpy0HCxsbtmzqfMm9rLYIVeI6dvNe",
   "role": {
     "$oid": "64227b89852c6ed8da49bbf0"
   },
@@ -67,7 +67,7 @@
     "$oid": "642512f865069cb4d7accc68"
   },
   "email": "admin@nextsolutionlab.com",
-  "password": "12345",
+  "password": "$2a$12$zYFqliLls1FZ2wsoxRDl8.qEZpy0HCxsbtmzqfMm9rLYIVeI6dvNe",
   "role": {
     "$oid": "642509b165069cb4d7accc43"
   },
@@ -95,7 +95,7 @@
     "$oid": "642512f865069cb4d7accc69"
   },
   "email": "shafi@nextsolutionlab.com",
-  "password": "12345",
+  "password": "$2a$12$zYFqliLls1FZ2wsoxRDl8.qEZpy0HCxsbtmzqfMm9rLYIVeI6dvNe",
   "role": {
     "$oid": "64227b89852c6ed8da49bbee"
   },
@@ -127,7 +127,7 @@
     "$oid": "642512f865069cb4d7accc6a"
   },
   "email": "sazzad@nextsolutionlab.com",
-  "password": "12345",
+  "password": "$2a$12$zYFqliLls1FZ2wsoxRDl8.qEZpy0HCxsbtmzqfMm9rLYIVeI6dvNe",
   "role": {
     "$oid": "64227b89852c6ed8da49bbed"
   },

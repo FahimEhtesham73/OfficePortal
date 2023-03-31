@@ -1,8 +1,19 @@
 const userRouters = require("../routers/userRouter");
+const roleRouters = require("../routers/roleRouter");
+const departmentRouters = require("../routers/departmentRouter");
+const designationRouters = require("../routers/designationRouter");
 
 
+
+
+const v1 = "/api/v1"
 module.exports = (app) => {
-    app.use("/api/v1/users", userRouters);
+    app.use(`${v1}/users`, userRouters);
+    app.use(`${v1}/roles`, roleRouters);
+    app.use(`${v1}/depts`, departmentRouters);
+    app.use(`${v1}/designations`, designationRouters);
+
+
     
 
 
