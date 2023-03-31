@@ -149,7 +149,7 @@ const Punch = () => {
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
     return (
-        <>
+        <Box sx={{marginLeft:{sm:'60px',md:"280px"}}}>
 
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
@@ -298,7 +298,7 @@ const Punch = () => {
                 </DialogActions>
             </BootstrapDialog>
 
-        </>
+        </Box>
     )
 }
 

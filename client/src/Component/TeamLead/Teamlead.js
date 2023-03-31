@@ -178,7 +178,7 @@ const Teamlead = () => {
         </Menu>
     )
     return (
-        <>
+        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
             <Box >
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                     <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Current Team Lead</Typography>
@@ -259,7 +259,7 @@ const Teamlead = () => {
                 </DialogActions>
 
             </BootstrapDialog>
-        </>
+        </Box>
     )
 }
 

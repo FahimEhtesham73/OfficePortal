@@ -763,10 +763,10 @@ strong {
 
 
 .page-wrapper {
-    left: 0;
+    /* left: 0; */
     position: relative;
     transition: all .2s ease-in-out;
-    /* margin: 0 0 0 230px; */
+    margin: 0 0 0 230px;
     /* padding: 60px 0 0 */
 }
 

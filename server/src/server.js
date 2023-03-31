@@ -4,7 +4,7 @@ const app = require("./api/configuration/app");
 const PORT = process.env.PORT || 3001 ;
 
 // const production_DB = process.env.NSL_DB; 
-const local_DB = "mongodb://localhost:27017/nslsystem?replicaSet=rs"; //local db url
+const local_DB = "mongodb+srv://cluster0.cetklmc.mongodb.net/nsl_leave_management?retryWrites=true&w=majority"; //local db url
 
 //db connection
 (async function dbConnection(url){

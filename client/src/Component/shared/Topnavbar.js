@@ -27,6 +27,7 @@ import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import SettingsIcon from '@mui/icons-material/Settings';
+import LoginIcon from '@mui/icons-material/Login';
 // Importing Component
 import AllEmployees from '../AllEmployees';
 import Attendancesheet from '../Attendance/Attendancesheet';
@@ -39,6 +40,7 @@ import LeaveStatusLead from '../Leave/LeaveStatusLead';
 import Teamlead from '../TeamLead/Teamlead';
 import Profile from '../Profile/Profile';
 import Punch from '../Attendance/Punch';
+import Signin from '../Signin';
 
 
 const drawerWidth = 240;
@@ -78,7 +80,7 @@ const Topnavbar = (props) => {
   const navigate = useNavigate()
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-  const [menuData, setMenuData] = useState('All Employees')
+
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
@@ -97,19 +99,17 @@ const Topnavbar = (props) => {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
     localStorage.setItem('sidebar', 'profile')
-    // navigate('/profile')
+    navigate('/profile')
   };
 
   const saveMenuData = (text) => {
-    setMenuData(text)
-    localStorage.setItem('sidebar', text)
-  }
-
-  const getMenuData = () => {
-    return localStorage.getItem('sidebar') ? localStorage.getItem('sidebar') : localStorage.setItem('sidebar', 'All Employees')
+    // setMenuData(text)
+    // localStorage.setItem('sidebar', text)
+    navigate(`/${text}`)
   }
 
 
@@ -122,29 +122,191 @@ const Topnavbar = (props) => {
       </DrawerHeader>
       <Divider />
       <List>
-        {['In And Out', 'All Employees', 'Attendance Sheet', 'Holidays', 'Leaves', 'Leave Status', 'Team Leads'].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-              onClick={() => { text === 'Drafts' ? handleClick() : saveMenuData(text) }}
-            >
-              <ListItemIcon
+        {
+          !localStorage.getItem('Cookies') ?
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
                 sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
                 }}
+                onClick={() => { saveMenuData('Sign In') }}
               >
-                {(index === 0 && <PunchClockIcon />) || (index === 1 && <PeopleIcon />) || (index === 2 && <GridOnIcon />) || (index === 3 && <HolidayVillageIcon />) || (index === 4 && <EmojiTransportationIcon />) || (index === 5 && <BallotIcon /> || (index === 6 && <EngineeringIcon />) || (index === 7 && <EngineeringIcon />))}
-              </ListItemIcon>
-              <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Sign In'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem> :
+            (
+              <>
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <PunchClockIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'In And Out'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('allemployee') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'All Employee'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('attendance') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <GridOnIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Attendance Sheet'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('holiday') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <HolidayVillageIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Holidays'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('leaveemployee') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <EmojiTransportationIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Leaves'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('leaveadmin') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <BallotIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Leave Status'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('teamlead') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <EngineeringIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Team Leads'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+              </>
+
+            )
+
+
+        }
+
       </List>
     </div>
   )
@@ -154,7 +316,7 @@ const Topnavbar = (props) => {
     window.addEventListener('resize', () => {
       setWidth(window.innerWidth)
     })
-    if (width >= 600) {
+    if (width >= 900) {
       setOpen(true)
     }
     return () => window.removeEventListener("resize", () => {
@@ -171,10 +333,10 @@ const Topnavbar = (props) => {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={() => { width < 600 && setOpen(!open) }}
+            onClick={() => { width < 900 && setOpen(!open) }}
             edge="start"
           >
-            {width < 600 && <MenuIcon />}
+            {width < 900 && <MenuIcon />}
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             NSL Leave Management
@@ -202,11 +364,15 @@ const Topnavbar = (props) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
+              <MenuItem >
+                <Typography textAlign="center">Settings</Typography>
+              </MenuItem>
+              <MenuItem >
+                <Typography textAlign="center">Log Out</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -226,7 +392,7 @@ const Topnavbar = (props) => {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', sm: 'block',md:'none',lg:'none',xl:'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
@@ -238,7 +404,7 @@ const Topnavbar = (props) => {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'none', sm: 'none',md:'block',lg:'block',xl:'block' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
           open
@@ -249,7 +415,7 @@ const Topnavbar = (props) => {
 
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {getMenuData() === 'All Employees' && <AllEmployees />}
+        {/* {getMenuData() === 'All Employees' && <AllEmployees />}
         {getMenuData() === 'Attendance Sheet' && <Attendancesheet />}
         {getMenuData() === 'Holidays' && <Holidays />}
         {getMenuData() === 'Leaves' && <LeaveEmployee />}
@@ -257,6 +423,7 @@ const Topnavbar = (props) => {
         {getMenuData() === 'Team Leads' && <Teamlead />}
         {getMenuData() === 'profile' && <Profile />}
         {getMenuData() === 'In And Out' && <Punch />}
+        {getMenuData() === 'Sign In' && <Signin />} */}
         {/* {getMenuData() === 'Leave Setting' && <Leavesetting />} */}
       </Box>
 

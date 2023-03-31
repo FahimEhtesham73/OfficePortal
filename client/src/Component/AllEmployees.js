@@ -60,7 +60,7 @@ const AllEmployees = () => {
 
   return (
     <>
-      <Box >
+      <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
 
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography>
