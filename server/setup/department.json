@@ -3,7 +3,7 @@
     "$oid": "642509b165069cb4d7accc43"
   },
   "name": "AI",
-  "alias": "A I",
+  "alias": "Artificial Intelligence",
   "head": "",
   "createdBy": {
     "$oid": "000000000000000000000000"
@@ -15,8 +15,8 @@
   "_id": {
     "$oid": "642509b165069cb4d7accc44"
   },
-  "name": "Testing",
-  "alias": "Testing",
+  "name": "software development",
+  "alias": "Software Development",
   "head": "",
   "createdBy": {
     "$oid": "000000000000000000000000"
@@ -28,8 +28,8 @@
   "_id": {
     "$oid": "642509b165069cb4d7accc45"
   },
-  "name": "Web Development",
-  "alias": "Web Development",
+  "name": "testing",
+  "alias": "Testing",
   "head": "",
   "createdBy": {
     "$oid": "000000000000000000000000"
@@ -37,4 +37,47 @@
   "updatedBy": {
     "$oid": "000000000000000000000000"
   }
-}]
+},
+{
+  "_id": {
+    "$oid": "642509b165069cb4d7accc46"
+  },
+  "name": "robotics",
+  "alias": "Robotics",
+  "head": "",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},
+  {
+    "_id": {
+      "$oid": "642509b165069cb4d7accc47"
+    },
+    "name": "HR",
+    "alias": "HR",
+    "head": "",
+    "createdBy": {
+      "$oid": "000000000000000000000000"
+    },
+    "updatedBy": {
+      "$oid": "000000000000000000000000"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "642509b165069cb4d7accc48"
+    },
+    "name": "head",
+    "alias": "Head",
+    "head": "",
+    "createdBy": {
+      "$oid": "000000000000000000000000"
+    },
+    "updatedBy": {
+      "$oid": "000000000000000000000000"
+    }
+  }
+]

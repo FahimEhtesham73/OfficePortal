@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie'
 // Importing from MUI
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -27,7 +28,7 @@ import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import SettingsIcon from '@mui/icons-material/Settings';
-import LoginIcon from '@mui/icons-material/Login';
+import LoginIcon from '@mui/icons-material/Login'
 // Importing Component
 import AllEmployees from '../AllEmployees';
 import Attendancesheet from '../Attendance/Attendancesheet';
@@ -41,6 +42,7 @@ import Teamlead from '../TeamLead/Teamlead';
 import Profile from '../Profile/Profile';
 import Punch from '../Attendance/Punch';
 import Signin from '../Signin';
+import userRole from '../Hook/userHook';
 
 
 const drawerWidth = 240;
@@ -76,7 +78,7 @@ const AppBar = styled(MuiAppBar, {
 
 
 const Topnavbar = (props) => {
-  // const { window } = props;
+
   const navigate = useNavigate()
   const theme = useTheme();
   const [open, setOpen] = useState(true);
@@ -85,7 +87,7 @@ const Topnavbar = (props) => {
   const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
 
-
+  const id = JSON.parse(localStorage?.getItem('userData'))?.userInformation?._id
   // For handling Drawer
   const handleDrawerClose = () => {
     setOpen(false);
@@ -102,8 +104,6 @@ const Topnavbar = (props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-    localStorage.setItem('sidebar', 'profile')
-    navigate('/profile')
   };
 
   const saveMenuData = (text) => {
@@ -111,7 +111,6 @@ const Topnavbar = (props) => {
     // localStorage.setItem('sidebar', text)
     navigate(`/${text}`)
   }
-
 
   const drawer = (
     <div>
@@ -123,7 +122,7 @@ const Topnavbar = (props) => {
       <Divider />
       <List>
         {
-          !localStorage.getItem('Cookies') ?
+          !localStorage.getItem('userData') ?
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -131,7 +130,7 @@ const Topnavbar = (props) => {
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
-                onClick={() => { saveMenuData('Sign In') }}
+                onClick={() => { saveMenuData('signin') }}
               >
                 <ListItemIcon
                   sx={{
@@ -147,6 +146,7 @@ const Topnavbar = (props) => {
             </ListItem> :
             (
               <>
+                {/* Punch IN */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -168,6 +168,7 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'In And Out'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
+                {/* All EMployee */}
 
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
@@ -190,7 +191,7 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'All Employee'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
-
+                {/* Attendance Sheet */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -212,6 +213,7 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'Attendance Sheet'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
+                {/* Holidays */}
 
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
@@ -234,7 +236,7 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'Holidays'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
-
+                {/* Leave Employee */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -257,6 +259,10 @@ const Topnavbar = (props) => {
                   </ListItemButton>
                 </ListItem>
 
+                {/* Leave Status Admin */}
+
+                {
+                (userRole()==='Admin' || userRole()==='Team Lead')&& 
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -278,7 +284,8 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'Leave Status'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
-
+                }
+                {/* Team Lead */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -303,8 +310,6 @@ const Topnavbar = (props) => {
               </>
 
             )
-
-
         }
 
       </List>
@@ -342,7 +347,8 @@ const Topnavbar = (props) => {
             NSL Leave Management
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0,display:'flex',justifyContent:'center',alignItems:'center',padding:'10px' }}>
+          <Typography variant="p"  component="div" sx={{marginRight:"15px"}}>{JSON.parse(localStorage.getItem('userData'))?.userInformation.firstName}</Typography>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -364,13 +370,20 @@ const Topnavbar = (props) => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
+              <MenuItem onClick={() => {
+                handleCloseUserMenu()
+                navigate(`/profile/${id}`)
+              }}>
                 <Typography textAlign="center">Profile</Typography>
               </MenuItem>
               <MenuItem >
                 <Typography textAlign="center">Settings</Typography>
               </MenuItem>
-              <MenuItem >
+              <MenuItem onClick={() => {
+                handleCloseUserMenu()
+                localStorage.removeItem('userData')
+                navigate('/signin')
+              }}>
                 <Typography textAlign="center">Log Out</Typography>
               </MenuItem>
             </Menu>
@@ -392,7 +405,7 @@ const Topnavbar = (props) => {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: 'block', sm: 'block',md:'none',lg:'none',xl:'none' },
+            display: { xs: 'block', sm: 'block', md: 'none', lg: 'none', xl: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
@@ -404,7 +417,7 @@ const Topnavbar = (props) => {
           sx={{
             width: drawerWidth,
             flexShrink: 0,
-            display: { xs: 'none', sm: 'none',md:'block',lg:'block',xl:'block' },
+            display: { xs: 'none', sm: 'none', md: 'block', lg: 'block', xl: 'block' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
           open

@@ -1,0 +1,50 @@
+[
+    {
+        "name": "Intern"
+    },
+    {
+        "name": "Associate Software Engineer"
+    },
+    {
+        "name": "Software Engineer"
+    },
+    {
+        "name":"Senior Software Engineer"
+    },
+    {
+        "name":"Team Lead Software Engineer"
+    },
+    {
+        "name":" Senior Team Lead Software Engineer"
+    },
+    {
+        "name": "Associate AI Engineer"
+    },
+    {
+        "name": "AI Engineer"
+    },
+    {
+        "name": "Senior AI Engineer"
+    },
+    
+    {
+        "name":"Team Lead AI"
+    },
+    {
+        "name":"Senior Team Lead AI"
+    },
+    {
+        "name":"Project Manager"
+    },
+    {
+        "name":"Facility manager"
+    },
+    {
+        "name":"CEO"
+    },
+    {
+        "name":"COO"
+    }
+    
+    
+]

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         marginTop: "60px",
         width: "100%",
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
     },
     timeColor: {
         color: '#8E8E8E'
@@ -149,7 +149,7 @@ const Punch = () => {
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
     return (
-        <Box sx={{marginLeft:{sm:'60px',md:"280px"}}}>
+        <Box sx={{marginLeft:{sm:'60px',md:"280px",xs:"30px"},marginRight:"30px"}}>
 
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
@@ -175,7 +175,7 @@ const Punch = () => {
                 </Card>
             </Box>
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width:"100%" }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4} md={3} >
                         <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
@@ -230,7 +230,7 @@ const Punch = () => {
                     </Grid>
                 </Grid>
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', maxWidth: '2618px' }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom:"30px",minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>

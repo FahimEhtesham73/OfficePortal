@@ -14,8 +14,8 @@
   "_id": {
     "$oid": "64227b89852c6ed8da49bbed"
   },
-  "name": "maanger",
-  "alias": "Manager",
+  "name": "project lead",
+  "alias": "Project Lead",
   "createdBy": {
     "$oid": "000000000000000000000000"
   },
@@ -36,22 +36,10 @@
   }
 },{
   "_id": {
-    "$oid": "64227b89852c6ed8da49bbef"
-  },
-  "name": "projectlead",
-  "alias": "Project Lead",
-  "createdBy": {
-    "$oid": "000000000000000000000000"
-  },
-  "updatedBy": {
-    "$oid": "000000000000000000000000"
-  }
-},{
-  "_id": {
     "$oid": "64227b89852c6ed8da49bbf0"
   },
-  "name": "user",
-  "alias": "User",
+  "name": "employee",
+  "alias": "Employee",
   "createdBy": {
     "$oid": "000000000000000000000000"
   },

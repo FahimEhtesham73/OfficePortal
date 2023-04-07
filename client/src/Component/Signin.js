@@ -10,57 +10,55 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { toast } from 'react-toastify';
+import {useDispatch,useSelector} from 'react-redux'
+import { addUser } from '../store/slices/UserSlice';
 
 
 const theme = createTheme();
 
 const Signin = () => {
+    const dispatch = useDispatch()
+    const data = useSelector((state)=>{
+        return state.users //Here users is userSlice which we defined as users in store  //Here state represents the whole state of the project which is store 
+    })
+    // console.log("User Data",data);
     const navigate = useNavigate()
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        localStorage.setItem('Cookies','test-cookie')
-        localStorage.setItem('sidebar','All Employees')
-        window.location.reload()
-        // const userData = new FormData(event.currentTarget);
-        // const res = await fetch(`${process.env.REACT_APP_URL}/userSignin`, {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify({
-        //         name: userData.get('name'), password: userData.get('password')
-        //     }),
-        //     credentials: 'include'
-        // })
-        // const data = await res.json()
+        event.preventDefault()
+        const userData = new FormData(event.currentTarget);
+        // console.log(userData);
+        const res = await fetch(`${process.env.REACT_APP_URL}/users/signin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: userData.get('email'), password: userData.get('password')
+            }),
+            credentials: 'include'
+        })
+        const data = await res.json()
         // console.log(data);
-        // if (res.status === 400) {
-        //     toast(data.message, {
-        //         position: "top-center",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //         progress: undefined,
-        //         theme: "light",
-        //     });
-        // }
-        // else {
-        //     localStorage.setItem('jwtoken', data.token)
-        //     localStorage.setItem("userData", JSON.stringify(data))
-        //     toast('Admin Logged In Successfully', {
-        //         position: "top-center",
-        //         autoClose: 5000,
-        //         hideProgressBar: false,
-        //         closeOnClick: true,
-        //         pauseOnHover: true,
-        //         draggable: true,
-        //         progress: undefined,
-        //         theme: "light",
-        //     });
-        //     navigate('/addslide')
-        // }
+        
+        if (res.status === 400) {
+            toast.success(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            // toast(data.message, {
+            //     position: "top-center",
+            //     autoClose: 5000,
+            //     hideProgressBar: false,
+            //     closeOnClick: true,
+            //     pauseOnHover: true,
+            //     draggable: true,
+            //     progress: undefined,
+            //     theme: "light",
+            // });
+        }
+        else {
+            localStorage.setItem("userData", JSON.stringify(data))
+            dispatch(addUser(data))
+            toast.success('Log in successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            navigate('/')
+        }
     };
     return (
         <ThemeProvider theme={theme}>
@@ -85,10 +83,10 @@ const Signin = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="name"
-                            label="User Name"
-                            name="name"
-                            autoComplete="name"
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
                             autoFocus
                         />
                         <TextField

@@ -22,6 +22,7 @@ import Holidays from "./Component/Leave/Holidays";
 import LeaveEmployee from "./Component/Leave/LeaveEmployee";
 import LeaveStatusLead from "./Component/Leave/LeaveStatusLead";
 import Teamlead from "./Component/TeamLead/Teamlead";
+import AdminCombinedProtected from "./Component/Protected Router/AdminCombinedProtected";
 
 const App = () => {
   return (
@@ -29,13 +30,13 @@ const App = () => {
       <Topnavbar />
       <Routes>
         <Route path="/signin" exact element={<Signin/>}/>
-        <Route path='/profile' exact element={<Profile/>}/>
+        <Route path='/profile/:id'  element={<Profile/>}/>
         <Route path='/allemployee' element={<AllEmployees/>}/>
         <Route path='/' element={<Punch/>}/>
         <Route path='/attendance' element={<Attendancesheet/>}/>
         <Route path='/holiday' element={<Holidays/>}/>
         <Route path='/leaveemployee' element={<LeaveEmployee/>}/>
-        <Route path='/leaveadmin' element={<LeaveStatusLead/>}/>
+        <Route path='/leaveadmin' element={<AdminCombinedProtected><LeaveStatusLead/></AdminCombinedProtected> }/>
         <Route path='/teamlead' element={<Teamlead/>}/>
         {/* All Employees */}
       </Routes>

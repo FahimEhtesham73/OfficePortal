@@ -4,25 +4,25 @@ const Role = require("../models/roleModel");
 const Module = require("../models/moduleModel");
 const Permission = require("../models/rolePermissionModel");
 const Department = require("../models/departmentModel")
+const Designation = require("../models/designationModel")
 // const SubModule = require("../models/subModule");
 
-const jwt = require("jsonwebtoken");
-const { verifyHash, tokenGeneration } = require("../services/userServices");
+const { verifyHash, tokenGeneration, hashPasswordGenarator } = require("../services/userServices");
 
 
 module.exports.createUser = async(req, res)=> {
     try{
 
-        const {email, password, role, name} = req.body;
+        const {firstName, lastName, email, password, designation, role, department,empId,joiningDate } = req.body;
+        if(!firstName, !lastName, !email, !password, !designation, !role, !department, !empId, !joiningDate) return res.status(400).json('Fill All The fields')
+        console.log(req.body);
         const user = await User.findOne({email: email});
-        if(user) return res.status(400).json("userid already exist");
+        if(user) return res.status(400).json("Employee already exist");
     
-        const userData = {email, password, role}
-        const userInfo = await new User(userData).save();
+        const hashPassword = await hashPasswordGenarator(password)
+        const userData = {firstName, lastName, email, password: hashPassword, designation, role, department,empId,joiningDate}
         
-
-        const UserData = {name, userId: userInfo._id };
-        const result = await new User(UserData).save();
+        const result = await new User(userData).save();
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
@@ -33,8 +33,9 @@ module.exports.createUser = async(req, res)=> {
 module.exports.signinUser = async(req, res)=> {
     try{
         const {email, password} = req.body;
-
-            const user = await User.findOne({email: email}).lean();
+            const user = await User.findOne({email: email}).populate("role", "alias")
+                .populate("designation", "name")
+                .populate("department", "name").lean();
             if(!user) return res.status(400).json("wrong credential");
             let isValid = await verifyHash(password, user.password)
             if(!isValid) return res.status(400).json("wrong credential");
@@ -49,7 +50,7 @@ module.exports.signinUser = async(req, res)=> {
             const token = tokenGeneration(userTokenData);
             const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
             // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
-            res.setHeader("Set-Cookie", [cookie, anotherCookie])
+            res.setHeader("Set-Cookie", [cookie])
 
             return res.status(200).json({"userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login"}); 
     }catch(err){
@@ -70,10 +71,40 @@ module.exports.deleteSingleUser = async(req, res)=> {
 
 module.exports.allUser = async(req, res)=> {
     try{
-        const users = await User.find().lean();
-
+        const users = await User.find().populate("designation", "name")
+        return res.status(200).json(users)
     }catch(e){
         console.log(e);
         return res.status(500).json("something went wrong on all user get function")
+    }
+}
+
+
+module.exports.getSingleUser = async(req, res)=> {
+    try{
+        const id = req.params.id
+        const users = await User.find({_id:id}).populate("role", "alias")
+        .populate("designation", "name")
+        .populate("department", "name")
+        return res.status(200).json(users)
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("something went wrong on single user get function")
+    }
+}
+
+module.exports.updateSingleUser = async (req,res)=>{
+    console.log(req.body);
+    try{
+        const id = req.params.id
+        const updateUser = await User.findByIdAndUpdate({_id:id},req.body,{new:true}).populate("role", "alias")
+        .populate("designation", "name")
+        .populate("department", "name")
+        console.log(updateUser);
+        return res.status(200).json(updateUser)
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("Something went wrong on update information")
     }
 }
