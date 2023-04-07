@@ -6,7 +6,7 @@ const Permission = require("../models/rolePermissionModel");
 const Department = require("../models/departmentModel")
 const Designation = require("../models/designationModel")
 // const SubModule = require("../models/subModule");
-
+const jwt = require("jsonwebtoken");
 const { verifyHash, tokenGeneration, hashPasswordGenarator } = require("../services/userServices");
 
 
@@ -50,6 +50,8 @@ module.exports.signinUser = async(req, res)=> {
             const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
             // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
             res.setHeader("Set-Cookie", [cookie])
+
+            res.cookie("_info", jwt.sign(restUserInformation, "secret"))
 
             return res.status(200).json({"userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login"}); 
     }catch(err){
