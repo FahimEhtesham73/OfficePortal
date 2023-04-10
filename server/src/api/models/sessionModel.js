@@ -1,13 +1,13 @@
 const {Schema, model} = require("mongoose")
 const sessionSchema = new Schema({
-    email: String,
     userId: {type: Schema.Types.ObjectId, ref: "User"},
-    accessToken: String,
+    jwt: String,
     location: String,
     ipAddress: String,
     timeZone: String,
 },{timestamps: true});
 
-sessionSchema.createIndex({"userId": 1});
+sessionSchema.index({"userId": 1}, {expireAfterSeconds: parseInt(process.env.SESSION_TIMEOUT)});
+
 
 module.exports = model("Session", sessionSchema);

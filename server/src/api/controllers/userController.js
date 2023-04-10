@@ -6,16 +6,19 @@ const Permission = require("../models/rolePermissionModel");
 const Department = require("../models/departmentModel")
 const Designation = require("../models/designationModel")
 // const SubModule = require("../models/subModule");
-
-const { verifyHash, tokenGeneration, hashPasswordGenarator } = require("../services/userServices");
+const jwt = require("jsonwebtoken");
+const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession } = require("../services/userServices");
+const { validationResult } = require("express-validator");
+const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 
 
 module.exports.createUser = async(req, res)=> {
     try{
-
+        console.log(req.cookies);
+        const errors = validationMessages(validationResult(req).mapped());
+        console.log(errors);
+        if(isErrorFounds(errors)) return res.status(400).json({"message": errors})
         const {firstName, lastName, email, password, designation, role, department,empId,joiningDate } = req.body;
-        if(!firstName, !lastName, !email, !password, !designation, !role, !department, !empId, !joiningDate) return res.status(400).json('Fill All The fields')
-        console.log(req.body);
         const user = await User.findOne({email: email});
         if(user) return res.status(400).json("Employee already exist");
     
@@ -26,7 +29,7 @@ module.exports.createUser = async(req, res)=> {
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
-        return res.status(500).json("wrong in create user");
+        return res.status(500).json("Something went wrong");
     }
 }
 
@@ -48,9 +51,19 @@ module.exports.signinUser = async(req, res)=> {
             }
             const {password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation} = user;
             const token = tokenGeneration(userTokenData);
+            const userSessionData = {
+                ipAddress: req.ip,
+                jwt: token,
+                timeZone: "",
+            }
+            const userSession = await createSession(user._id, userSessionData);
             const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
             // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
             res.setHeader("Set-Cookie", [cookie])
+            res.cookie("_info", jwt.sign(restUserInformation, "secret"), );//{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
+            res.cookie("_sid", userSession._id, {path: "/", secure: true, httpOnly:true, sameSite: true, } );
+
+
 
             return res.status(200).json({"userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login"}); 
     }catch(err){

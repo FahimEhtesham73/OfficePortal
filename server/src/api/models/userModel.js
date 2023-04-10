@@ -33,8 +33,6 @@ const UserSchema = new Schema({
     imagePath: {type: String, default: "https://cdn-icons-png.flaticon.com/512/21/21104.png" },
     createdBy: {type: Schema.Types.ObjectId,  default: "000000000000000000000000"},
     updatedBy: {type: Schema.Types.ObjectId,  default: "000000000000000000000000"},
-    education:[{name:String,degree:String,year:String}],
-    experience:[{companyName:String,year:String}]
 },{timestamps: true});
 
 // UserSchema.cre({"empId": 1})

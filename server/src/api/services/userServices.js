@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const path = require("node:path");
+const Session = require("../models/sessionModel");
 
 /**
  * 
@@ -68,4 +69,24 @@ module.exports.verifyToken =  (token) => {
 
     const isVerified =  jwt.verify(token, publicKey, signOptions);
     return isVerified
+}
+
+
+
+/**
+ * @param {string} userId
+ * @param {object} userData
+ */
+module.exports.createSession = async (userId, sessionData)=> {
+    const isSessionAvialble = await Session.findOne({userId: userId});
+    
+    let createNewSession;
+    if(!isSessionAvialble) {
+        createNewSession = await new Session({userId, ...sessionData}).save()
+    } 
+    
+    await Session.findOneAndUpdate({userId: userId}, {userId: userId, ...sessionData});
+    
+
+    return isSessionAvialble? isSessionAvialble._id : createNewSession._id;
 }

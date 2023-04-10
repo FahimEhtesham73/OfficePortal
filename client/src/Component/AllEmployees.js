@@ -206,7 +206,8 @@ const AllEmployees = () => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(user),
-      credentials: 'include'
+      credentials: 'include',
+      // withCredentials: true
     })
 
     const data = await res.json()
@@ -220,11 +221,11 @@ const AllEmployees = () => {
       getAllUser()
     } else {
       toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-      setUser({
-        firstName: "", lastName: "", email: "", password: "", designation: "", role: "", department: "", empId: "", joiningDate: ""
-      })
+      // setUser({
+      //   firstName: "", lastName: "", email: "", password: "", designation: "", role: "", department: "", empId: "", joiningDate: ""
+      // })
       setSelectedDate(null)
-      setOpenModal(false)
+      // setOpenModal(false)
     }
   }
 
