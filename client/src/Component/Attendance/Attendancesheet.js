@@ -64,7 +64,7 @@ const Attendancesheet = () => {
     ]
 
     return (
-        <>
+        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
             </Box>
@@ -147,7 +147,7 @@ const Attendancesheet = () => {
                     </Table>
                 </TableContainer>
             </Box>
-        </>
+        </Box>
 
     )
 }

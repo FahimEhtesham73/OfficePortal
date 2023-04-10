@@ -217,7 +217,7 @@ const LeaveStatusLead = () => {
         </Menu>
     )
     return (
-        <>
+        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
                 <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
@@ -412,7 +412,7 @@ const LeaveStatusLead = () => {
                     </Button>
                 </DialogActions>
             </BootstrapDialog>
-        </>
+        </Box>
     )
 }
 

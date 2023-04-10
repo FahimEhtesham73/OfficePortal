@@ -2,12 +2,14 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 
 module.exports = (app)=>{
 
 
     app.use(helmet());
+    
     // app.use(cors());
     // Adding headers for cors policy
     
@@ -33,9 +35,9 @@ module.exports = (app)=>{
     });
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
-
+    app.use(cookieParser())
     //dev
-    if(process.env.NODE_ENV === 'development'){
+    if(process.env.NODE_ENV === 'dev'){
         app.use(morgan('dev'))
     }
 }

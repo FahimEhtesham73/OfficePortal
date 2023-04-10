@@ -7,32 +7,36 @@ const Department = require("../models/departmentModel")
 const Designation = require("../models/designationModel")
 // const SubModule = require("../models/subModule");
 const jwt = require("jsonwebtoken");
-const { verifyHash, tokenGeneration, hashPasswordGenarator } = require("../services/userServices");
+const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession } = require("../services/userServices");
+const { validationResult } = require("express-validator");
+const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 
 
 module.exports.createUser = async(req, res)=> {
     try{
-
-        const {firstName, lastName, email, password, designation, role, department } = req.body;
+        console.log(req.cookies);
+        const errors = validationMessages(validationResult(req).mapped());
+        console.log(errors);
+        if(isErrorFounds(errors)) return res.status(400).json({"message": errors})
+        const {firstName, lastName, email, password, designation, role, department,empId,joiningDate } = req.body;
         const user = await User.findOne({email: email});
         if(user) return res.status(400).json("Employee already exist");
     
         const hashPassword = await hashPasswordGenarator(password)
-        const userData = {firstName, lastName, email, password: hashPassword, designation, role, department}
+        const userData = {firstName, lastName, email, password: hashPassword, designation, role, department,empId,joiningDate}
         
         const result = await new User(userData).save();
         return res.status(200).json(result);
     }catch(e){
         console.log(e);
-        return res.status(500).json("wrong in create user");
+        return res.status(500).json("Something went wrong");
     }
 }
 
 module.exports.signinUser = async(req, res)=> {
     try{
         const {email, password} = req.body;
-
-            const user = await User.findOne({email: email}).populate("role", "title", "Role")
+            const user = await User.findOne({email: email}).populate("role", "alias")
                 .populate("designation", "name")
                 .populate("department", "name").lean();
             if(!user) return res.status(400).json("wrong credential");
@@ -47,11 +51,19 @@ module.exports.signinUser = async(req, res)=> {
             }
             const {password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation} = user;
             const token = tokenGeneration(userTokenData);
+            const userSessionData = {
+                ipAddress: req.ip,
+                jwt: token,
+                timeZone: "",
+            }
+            const userSession = await createSession(user._id, userSessionData);
             const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
             // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
             res.setHeader("Set-Cookie", [cookie])
+            res.cookie("_info", jwt.sign(restUserInformation, "secret"), );//{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
+            res.cookie("_sid", userSession._id, {path: "/", secure: true, httpOnly:true, sameSite: true, } );
 
-            res.cookie("_info", jwt.sign(restUserInformation, "secret"))
+
 
             return res.status(200).json({"userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login"}); 
     }catch(err){
@@ -72,10 +84,40 @@ module.exports.deleteSingleUser = async(req, res)=> {
 
 module.exports.allUser = async(req, res)=> {
     try{
-        const users = await User.find().lean();
-
+        const users = await User.find().populate("designation", "name")
+        return res.status(200).json(users)
     }catch(e){
         console.log(e);
         return res.status(500).json("something went wrong on all user get function")
+    }
+}
+
+
+module.exports.getSingleUser = async(req, res)=> {
+    try{
+        const id = req.params.id
+        const users = await User.find({_id:id}).populate("role", "alias")
+        .populate("designation", "name")
+        .populate("department", "name")
+        return res.status(200).json(users)
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("something went wrong on single user get function")
+    }
+}
+
+module.exports.updateSingleUser = async (req,res)=>{
+    console.log(req.body);
+    try{
+        const id = req.params.id
+        const updateUser = await User.findByIdAndUpdate({_id:id},req.body,{new:true}).populate("role", "alias")
+        .populate("designation", "name")
+        .populate("department", "name")
+        console.log(updateUser);
+        return res.status(200).json(updateUser)
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("Something went wrong on update information")
     }
 }

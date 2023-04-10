@@ -3,6 +3,8 @@ const User = require("../models/userModel");
 
 module.exports.Authorize = async(req, res, next)=>{
     try {
+        const cookies = req.cookies;
+        console.log(cookies);
         let token = req.header("Authorization");
         token = token.split(" ")[1].trim();
         const decode = await jwt.verify(token, 'SECRET');

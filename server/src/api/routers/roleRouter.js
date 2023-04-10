@@ -1,4 +1,4 @@
-const { getAllRoles } = require("../controllers/roleController");
+const { getAllRoles, createRole } = require("../controllers/roleController");
 
 const router = require("express").Router();
 
