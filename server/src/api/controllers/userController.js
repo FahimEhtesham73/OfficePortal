@@ -57,7 +57,7 @@ module.exports.signinUser = async(req, res)=> {
                 timeZone: "",
             }
             const userSession = await createSession(user._id, userSessionData);
-            const cookie = `_token=${token};samesite=strict; secure;path=/; httpOnly`
+            const cookie = `_token=${token};samesite=strict; secure;path=/;`
             // res.cookie("_token", cookie, { expires: new Date(Date.now() + 43200*1000)});
             res.setHeader("Set-Cookie", [cookie])
             res.cookie("_info", jwt.sign(restUserInformation, "secret"), );//{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
