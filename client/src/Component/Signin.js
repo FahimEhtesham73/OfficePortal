@@ -19,7 +19,9 @@ const theme = createTheme();
 const Signin = () => {
     const dispatch = useDispatch()
     const data = useSelector((state)=>{
-        return state.users //Here users is userSlice which we defined as users in store  //Here state represents the whole state of the project which is store 
+        return state.users 
+        //Here users is userSlice which we defined as users in store  
+        //Here state represents the whole state of the project which is store 
     })
     // console.log("User Data",data);
     const navigate = useNavigate()

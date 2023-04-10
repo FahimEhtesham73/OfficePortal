@@ -141,6 +141,10 @@ const Punch = () => {
     const handleClickClose = () => {
         setOpen(false);
     };
+
+    const handlePosition = (e)=>{
+        console.log(e.target.value);
+    }
     const rows = [
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:00 PM', '9.5 hrs', '.5'),
@@ -283,11 +287,11 @@ const Punch = () => {
                 </BootstrapDialogTitle>
                 <DialogContent >
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
-                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }}>
-                        <FormControlLabel control={<Checkbox />} label="Work From Home" />
-                        <FormControlLabel control={<Checkbox />} label="Work At Office" />
-                        <FormControlLabel control={<Checkbox />} label="Work On Holiday" />
-                        <FormControlLabel control={<Checkbox />} label="Half day" />
+                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} >
+                        <FormControlLabel control={<Checkbox />} value='WFH' label="Work From Home" onClick={(e)=>{handlePosition(e)}}/>
+                        <FormControlLabel control={<Checkbox />} value='WAO' label="Work At Office" />
+                        <FormControlLabel control={<Checkbox />} value='WH' label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
                     </FormGroup>
 
                 </DialogContent>
