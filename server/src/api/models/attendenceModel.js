@@ -3,7 +3,7 @@ const attendenceSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, ref: "User"},
     checkInTime: Date,
     checkOutTime: Date,
-    status: {type: [String], enum: ["WFO", "IO", "HD", "WOH"]}, // IO, WFO, HD,
+    status: {type: [String], enum: ["WFH", "WAO", "HD", "WOH"]}, // IO, WFO, HD,
     // isWOH: Boolean,
     comments: String,
     createdBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
