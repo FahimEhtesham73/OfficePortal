@@ -35,7 +35,8 @@ const Signin = () => {
             body: JSON.stringify({
                 email: userData.get('email'), password: userData.get('password')
             }),
-            credentials: 'include'
+            credentials: 'include',
+            withCredentials:true
         })
         const data = await res.json()
         // console.log(data);
