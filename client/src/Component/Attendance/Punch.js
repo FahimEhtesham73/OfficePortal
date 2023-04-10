@@ -24,7 +24,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react'
-
+import Cookies from 'js-cookie';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -127,12 +127,15 @@ BootstrapDialogTitle.propTypes = {
 
 
 const Punch = () => {
+    const jwt = Cookies.get('_token')
     const classes = useStyles()
     function createData(name, date, punchin, punchout, totalhour, overtime) {
         return { name, date, punchin, punchout, totalhour, overtime };
     }
     const [open, setOpen] = useState(false);
-
+    const [position, setPosition] = useState([])
+    const [checkBoxDisableHome, setCheckBoxDisableHome] = useState(false)
+    const [checkBoxDisableOffice, setCheckBoxDisableOffice] = useState(false)
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -142,8 +145,61 @@ const Punch = () => {
         setOpen(false);
     };
 
-    const handlePosition = (e)=>{
-        console.log(e.target.value);
+    const handlePosition = (e) => {
+        if (e.target.value === 'WFH') {
+            if (position.includes('WFH')) {
+                setCheckBoxDisableHome(false)
+                const temp = position.filter((val) => { return val !== 'WFH' })
+                setPosition(temp)
+            } else {
+                setCheckBoxDisableHome(true)
+                setCheckBoxDisableOffice(false)
+                const unchekedFilter = position.filter((val) => { return val !== 'WAO' })
+                setPosition([...unchekedFilter, 'WFH'])
+            }
+
+        }
+        else if (e.target.value === 'WAO') {
+            if (position.includes('WAO')) {
+                setCheckBoxDisableOffice(false)
+                const temp = position.filter((val) => { return val !== 'WAO' })
+                setPosition(temp)
+            } else {
+                setCheckBoxDisableOffice(true)
+                setCheckBoxDisableHome(false)
+                const unchekedFilter = position.filter((val) => { return val !== 'WFH' })
+                setPosition([...unchekedFilter, 'WAO'])
+            }
+
+        } else {
+            if (position.includes(e.target.value)) {
+                const unchekedFilter = position.filter((val) => { return e.target.value !== val })
+                setPosition(unchekedFilter)
+            } else {
+                setPosition([...position, e.target.value])
+            }
+
+        }
+
+    }
+    
+
+    const punchIn = async()=>{
+        const res = await fetch(`${process.env.REACT_APP_URL}/attendance/create`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                checkInTime:new Date(),
+                status:position
+            }),
+            credentials: 'include',
+            withCredentials: true
+          })
+
+        const data = await res.json()
+        console.log("created punch data",data);
     }
     const rows = [
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
@@ -153,7 +209,7 @@ const Punch = () => {
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
     return (
-        <Box sx={{marginLeft:{sm:'60px',md:"280px",xs:"30px"},marginRight:"30px"}}>
+        <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
 
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
@@ -179,7 +235,7 @@ const Punch = () => {
                 </Card>
             </Box>
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width:"100%" }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4} md={3} >
                         <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
@@ -234,7 +290,7 @@ const Punch = () => {
                     </Grid>
                 </Grid>
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom:"30px",minWidth: '600px', maxWidth: '2618px' }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom: "30px", minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -287,16 +343,17 @@ const Punch = () => {
                 </BootstrapDialogTitle>
                 <DialogContent >
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
-                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} >
-                        <FormControlLabel control={<Checkbox />} value='WFH' label="Work From Home" onClick={(e)=>{handlePosition(e)}}/>
-                        <FormControlLabel control={<Checkbox />} value='WAO' label="Work At Office" />
+                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
+                        <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
+                        <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
                         <FormControlLabel control={<Checkbox />} value='WH' label="Work On Holiday" />
                         <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
                     </FormGroup>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={handleClickClose}>
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={()=>{handleClickClose()
+                    punchIn()}}>
                         Punch
                     </Button>
                 </DialogActions>

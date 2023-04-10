@@ -19,12 +19,11 @@ module.exports = (app)=>{
 
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         // res.setHeader('Content-Security-Policy', 'script-src http://localhost:3000')
-        // https://www2.otsuka.deepicr.jp
         // Request methods you wish to allow
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
         // Request headers you wish to allow
-        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,sid,authorization,filesinformation');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type,Authorization,Accept');
 
         // Set to true if you need the website to include cookies in the requests sent
         // to the API (e.g. in case you use sessions)
