@@ -248,6 +248,7 @@ const Punch = () => {
     }
 
     const punchOut = async()=>{
+        console.log("Attendance ID", JSON.parse(localStorage.getItem('userData'))?.userInformation?._id);
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/update`, {
             method: "PUT",
             headers: {
@@ -256,7 +257,7 @@ const Punch = () => {
             },
             body: JSON.stringify({
                 aId:punchedInfo._id,
-                userId:localStorage?.userData?.userInformation?._id,
+                userId:JSON.parse(localStorage.getItem('userData'))?.userInformation?._id,
                 updateData: {
                     checkOutTime: new Date()
                 }
@@ -266,6 +267,11 @@ const Punch = () => {
         })
         const data = await res.json()
         console.log("Punched Out",data);
+        if(res.status === 200){
+            setIsPunchedIn(false)
+            const localTime = formatAMPM(new Date(data.data.checkOutTime))
+            toast.success(`You Punched Out At ${localTime}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
     }
 
 
