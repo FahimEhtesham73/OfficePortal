@@ -74,3 +74,31 @@ module.exports.getAttendences = async (req, res)=> {
         return res.status(500).json({"message":"Something went wrong"});
     }
 }
+
+module.exports.updateAttendece = async(req, res) => {
+    try{
+        const attendeceId = req.body.aId;
+        const userId = req.body.userId;
+        const data = {
+            ...req.body.updateData,
+        }
+
+        const attendence = await Attendence.findOne({_id: attendeceId, userId: userId }).lean();
+        console.log(attendence);
+        if(!attendence) return res.status(404).json({"message": "Not found"});
+        const updatedDoc = await Attendence.findOneAndUpdate({
+            _id: attendeceId, userId: userId
+        }, {$set: {
+            ...data,
+            updatedBy: req.user._id
+        }},{new: true})
+        .select({userId: 1, status:1, checkInTime: 1, checkOutTime: 1}).lean()
+
+        return res.status(200).json({"message": "Updated successfully", data: updatedDoc})
+    }catch(err){
+        console.log("err", err);
+        return res.status(500).json({"message":"Something went wrong"});
+
+        
+    }
+}
