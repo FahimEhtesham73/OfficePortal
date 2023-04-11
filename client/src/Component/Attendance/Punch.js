@@ -25,7 +25,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react'
 import Cookies from 'js-cookie';
-
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles((theme) => ({
     cardWrapper: {
@@ -136,6 +136,7 @@ const Punch = () => {
     const [position, setPosition] = useState([])
     const [checkBoxDisableHome, setCheckBoxDisableHome] = useState(false)
     const [checkBoxDisableOffice, setCheckBoxDisableOffice] = useState(false)
+    const [isPunchedIn, setIsPunchedIn] = useState(false)
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -145,6 +146,20 @@ const Punch = () => {
         setOpen(false);
     };
 
+    // Convert Date
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+      }
+
+    const localTime = formatAMPM(new Date('2023-04-11T05:46:43.706Z'))
+    console.log(localTime);
     const handlePosition = (e) => {
         if (e.target.value === 'WFH') {
             if (position.includes('WFH')) {
@@ -182,25 +197,43 @@ const Punch = () => {
         }
 
     }
-    
+    console.log("work position", position);
 
-    const punchIn = async()=>{
-        const res = await fetch(`${process.env.REACT_APP_URL}/attendance/create`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body:JSON.stringify({
-                checkInTime:new Date(),
-                status:position
-            }),
-            credentials: 'include',
-            withCredentials: true
-          })
+    const punchIn = async () => {
+        if (position.length === 0) {
+            toast.warning("Select Your Work Position", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        } else {
+            if(position.includes(undefined) || position.includes(null)){
+                const filteredArr = position.filter((val)=>{return val!==undefined || val!==null} )
+                setPosition(filteredArr)
+            }
+            const res = await fetch(`${process.env.REACT_APP_URL}/attendence/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + jwt
+                },
+                body: JSON.stringify({
+                    checkInTime: new Date(),
+                    status: position
+                }),
+                credentials: 'include',
+                withCredentials: true
+            })
 
-        const data = await res.json()
-        console.log("created punch data",data);
+            const data = await res.json()
+            if (res.status === 200 || res.status === 201) {
+                console.log("created punch data", data);
+                toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+                setIsPunchedIn(true)
+            } else {
+                toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            }
+        }
+
     }
+
+
     const rows = [
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:00 PM', '9.5 hrs', '.5'),
@@ -229,7 +262,10 @@ const Punch = () => {
                             </Box>
                         </Box>
                         <Box className={classes.button}>
-                            <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
+                            {
+                                isPunchedIn ? <Button variant="contained" onClick={()=>{console.log("Punched out")}}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
+                            }
+
                         </Box>
                     </CardContent>
                 </Card>
@@ -251,18 +287,18 @@ const Punch = () => {
                                 label="Select Month"
                             // onChange={handleChange}
                             >
-                                <MenuItem value={10}>January</MenuItem>
-                                <MenuItem value={20}>February</MenuItem>
-                                <MenuItem value={30}>March</MenuItem>
-                                <MenuItem value={10}>April</MenuItem>
-                                <MenuItem value={20}>May</MenuItem>
-                                <MenuItem value={30}>June</MenuItem>
-                                <MenuItem value={10}>July</MenuItem>
-                                <MenuItem value={20}>August</MenuItem>
-                                <MenuItem value={30}>September</MenuItem>
-                                <MenuItem value={10}>October</MenuItem>
-                                <MenuItem value={20}>November</MenuItem>
-                                <MenuItem value={30}>December</MenuItem>
+                                <MenuItem value={'jan'}>January</MenuItem>
+                                <MenuItem value={'feb'}>February</MenuItem>
+                                <MenuItem value={'mar'}>March</MenuItem>
+                                <MenuItem value={'apr'}>April</MenuItem>
+                                <MenuItem value={'may'}>May</MenuItem>
+                                <MenuItem value={'june'}>June</MenuItem>
+                                <MenuItem value={'july'}>July</MenuItem>
+                                <MenuItem value={'aug'}>August</MenuItem>
+                                <MenuItem value={'sep'}>September</MenuItem>
+                                <MenuItem value={'oct'}>October</MenuItem>
+                                <MenuItem value={'nov'}>November</MenuItem>
+                                <MenuItem value={'dec'}>December</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -346,14 +382,16 @@ const Punch = () => {
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
-                        <FormControlLabel control={<Checkbox />} value='WH' label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
                         <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
                     </FormGroup>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={()=>{handleClickClose()
-                    punchIn()}}>
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                        handleClickClose()
+                        punchIn()
+                    }}>
                         Punch
                     </Button>
                 </DialogActions>

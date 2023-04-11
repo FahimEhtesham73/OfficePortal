@@ -1,6 +1,7 @@
 const Attendence = require("../models/attendenceModel");
 
 module.exports.createAttendence = async (req, res) => {
+    console.log("Hitted");
     try{
         const checkInTime = new Date(req.body.checkInTime);
         // const timeZone = req.body.tz;
@@ -25,11 +26,11 @@ module.exports.createAttendence = async (req, res) => {
             createdBy: req.user._id,
         }).save()
 
-        return res.status(201).json({"message": "Punch In Successfully"})
+        return res.status(201).json({"message": "Punch In Successfully",info:userAttendence})
 
     }catch(err){
         console.log("err", err);
-        return res.status(500).json("Something went wrong");
+        return res.status(500).json({"message":"Something went wrong"});
         
     }
 }
