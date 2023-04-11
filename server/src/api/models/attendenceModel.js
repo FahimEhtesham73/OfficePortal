@@ -1,6 +1,6 @@
 const {Schema, model} = require("mongoose")
 const attendenceSchema = new Schema({
-    userId: {type: Schema.Types.ObjectId, ref: "User"},
+    userId: {type: Schema.Types.ObjectId, ref: "User", autopopulate: {select: 'firstName'}},
     checkInTime: Date,
     checkOutTime: Date,
     status: {type: [String], enum: ["WFH", "WAO", "HD", "WOH"]}, // IO, WFO, HD,
@@ -9,5 +9,7 @@ const attendenceSchema = new Schema({
     createdBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
     updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
 },{timestamps: true})
+
+attendenceSchema.plugin(require('mongoose-autopopulate'));
 
 module.exports = model("Attendence", attendenceSchema);

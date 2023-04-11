@@ -36,7 +36,8 @@ module.exports.createUser = async(req, res)=> {
 module.exports.signinUser = async(req, res)=> {
     try{
         const {email, password} = req.body;
-            const user = await User.findOne({email: email}).populate("role", "alias")
+            const user = await User.findOne({email: email})
+                .populate("role", "alias")
                 .populate("designation", "name")
                 .populate("department", "name").lean();
             if(!user) return res.status(400).json("wrong credential");

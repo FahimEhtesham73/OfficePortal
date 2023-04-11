@@ -137,6 +137,7 @@ const Punch = () => {
     const [checkBoxDisableHome, setCheckBoxDisableHome] = useState(false)
     const [checkBoxDisableOffice, setCheckBoxDisableOffice] = useState(false)
     const [isPunchedIn, setIsPunchedIn] = useState(false)
+    const [punchedTime,setPunchedTime] = useState("")
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -157,9 +158,20 @@ const Punch = () => {
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
       }
+    
+    function formatDateMonth(){
+        const date = new Date()
+        const formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          });
+        
+        return formattedDate
+    }  
 
     const localTime = formatAMPM(new Date('2023-04-11T05:46:43.706Z'))
-    console.log(localTime);
+    // console.log(localTime);
     const handlePosition = (e) => {
         if (e.target.value === 'WFH') {
             if (position.includes('WFH')) {
@@ -203,10 +215,9 @@ const Punch = () => {
         if (position.length === 0) {
             toast.warning("Select Your Work Position", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         } else {
-            if(position.includes(undefined) || position.includes(null)){
-                const filteredArr = position.filter((val)=>{return val!==undefined || val!==null} )
-                setPosition(filteredArr)
-            }
+            const filteredArr = position.filter((val)=>{return val!==undefined} )
+
+            setPosition(filteredArr)
             const res = await fetch(`${process.env.REACT_APP_URL}/attendence/create`, {
                 method: "POST",
                 headers: {
@@ -215,7 +226,7 @@ const Punch = () => {
                 },
                 body: JSON.stringify({
                     checkInTime: new Date(),
-                    status: position
+                    status: filteredArr
                 }),
                 credentials: 'include',
                 withCredentials: true
@@ -225,6 +236,8 @@ const Punch = () => {
             if (res.status === 200 || res.status === 201) {
                 console.log("created punch data", data);
                 toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+                const localTime = formatAMPM(new Date(data.info.checkInTime))
+                setPunchedTime(localTime)
                 setIsPunchedIn(true)
             } else {
                 toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
@@ -241,6 +254,7 @@ const Punch = () => {
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
+
     return (
         <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
 
@@ -251,9 +265,9 @@ const Punch = () => {
             <Box className={classes.cardWrapper}>
                 <Card elevation={4} sx={{ width: '60%' }}>
                     <CardContent>
-                        <Typography sx={{ fontWeight: 'bolder' }}>Time Sheet<span className={classes.timeColor}> 21 Mar,2023</span></Typography>
+                        <Typography sx={{ fontWeight: 'bolder' }}>Time Sheet<span className={classes.timeColor}> {formatDateMonth()} </span></Typography>
                         <Box className={classes.paperDesign}>
-                            <Typography className='text-center'>Punched In at 8:30 A.M</Typography>
+                            <Typography className='text-center'>Punched In at {punchedTime}</Typography>
                         </Box>
                         {/* Hour Circle */}
                         <Box className={classes.circleWrapper}>
