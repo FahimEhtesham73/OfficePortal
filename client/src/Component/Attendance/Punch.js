@@ -23,7 +23,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { makeStyles } from '@material-ui/core';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 
@@ -138,6 +138,7 @@ const Punch = () => {
     const [checkBoxDisableOffice, setCheckBoxDisableOffice] = useState(false)
     const [isPunchedIn, setIsPunchedIn] = useState(false)
     const [punchedTime,setPunchedTime] = useState("")
+    const [punchedInfo,setPunchedInfo] = useState('')
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -209,7 +210,7 @@ const Punch = () => {
         }
 
     }
-    console.log("work position", position);
+    // console.log("work position", position);
 
     const punchIn = async () => {
         if (position.length === 0) {
@@ -254,6 +255,36 @@ const Punch = () => {
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
         createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
     ];
+
+    const getInfo = async()=>{
+        const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            credentials: 'include',
+            withCredentials: true
+        })
+        const data = await res.json()
+        console.log("Data",data);
+        if(res.status === 200){
+            setPunchedInfo(data.punched)
+            if(data.punched === false){
+                setIsPunchedIn(false)
+            }else{
+                setIsPunchedIn(true)
+                const localTime = formatAMPM(new Date(data?.punched?.checkInTime))
+                setPunchedTime(localTime)
+            }
+        }else{
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+    }
+
+    useEffect(()=>{
+        getInfo()
+    },[])
 
     return (
         <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
