@@ -247,6 +247,27 @@ const Punch = () => {
 
     }
 
+    const punchOut = async()=>{
+        const res = await fetch(`${process.env.REACT_APP_URL}/attendence/update`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            body: JSON.stringify({
+                aId:punchedInfo._id,
+                userId:localStorage?.userData?.userInformation?._id,
+                updateData: {
+                    checkOutTime: new Date()
+                }
+            }),
+            credentials: 'include',
+            withCredentials: true
+        })
+        const data = await res.json()
+        console.log("Punched Out",data);
+    }
+
 
     const rows = [
         createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
@@ -308,7 +329,7 @@ const Punch = () => {
                         </Box>
                         <Box className={classes.button}>
                             {
-                                isPunchedIn ? <Button variant="contained" onClick={()=>{console.log("Punched out")}}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
+                                isPunchedIn ? <Button variant="contained" onClick={()=>{punchOut()}}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
                             }
 
                         </Box>
