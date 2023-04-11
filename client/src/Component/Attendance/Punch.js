@@ -297,7 +297,7 @@ const Punch = () => {
         console.log("Data",data);
         if(res.status === 200){
             setPunchedInfo(data.punched)
-            if(data.punched === false){
+            if(data.isPunchedIn === false){
                 setIsPunchedIn(false)
             }else{
                 setIsPunchedIn(true)
