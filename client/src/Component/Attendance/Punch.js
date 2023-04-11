@@ -188,14 +188,16 @@ const Punch = () => {
         const res = await fetch(`${process.env.REACT_APP_URL}/attendance/create`, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + jwt
+              
             },
             body:JSON.stringify({
                 checkInTime:new Date(),
                 status:position
             }),
             credentials: 'include',
-            withCredentials: true
+            // withCredentials: true
           })
 
         const data = await res.json()

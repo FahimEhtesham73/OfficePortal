@@ -2,16 +2,15 @@ const Attendence = require("../models/attendenceModel");
 
 module.exports.createAttendence = async (req, res) => {
     try{
+        console.log("shuvo");
         const checkInTime = new Date(req.body.checkInTime);
         // const timeZone = req.body.tz;
         const status = req.body.status;
         const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
         const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
         // return;
-        console.log(startDay, endDay);
-        const query = {
-            $and: [{userId: req.user.id}, {checkInTime: {$gte: new Date(checkInTime), $lte: new Date(checkInTime)}}]
-        }
+        // console.log(startDay, endDay);
+        
         const isUserAlreadyPunchedIn = await Attendence.findOne({
             userId: req.user._id, 
             createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
@@ -29,16 +28,49 @@ module.exports.createAttendence = async (req, res) => {
 
     }catch(err){
         console.log("err", err);
-        return res.status(500).json("Something went wrong");
+        return res.status(500).json({"message":"Something went wrong"});
+
         
     }
 }
 
 
-module.exports.getAttendence = async (req, res)=> {
+module.exports.getAttendences = async (req, res)=> {
     try{
+        const query = req.body;
+        const limit = req.body.limit? parseInt(req.query.limit) : 10;
+        const arg = {}
+        const checkInTime = req.body.checkInTime;
+
+        
+        const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
+        const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
+        
+        const isPunchedIn = await Attendence.findOne({
+            userId: req.user._id,
+            createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
+        }).lean().select({userId:1, status: 1, checkInTime: 1});
+
+        for(let q in query){
+            if(q === "usersId"){
+                arg['usersId'] = query[q]
+            }
+            if(q === "month"){
+                
+            }
+        }
+
+        const allAttendence = await Attendence.find({
+            userId:req.user._id
+        })
+        .select({userId:1, status:1, checkInTime:1, checkOutTime:1})
+        .sort({checkInTime: 1})
+        .limit(10)
+
+        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: false, "attendenceList": allAttendence })
 
     }catch(err){
-
+        console.log("err", err);
+        return res.status(500).json({"message":"Something went wrong"});
     }
 }
