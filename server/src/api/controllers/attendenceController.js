@@ -70,7 +70,7 @@ module.exports.getAttendences = async (req, res)=> {
         .sort({checkInTime: 1})
         .limit(10)
 
-        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: false, "attendenceList": allAttendence })
+        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: "", isPunchedIn: isPunchedIn? true: false ,"attendenceList": allAttendence })
 
     }catch(err){
         console.log("err", err);
