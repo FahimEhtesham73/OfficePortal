@@ -61,7 +61,6 @@ module.exports.getAttendences = async (req, res)=> {
                 
             }
         }
-
         const allAttendence = await Attendence.find({
             userId:req.user._id
         })
