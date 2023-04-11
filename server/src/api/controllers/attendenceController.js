@@ -1,4 +1,6 @@
+const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
+const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 
 module.exports.createAttendence = async (req, res) => {
     try{
@@ -77,6 +79,8 @@ module.exports.getAttendences = async (req, res)=> {
 
 module.exports.updateAttendece = async(req, res) => {
     try{
+        const erros = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
         const attendeceId = req.body.aId;
         const userId = req.body.userId;
         const data = {
