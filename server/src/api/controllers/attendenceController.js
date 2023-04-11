@@ -52,7 +52,7 @@ module.exports.getAttendences = async (req, res)=> {
         const isPunchedIn = await Attendence.findOne({
             userId: req.user._id,
             createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        }).lean().select({userId:1, status: 1, checkInTime: 1});
+        }).lean().select({userId:1, status: 1, checkInTime: 1,checkOutTime:1});
 
         for(let q in query){
             if(q === "usersId"){
