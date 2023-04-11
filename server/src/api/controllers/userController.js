@@ -16,7 +16,6 @@ module.exports.createUser = async(req, res)=> {
     try{
         console.log(req.cookies);
         const errors = validationMessages(validationResult(req).mapped());
-        console.log(errors);
         if(isErrorFounds(errors)) return res.status(400).json({"message": errors})
         const {firstName, lastName, email, password, designation, role, department,empId,joiningDate } = req.body;
         const user = await User.findOne({email: email});

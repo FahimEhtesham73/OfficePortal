@@ -9,3 +9,16 @@ module.exports.createAttendence = [
         }
     })
 ]
+
+
+module.exports.updateAttendenceValidation = [
+    // body("aId").isMongoId().withMessage("Not valid"),
+    // body("userId").isMongoId().withMessage("Not valid"),
+    // body("updateDate").custom(v=> {
+    //     if(v.checkOutTime && n){
+            
+    //     }
+    // })
+
+
+]

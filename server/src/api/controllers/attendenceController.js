@@ -1,4 +1,6 @@
+const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
+const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 
 module.exports.createAttendence = async (req, res) => {
     console.log("Hitted");
@@ -73,5 +75,35 @@ module.exports.getAttendences = async (req, res)=> {
     }catch(err){
         console.log("err", err);
         return res.status(500).json({"message":"Something went wrong"});
+    }
+}
+
+module.exports.updateAttendece = async(req, res) => {
+    try{
+        const erros = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
+        const attendeceId = req.body.aId;
+        const userId = req.body.userId;
+        const data = {
+            ...req.body.updateData,
+        }
+
+        const attendence = await Attendence.findOne({_id: attendeceId, userId: userId }).lean();
+        console.log(attendence);
+        if(!attendence) return res.status(404).json({"message": "Not found"});
+        const updatedDoc = await Attendence.findOneAndUpdate({
+            _id: attendeceId, userId: userId
+        }, {$set: {
+            ...data,
+            updatedBy: req.user._id
+        }},{new: true})
+        .select({userId: 1, status:1, checkInTime: 1, checkOutTime: 1}).lean()
+
+        return res.status(200).json({"message": "Updated successfully", data: updatedDoc})
+    }catch(err){
+        console.log("err", err);
+        return res.status(500).json({"message":"Something went wrong"});
+
+        
     }
 }
