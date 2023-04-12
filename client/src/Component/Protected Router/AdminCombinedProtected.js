@@ -1,16 +1,26 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
+import jwt_decode from "jwt-decode";
+import Cookies from 'js-cookie';
+const AdminCombinedProtected = ({ children }) => {
+    const token = Cookies.get('_info')
+    var decoded 
+    if(token){
+        decoded = jwt_decode(token);
+    }else{
+        decoded = ''
+    }
 
-const AdminCombinedProtected = ({children}) => {
-    const user = JSON.parse(localStorage.getItem("userData")) 
+    // console.log(decoded);
 
-    if(user?.userInformation?.role?.alias==='Admin' || user?.userInformation?.role?.alias==='Team Lead'){
+
+    if (decoded?.role?.alias === 'Admin' || decoded?.role?.alias === 'Team Lead') {
         return children
     }
     else {
         return <Navigate to='/' />
     }
- 
+
 }
 
 export default AdminCombinedProtected

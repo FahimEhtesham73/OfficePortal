@@ -23,8 +23,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { makeStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 
 const useStyles = makeStyles((theme) => ({
@@ -128,17 +129,22 @@ BootstrapDialogTitle.propTypes = {
 
 const Punch = () => {
     const jwt = Cookies.get('_token')
-    const classes = useStyles()
-    function createData(name, date, punchin, punchout, totalhour, overtime) {
-        return { name, date, punchin, punchout, totalhour, overtime };
+    var decoded
+    if (jwt) {
+        decoded = jwtDecode(jwt);
+    } else {
+        decoded = ''
     }
+    const classes = useStyles()
+
     const [open, setOpen] = useState(false);
     const [position, setPosition] = useState([])
     const [checkBoxDisableHome, setCheckBoxDisableHome] = useState(false)
     const [checkBoxDisableOffice, setCheckBoxDisableOffice] = useState(false)
     const [isPunchedIn, setIsPunchedIn] = useState(false)
-    const [punchedTime,setPunchedTime] = useState("")
-    const [punchedInfo,setPunchedInfo] = useState('')
+    const [punchedTime, setPunchedTime] = useState("")
+    const [punchedInfo, setPunchedInfo] = useState('')
+    const [attendenceList, setAttendenceList] = useState([])
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -155,24 +161,22 @@ const Punch = () => {
         var ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
-      }
-    
-    function formatDateMonth(){
+    }
+
+    function formatDateMonth() {
         const date = new Date()
         const formattedDate = date.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric"
-          });
-        
-        return formattedDate
-    }  
+        });
 
-    const localTime = formatAMPM(new Date('2023-04-11T05:46:43.706Z'))
-    // console.log(localTime);
+        return formattedDate
+    }
+
     const handlePosition = (e) => {
         if (e.target.value === 'WFH') {
             if (position.includes('WFH')) {
@@ -216,7 +220,7 @@ const Punch = () => {
         if (position.length === 0) {
             toast.warning("Select Your Work Position", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         } else {
-            const filteredArr = position.filter((val)=>{return val!==undefined} )
+            const filteredArr = position.filter((val) => { return val !== undefined })
 
             setPosition(filteredArr)
             const res = await fetch(`${process.env.REACT_APP_URL}/attendence/create`, {
@@ -237,9 +241,12 @@ const Punch = () => {
             if (res.status === 200 || res.status === 201) {
                 console.log("created punch data", data);
                 toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-                const localTime = formatAMPM(new Date(data.info.checkInTime))
+                localStorage.setItem('punchedInTime',data?.info?.checkInTime)
+                const localTime = formatAMPM(new Date(data?.info?.checkInTime))
                 setPunchedTime(localTime)
                 setIsPunchedIn(true)
+                document.getElementById("time").innerText = `00:00`
+                getInfo()
             } else {
                 toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             }
@@ -247,8 +254,8 @@ const Punch = () => {
 
     }
 
-    const punchOut = async()=>{
-        console.log("Attendance ID", JSON.parse(localStorage.getItem('userData'))?.userInformation?._id);
+    const punchOut = async () => {
+        console.log("Attendance ID", decoded?._id);
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/update`, {
             method: "PUT",
             headers: {
@@ -256,8 +263,8 @@ const Punch = () => {
                 "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify({
-                aId:punchedInfo._id,
-                userId:JSON.parse(localStorage.getItem('userData'))?.userInformation?._id,
+                aId: punchedInfo._id,
+                userId: decoded?._id,
                 updateData: {
                     checkOutTime: new Date()
                 }
@@ -266,24 +273,51 @@ const Punch = () => {
             withCredentials: true
         })
         const data = await res.json()
-        console.log("Punched Out",data);
-        if(res.status === 200){
+        // console.log("Punched Out",data);
+        if (res.status === 200) {
+            localStorage.removeItem('punchedInTime')
             setIsPunchedIn(false)
             const localTime = formatAMPM(new Date(data.data.checkOutTime))
             toast.success(`You Punched Out At ${localTime}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            getInfo()
         }
     }
 
 
-    const rows = [
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '6:00 PM', '9.5 hrs', '.5'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '5:30 PM', '9 hrs', '0'),
-        createData('Saimom', "1 Jan 2023", '8:30 AM', '6:30 PM', '10 hrs', '1'),
-    ];
+    const totalHour = (sDate, eDate) => {
+        const diffInMilliseconds = Math.abs(eDate - sDate);
+        const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+        console.log(diffInHours);
+        return diffInHours.toFixed(2)
+    }
 
-    const getInfo = async()=>{
+    const overTime = (sDate, eDate) => {
+        const time = parseFloat(totalHour(sDate, eDate)) - 9
+        if (time <= 0) return 0
+        else return time
+    }
+
+    let timeDiff = new Date().getTime() - new Date(localStorage.getItem('punchedInTime')).getTime()
+    let hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    let minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+
+    
+    function updateTime() {
+        // console.log(hours,minutes);
+        minutes++;
+        if (minutes === 60) {
+            hours++;
+            minutes = 0;
+        }
+        const hoursText = hours?.toString()?.padStart(2, "0");
+        const minutesText = minutes?.toString()?.padStart(2, "0");
+
+        document.getElementById("time").innerText = `${hoursText} : ${minutesText}`
+
+    }
+
+
+    const getInfo = async () => {
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
             method: "GET",
             headers: {
@@ -294,23 +328,40 @@ const Punch = () => {
             withCredentials: true
         })
         const data = await res.json()
-        console.log("Data",data);
-        if(res.status === 200){
+        // console.log("Data", data);
+        if (res.status === 200) {
             setPunchedInfo(data.punched)
-            if(data.isPunchedIn === false){
+            setAttendenceList(data.attendenceList)
+            if (data.punched === '') {
                 setIsPunchedIn(false)
-            }else{
+            } else if (!data.punched.checkOutTime) {
                 setIsPunchedIn(true)
                 const localTime = formatAMPM(new Date(data?.punched?.checkInTime))
                 setPunchedTime(localTime)
+            } else {
+                setIsPunchedIn(false)
             }
-        }else{
+        } else {
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         }
     }
 
     useEffect(()=>{
+        if(localStorage.getItem('punchedInTime')){
+            const intervalId = setInterval(updateTime, 60000);
+
+            return () => clearInterval(intervalId);
+        }
+        
+    },[localStorage.getItem('punchedInTime')])
+    useEffect(() => {
         getInfo()
+    }, [])
+    useLayoutEffect(()=>{
+        if(localStorage.getItem('punchedInTime')){
+            document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
+        }
+        
     },[])
 
     return (
@@ -330,12 +381,12 @@ const Punch = () => {
                         {/* Hour Circle */}
                         <Box className={classes.circleWrapper}>
                             <Box className={classes.circle}>
-                                <Typography variant="h6">3.05 hrs</Typography>
+                                <Typography variant="h6" id='time'></Typography>
                             </Box>
                         </Box>
                         <Box className={classes.button}>
                             {
-                                isPunchedIn ? <Button variant="contained" onClick={()=>{punchOut()}}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
+                                isPunchedIn ? <Button variant="contained" onClick={() => { punchOut() }}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
                             }
 
                         </Box>
@@ -412,27 +463,27 @@ const Punch = () => {
                     </TableHead>
                     <TableBody>
                         {
-                            rows.map((row, ind) => (
+                            attendenceList.map((row, ind) => (
                                 <StyledTableRow
                                     key={ind}
                                 >
                                     <StyledTableCell component="th" scope="row">
-                                        {row.name}
+                                        {row?.userId?.firstName}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         {row.date}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.punchin}
+                                        {formatAMPM(new Date(row?.checkInTime))}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.punchout}
+                                        {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.totalhour}
+                                        {row?.checkOutTime ? totalHour(new Date(row.checkInTime).getTime(), new Date(row.checkOutTime).getTime()) : ""}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.overtime}
+                                        {row?.checkOutTime ? overTime(new Date(row.checkInTime), new Date(row.checkOutTime)) : ""}
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))

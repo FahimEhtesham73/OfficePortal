@@ -14,12 +14,12 @@ module.exports.createAttendence = async (req, res) => {
         // return;
         // console.log(startDay, endDay);
         
-        // const isUserAlreadyPunchedIn = await Attendence.findOne({
-        //     userId: req.user._id, 
-        //     createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        // }).lean();
-        // console.log(isUserAlreadyPunchedIn);
-        // if(isUserAlreadyPunchedIn) return res.status(400).json({"message": "User already punched in"});
+        const isUserAlreadyPunchedIn = await Attendence.findOne({
+            userId: req.user._id, 
+            createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
+        }).lean();
+        console.log(isUserAlreadyPunchedIn);
+        if(isUserAlreadyPunchedIn) return res.status(400).json({"message": "User already punched in"});
         const userAttendence = await new Attendence({
             userId: req.user._id,
             status: status,
@@ -52,7 +52,7 @@ module.exports.getAttendences = async (req, res)=> {
         const isPunchedIn = await Attendence.findOne({
             userId: req.user._id,
             createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        }).lean().select({userId:1, status: 1, checkInTime: 1,checkOutTime:1});
+        }).lean().select({userId:1, status: 1, checkInTime: 1, checkOutTime: 1});
 
         for(let q in query){
             if(q === "usersId"){
@@ -62,7 +62,6 @@ module.exports.getAttendences = async (req, res)=> {
                 
             }
         }
-
         const allAttendence = await Attendence.find({
             userId:req.user._id
         })
@@ -70,7 +69,7 @@ module.exports.getAttendences = async (req, res)=> {
         .sort({checkInTime: 1})
         .limit(10)
 
-        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: "", isPunchedIn: isPunchedIn? true: false ,"attendenceList": allAttendence })
+        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: "", "attendenceList": allAttendence })
 
     }catch(err){
         console.log("err", err);

@@ -1,6 +1,15 @@
+import Cookies from "js-cookie"
+import jwtDecode from "jwt-decode"
 const userRole =()=>{
-    const user = JSON.parse(localStorage.getItem("userData")) 
-    const userRole = user.userInformation.role.alias
+    const token = Cookies.get('_info')
+    var decoded 
+    if(token){
+        decoded = jwtDecode(token);
+    }else{
+        decoded = ''
+    }
+
+    const userRole = decoded?.role.alias
 
     return userRole
 }
