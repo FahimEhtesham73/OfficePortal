@@ -10,7 +10,7 @@ async function Authorize (req, res, next){
         try{
             let headerToken = req.header("Authorization").split(" ")[1].trim();
             const isTokenValid = verifyToken(headerToken);
-            console.log(isTokenValid);
+            // console.log(isTokenValid);
             req.user = isTokenValid;
             next();
         }catch(err){
