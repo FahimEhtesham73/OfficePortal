@@ -89,7 +89,6 @@ module.exports.getAttendences = async (req, res)=> {
             
         }
 
-        // console.log(dates);
         let response = []
         let dateObj = {}
         for(let d of dates){
