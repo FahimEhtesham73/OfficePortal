@@ -129,12 +129,21 @@ BootstrapDialogTitle.propTypes = {
 
 const Punch = () => {
     const jwt = Cookies.get('_token')
+    const jwtUser = Cookies.get('_info')
     var decoded
+    var decodedUser
     if (jwt) {
         decoded = jwtDecode(jwt);
     } else {
         decoded = ''
     }
+
+    if (jwtUser) {
+        decodedUser = jwtDecode(jwtUser);
+    } else {
+        decodedUser = ''
+    }
+    
     const classes = useStyles()
 
     const [open, setOpen] = useState(false);
@@ -287,7 +296,7 @@ const Punch = () => {
     const totalHour = (sDate, eDate) => {
         const diffInMilliseconds = Math.abs(eDate - sDate);
         const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-        console.log(diffInHours);
+        // console.log(diffInHours);
         return diffInHours.toFixed(2)
     }
 
@@ -303,7 +312,6 @@ const Punch = () => {
 
     
     function updateTime() {
-        // console.log(hours,minutes);
         minutes++;
         if (minutes === 60) {
             hours++;
@@ -328,7 +336,7 @@ const Punch = () => {
             withCredentials: true
         })
         const data = await res.json()
-        // console.log("Data", data);
+        console.log("Data", data);
         if (res.status === 200) {
             setPunchedInfo(data.punched)
             setAttendenceList(data.attendenceList)
@@ -357,6 +365,8 @@ const Punch = () => {
     useEffect(() => {
         getInfo()
     }, [])
+
+
     useLayoutEffect(()=>{
         if(localStorage.getItem('punchedInTime')){
             document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
@@ -468,13 +478,13 @@ const Punch = () => {
                                     key={ind}
                                 >
                                     <StyledTableCell component="th" scope="row">
-                                        {row?.userId?.firstName}
+                                        {decodedUser?.firstName}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row.date}
+                                        {row?.key}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {formatAMPM(new Date(row?.checkInTime))}
+                                        {row?.checkInTime?formatAMPM(new Date(row?.checkInTime)):""}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}

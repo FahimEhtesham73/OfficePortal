@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
-
+const User = require('../models/userModel')
 module.exports.createAttendence = async (req, res) => {
     console.log("Hitted");
     try{
@@ -87,7 +87,6 @@ module.exports.getAttendences = async (req, res)=> {
         for (let i =1; i <= days; i++){
             let name = `${month}/${i}/${year}`;
             dates.push(name)
-            
         }
 
         // console.log(dates);
