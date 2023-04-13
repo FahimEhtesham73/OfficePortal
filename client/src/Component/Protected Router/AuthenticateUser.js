@@ -1,14 +1,11 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import jwt_decode from "jwt-decode";
-const AuthenticateUser = ({children}) => {
-    const user = JSON.parse(localStorage.getItem("userData")) 
-    // let cookies = Cookies.get('_info')
-    // var decoded = jwt_decode(cookies);
-    // console.log("Decoded Cookies",decoded);
 
-    if(user){
+const AuthenticateUser = ({children}) => {
+    let cookies = Cookies.get('_info')
+
+    if(cookies){
         return children
     }
     else {

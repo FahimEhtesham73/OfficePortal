@@ -2,8 +2,9 @@ const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
-
+const User = require('../models/userModel')
 module.exports.createAttendence = async (req, res) => {
+    console.log("Hitted");
     try{
         console.log("shuvo");
         const checkInTime = new Date(req.body.checkInTime);
@@ -27,12 +28,11 @@ module.exports.createAttendence = async (req, res) => {
             createdBy: req.user._id,
         }).save()
 
-        return res.status(201).json({"message": "Punch In Successfully"})
+        return res.status(201).json({"message": "Punch In Successfully",info:userAttendence})
 
     }catch(err){
         console.log("err", err);
         return res.status(500).json({"message":"Something went wrong"});
-
         
     }
 }
@@ -43,7 +43,8 @@ module.exports.getAttendences = async (req, res)=> {
         const query = req.body;
         const limit = req.body.limit? parseInt(req.query.limit) : 10;
         const arg = {}
-        const checkInTime = req.body.checkInTime;
+        const checkInTime = new Date()
+        // req.body.checkInTime;
 
         
         const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
@@ -86,7 +87,6 @@ module.exports.getAttendences = async (req, res)=> {
         for (let i =1; i <= days; i++){
             let name = `${month}/${i}/${year}`;
             dates.push(name)
-            
         }
 
         let response = []

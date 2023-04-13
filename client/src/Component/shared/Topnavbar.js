@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import jwtDecode from 'jwt-decode';
 // Importing from MUI
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -27,22 +28,13 @@ import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import SettingsIcon from '@mui/icons-material/Settings';
 import LoginIcon from '@mui/icons-material/Login'
 // Importing Component
-import AllEmployees from '../AllEmployees';
-import Attendancesheet from '../Attendance/Attendancesheet';
-import Holidays from '../Leave/Holidays';
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
-import LeaveEmployee from '../Leave/LeaveEmployee';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
 import PunchClockIcon from '@mui/icons-material/PunchClock';
-import LeaveStatusLead from '../Leave/LeaveStatusLead';
-import Teamlead from '../TeamLead/Teamlead';
-import Profile from '../Profile/Profile';
-import Punch from '../Attendance/Punch';
-import Signin from '../Signin';
 import userRole from '../Hook/userHook';
+
 
 
 const drawerWidth = 240;
@@ -87,7 +79,17 @@ const Topnavbar = (props) => {
   const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
 
-  const id = JSON.parse(localStorage?.getItem('userData'))?.userInformation?._id
+  const token = Cookies.get('_info')
+  // console.log(token);
+  let decode =''
+  if(token){
+    decode = jwtDecode(token) 
+  }else{
+    decode = ''
+  }
+  
+
+  const id = decode?._id
   // For handling Drawer
   const handleDrawerClose = () => {
     setOpen(false);
@@ -107,8 +109,6 @@ const Topnavbar = (props) => {
   };
 
   const saveMenuData = (text) => {
-    // setMenuData(text)
-    // localStorage.setItem('sidebar', text)
     navigate(`/${text}`)
   }
 
@@ -122,7 +122,7 @@ const Topnavbar = (props) => {
       <Divider />
       <List>
         {
-          !localStorage.getItem('userData') ?
+          !Cookies.get('_info') ?
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -262,28 +262,28 @@ const Topnavbar = (props) => {
                 {/* Leave Status Admin */}
 
                 {
-                (userRole()==='Admin' || userRole()==='Team Lead')&& 
-                <ListItem disablePadding sx={{ display: 'block' }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                    onClick={() => { saveMenuData('leaveadmin') }}
-                  >
-                    <ListItemIcon
+                  (userRole() === 'Admin' || userRole() === 'Team Lead') &&
+                  <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItemButton
                       sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
+                        minHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5,
                       }}
+                      onClick={() => { saveMenuData('leaveadmin') }}
                     >
-                      <BallotIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={'Leave Status'} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : 'auto',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <BallotIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={'Leave Status'} sx={{ opacity: open ? 1 : 0 }} />
+                    </ListItemButton>
+                  </ListItem>
                 }
                 {/* Team Lead */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
@@ -347,8 +347,8 @@ const Topnavbar = (props) => {
             NSL Leave Management
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 0,display:'flex',justifyContent:'center',alignItems:'center',padding:'10px' }}>
-          <Typography variant="p"  component="div" sx={{marginRight:"15px"}}>{JSON.parse(localStorage.getItem('userData'))?.userInformation.firstName}</Typography>
+          <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
+            <Typography variant="p" component="div" sx={{ marginRight: "15px" }}>{decode?.firstName}</Typography>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -381,7 +381,10 @@ const Topnavbar = (props) => {
               </MenuItem>
               <MenuItem onClick={() => {
                 handleCloseUserMenu()
-                localStorage.removeItem('userData')
+                Cookies.remove('_info')
+                Cookies.remove('_sid')
+                Cookies.remove('_token')
+                // localStorage.removeItem('userData')
                 navigate('/signin')
               }}>
                 <Typography textAlign="center">Log Out</Typography>
@@ -428,16 +431,6 @@ const Topnavbar = (props) => {
 
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* {getMenuData() === 'All Employees' && <AllEmployees />}
-        {getMenuData() === 'Attendance Sheet' && <Attendancesheet />}
-        {getMenuData() === 'Holidays' && <Holidays />}
-        {getMenuData() === 'Leaves' && <LeaveEmployee />}
-        {getMenuData() === 'Leave Status' && <LeaveStatusLead />}
-        {getMenuData() === 'Team Leads' && <Teamlead />}
-        {getMenuData() === 'profile' && <Profile />}
-        {getMenuData() === 'In And Out' && <Punch />}
-        {getMenuData() === 'Sign In' && <Signin />} */}
-        {/* {getMenuData() === 'Leave Setting' && <Leavesetting />} */}
       </Box>
 
     </Box>

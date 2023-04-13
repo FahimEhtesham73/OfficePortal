@@ -7,7 +7,7 @@ const attendenceSchema = new Schema({
     // isWOH: Boolean,
     comments: String,
     createdBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
-    updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"}
+    updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
 },{timestamps: true})
 
 attendenceSchema.plugin(require('mongoose-autopopulate'));

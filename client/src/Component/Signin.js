@@ -45,19 +45,9 @@ const Signin = () => {
         
         if (res.status === 400) {
             toast.success(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-            // toast(data.message, {
-            //     position: "top-center",
-            //     autoClose: 5000,
-            //     hideProgressBar: false,
-            //     closeOnClick: true,
-            //     pauseOnHover: true,
-            //     draggable: true,
-            //     progress: undefined,
-            //     theme: "light",
-            // });
         }
         else {
-            localStorage.setItem("userData", JSON.stringify(data))
+            // localStorage.setItem("userData", JSON.stringify(data))
             dispatch(addUser(data))
             toast.success('Log in successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             navigate('/')
