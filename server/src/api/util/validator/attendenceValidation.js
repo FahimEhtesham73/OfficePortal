@@ -1,4 +1,5 @@
 const {check, body} = require("express-validator")
+const { default: mongoose } = require("mongoose")
 
 module.exports.createAttendence = [
     body("checkInTime").custom(v=> {
@@ -19,6 +20,19 @@ module.exports.updateAttendenceValidation = [
             
     //     }
     // })
+]
 
-
+module.exports.getAttendenceValidation = [
+    body("checkInTime").notEmpty().withMessage("Required").custom(v=> {
+        return new Date(new Date(v).setHours(0,0,0,0)).getTime() <= new Date().getTime()
+    }).withMessage("Invalid Date range"),
+    body("monthDateYear").notEmpty().withMessage("Required").custom(v=> {
+        return new Date(new Date(v).setHours(0,0,0,0)).getTime() <= new Date().getTime()  
+    }).withMessage("Invalid Date range"),
+    body("userId").custom(v=> {
+        if(v){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true;
+    })
 ]
