@@ -43,8 +43,8 @@ const Signin = () => {
         const data = await res.json()
         // console.log(data);
         
-        if (res.status === 400) {
-            toast.success(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        if (res.status !== 200) {
+            toast.success('Invalid credentials', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         }
         else {
             // localStorage.setItem("userData", JSON.stringify(data))

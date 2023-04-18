@@ -11,8 +11,8 @@ import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
 
 
-const Profile = ( ) => {
-    const {id} = useParams() 
+const Profile = () => {
+    const { id } = useParams()
     const [loading, setLoading] = useState(false)
     const [userData, setUserData] = useState({})
     const [cardEdit, setCardEdit] = useState({
@@ -70,7 +70,7 @@ const Profile = ( ) => {
             },
         })
         const data = await res.json()
-
+        // console.log(data);
         const tempInfo = data[0]
         if (res.status === 200) {
             setUserData(data[0])
@@ -91,12 +91,12 @@ const Profile = ( ) => {
     }
 
     const updateUser = async (card) => {
-        console.log("Card Name",card);
+        console.log("Card Name", card);
         var sentData
-        if(card === 'intro'){
+        if (card === 'intro') {
             sentData = intro
         }
-        if(card === 'expertise'){
+        if (card === 'expertise') {
             sentData = {
                 expertise
             }
@@ -170,7 +170,7 @@ const Profile = ( ) => {
                                                             <li>
                                                                 <div class="title">Email:</div>
                                                                 <div ><span class="__cf_email__"
-                                                                >saimom@nextsolutionlab.com</span>
+                                                                >{userData?.email ? userData?.email : 'N/A'}</span>
                                                                 </div>
                                                             </li>
                                                             <li>

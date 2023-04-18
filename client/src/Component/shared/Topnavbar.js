@@ -81,13 +81,13 @@ const Topnavbar = (props) => {
 
   const token = Cookies.get('_info')
   // console.log(token);
-  let decode =''
-  if(token){
-    decode = jwtDecode(token) 
-  }else{
+  let decode = ''
+  if (token) {
+    decode = jwtDecode(token)
+  } else {
     decode = ''
   }
-  
+
 
   const id = decode?._id
   // For handling Drawer
@@ -347,50 +347,54 @@ const Topnavbar = (props) => {
             NSL Leave Management
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
-            <Typography variant="p" component="div" sx={{ marginRight: "15px" }}>{decode?.firstName}</Typography>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem onClick={() => {
-                handleCloseUserMenu()
-                navigate(`/profile/${id}`)
-              }}>
-                <Typography textAlign="center">Profile</Typography>
-              </MenuItem>
-              <MenuItem >
-                <Typography textAlign="center">Settings</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => {
-                handleCloseUserMenu()
-                Cookies.remove('_info')
-                Cookies.remove('_sid')
-                Cookies.remove('_token')
-                // localStorage.removeItem('userData')
-                navigate('/signin')
-              }}>
-                <Typography textAlign="center">Log Out</Typography>
-              </MenuItem>
-            </Menu>
-          </Box>
+          {
+            Cookies.get('_info') ?
+              <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
+                <Typography variant="p" component="div" sx={{ marginRight: "15px" }}>{decode?.firstName}</Typography>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem onClick={() => {
+                    handleCloseUserMenu()
+                    navigate(`/profile/${id}`)
+                  }}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </MenuItem>
+                  <MenuItem >
+                    <Typography textAlign="center">Settings</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    handleCloseUserMenu()
+                    Cookies.remove('_info')
+                    Cookies.remove('_sid')
+                    Cookies.remove('_token')
+                    // localStorage.removeItem('userData')
+                    navigate('/signin')
+                  }}>
+                    <Typography textAlign="center">Log Out</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box> : ""
+          }
+
         </Toolbar>
       </AppBar>
 

@@ -346,6 +346,7 @@ const Punch = () => {
                 setIsPunchedIn(true)
                 const localTime = formatAMPM(new Date(data?.punched?.checkInTime))
                 setPunchedTime(localTime)
+                console.log("Checkin Time",data?.punched?.checkInTime);
             } else {
                 setIsPunchedIn(false)
             }
@@ -517,7 +518,7 @@ const Punch = () => {
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
                         <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
                         <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
-                    </FormGroup>
+                    </FormGroup>``
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
