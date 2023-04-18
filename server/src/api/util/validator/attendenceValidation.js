@@ -23,9 +23,7 @@ module.exports.updateAttendenceValidation = [
 ]
 
 module.exports.getAttendenceValidation = [
-    body("checkInTime").notEmpty().withMessage("Required").custom(v=> {
-        return new Date(new Date(v).setHours(0,0,0,0)).getTime() <= new Date().getTime()
-    }).withMessage("Invalid Date range"),
+    
     body("monthDateYear").notEmpty().withMessage("Required").custom(v=> {
         return new Date(new Date(v).setHours(0,0,0,0)).getTime() <= new Date().getTime()  
     }).withMessage("Invalid Date range"),

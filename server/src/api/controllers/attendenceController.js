@@ -40,24 +40,11 @@ module.exports.createAttendence = async (req, res) => {
 
 module.exports.getAttendences = async (req, res)=> {
     try{
-        // const errors = validationMessages(validationResult(req).mapped());
-        // if(isErrorFounds(errors)) return res.status(400).json(errors)
+        const errors = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(errors)) return res.status(400).json(errors)
         const body = req.body;
         const limit = req.body.limit? parseInt(req.query.limit) : 10;
         const arg = {}
-        // const checkInTime = new Date();
-        // // req.body.checkInTime;
-
-        
-        // const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
-        // const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
-        
-        // const isPunchedIn = await Attendence.findOne({
-        //     userId: req.user._id,
-        //     createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        // }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
-        // // .lean();
-
 
         let todaysDate = new Date();
 
@@ -94,18 +81,17 @@ module.exports.getAttendences = async (req, res)=> {
             dateObj[d] = {}
         }
         
-        let obj = {}
         for(let att of allAttendence){
             let dateStringToLocale = att.checkInTime.toLocaleDateString().split(" ")[0];
             
             if(dateStringToLocale in dateObj){
-                dateObj[dateStringToLocale] = {...att, name: userName?.firstName}
+                dateObj[dateStringToLocale] = {...att, }
             }
         }
 
         let arr = [];
         for(let d in dateObj){
-            arr.push({key: d,...dateObj[d]})
+            arr.push({key: d,...dateObj[d], name: userName?.firstName})
         }
 
         return res.status(200).json({"attendenceList": arr })
