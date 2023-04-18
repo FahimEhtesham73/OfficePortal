@@ -6,7 +6,6 @@ const User = require('../models/userModel');
 
 
 module.exports.createAttendence = async (req, res) => {
-    console.log("Hitted");
     try{
         console.log("shuvo");
         const checkInTime = new Date(req.body.checkInTime);
@@ -41,23 +40,23 @@ module.exports.createAttendence = async (req, res) => {
 
 module.exports.getAttendences = async (req, res)=> {
     try{
-        const errors = validationMessages(validationResult(req).mapped());
-        if(isErrorFounds(errors)) return res.status(400).json(errors)
+        // const errors = validationMessages(validationResult(req).mapped());
+        // if(isErrorFounds(errors)) return res.status(400).json(errors)
         const body = req.body;
         const limit = req.body.limit? parseInt(req.query.limit) : 10;
         const arg = {}
-        const checkInTime = new Date(req.body.checkInTime);
-        // req.body.checkInTime;
+        // const checkInTime = new Date();
+        // // req.body.checkInTime;
 
         
-        const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
-        const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
+        // const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
+        // const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
         
-        const isPunchedIn = await Attendence.findOne({
-            userId: req.user._id,
-            createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
-        // .lean();
+        // const isPunchedIn = await Attendence.findOne({
+        //     userId: req.user._id,
+        //     createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
+        // }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
+        // // .lean();
 
 
         let todaysDate = new Date();
@@ -109,7 +108,7 @@ module.exports.getAttendences = async (req, res)=> {
             arr.push({key: d,...dateObj[d]})
         }
 
-        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: "" ,"attendenceList": arr })
+        return res.status(200).json({"attendenceList": arr })
 
     }catch(err){
         console.log("err", err);
@@ -144,5 +143,34 @@ module.exports.updateAttendece = async(req, res) => {
         return res.status(500).json({"message":"Something went wrong"});
 
         
+    }
+}
+
+module.exports.getTodayAttendence = async (req, res) => {
+    try{
+         // const errors = validationMessages(validationResult(req).mapped());
+        // if(isErrorFounds(errors)) return res.status(400).json(errors)
+        // const body = req.body;
+        const checkInTime = new Date(req.body.checkInTime);
+        // req.body.checkInTime;
+        console.log("query", checkInTime.toLocaleString());
+
+        const startDay = new Date(new Date(checkInTime).setHours(0,0,0,0)).toISOString();
+        const endDay = new Date(new Date(checkInTime).setHours(23,59,59,59)).toISOString();
+        console.log(startDay);
+        const isPunchedIn = await Attendence.findOne({
+            userId: req.user._id,
+            createdAt: {
+                $gte: new Date(startDay).toISOString(), 
+                $lte: new Date(endDay).toISOString()
+            }
+        }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
+
+        return res.status(200).json({"punched": isPunchedIn? isPunchedIn: ""})
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({"message":"Something went wrong"});
+
     }
 }
