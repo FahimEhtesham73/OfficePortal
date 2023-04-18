@@ -148,6 +148,7 @@ const Punch = () => {
     } else {
         decodedUser = ''
     }
+    // console.log(decodedUser);
 
     const classes = useStyles()
 
@@ -159,6 +160,10 @@ const Punch = () => {
     const [punchedTime, setPunchedTime] = useState("")
     const [punchedInfo, setPunchedInfo] = useState('')
     const [attendenceList, setAttendenceList] = useState([])
+    const [allUser, setAllUser] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [filteredId, setFilteredId] = useState("")
+    const [filteredDate,setFilteredDate] = useState('')
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -306,7 +311,7 @@ const Punch = () => {
     }
 
     const searchedDate = (dateStr) => {
-    
+
         const date = new Date(dateStr);
 
         const year = date.getFullYear();
@@ -314,7 +319,7 @@ const Punch = () => {
         const lastDateOfMonth = new Date(year, month, 0).getDate();
 
         const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${lastDateOfMonth.toString().padStart(2, '0')}`;
-
+        setFilteredDate(formattedDate)
         console.log(formattedDate);
     }
 
@@ -346,20 +351,47 @@ const Punch = () => {
     const getInfo = async () => {
 
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer " + jwt
             },
+            body: JSON.stringify({
+                "userId": decodedUser._id,
+                "monthDateYear": new Date()
+            }),
             credentials: 'include',
             withCredentials: true
         })
 
         const data = await res.json()
-        // console.log(" Table Data", data);
+        console.log(" Table Data", data);
+        if (res.status === 200) {
+            setAttendenceList(data.attendenceList)
+        } else {
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+    }
+
+    const getPunchedInfo = async () => {
+        const res = await fetch(`${process.env.REACT_APP_URL}/attendence/today`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            body: JSON.stringify({
+                "checkInTime": new Date(),
+            }),
+            credentials: 'include',
+            withCredentials: true
+        })
+
+        const data = await res.json()
+        // console.log(" Punched Data", data);
         if (res.status === 200) {
             setPunchedInfo(data.punched)
-            setAttendenceList(data.attendenceList)
+            // setAttendenceList(data.attendenceList)
             if (data.punched === '') {
                 setIsPunchedIn(false)
             } else if (!data.punched.checkOutTime) {
@@ -375,6 +407,50 @@ const Punch = () => {
         }
     }
 
+    const getAllUser = async () => {
+        setLoading(true)
+        const res = await fetch(`${process.env.REACT_APP_URL}/users/getalluser`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+        const data = await res.json()
+        console.log("All User", data);
+        if (res.status === 200) {
+            setAllUser(data)
+            setLoading(false)
+        } else {
+            setLoading(false)
+            toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+
+    }
+
+    const fetchIndividualAttendance = async()=>{
+        const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            body: JSON.stringify({
+                "userId": decodedUser._id,
+                "monthDateYear": filteredDate
+            }),
+            credentials: 'include',
+            withCredentials: true
+        })
+
+        const data = await res.json()
+        console.log(" Table Data", data);
+        if (res.status === 200) {
+            setAttendenceList(data.attendenceList)
+        } else {
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+    }
+
     useEffect(() => {
         if (localStorage.getItem('punchedInTime')) {
             const intervalId = setInterval(updateTime, 60000);
@@ -385,6 +461,8 @@ const Punch = () => {
     }, [localStorage.getItem('punchedInTime')])
     useEffect(() => {
         getInfo()
+        getPunchedInfo()
+        getAllUser()
     }, [])
 
 
@@ -428,7 +506,26 @@ const Punch = () => {
             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={4} >
-                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
+                        <FormControl sx={{ width: "100%" }}>
+                            <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                label="Age"
+                                onChange={(e) => {
+                                    setFilteredId(e.target.value)
+                                }}
+                            >
+                                {
+                                    allUser && allUser.map((val, ind) => {
+                                        return (
+                                            <MenuItem value={val._id}>{val.firstName}</MenuItem>
+                                        )
+                                    })
+                                }
+                            </Select>
+                        </FormControl>
                     </Grid>
                     {/* Select Month */}
                     <Grid item xs={12} sm={6} md={4} >
@@ -456,9 +553,7 @@ const Punch = () => {
                             </Select>
                         </FormControl> */}
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            {/* <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}  sx={{ border:"2px solid green",maxHeight: 200, width: '100%' }}> */}
                             <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
-                            {/* </DemoContainer> */}
                         </LocalizationProvider>
 
                     </Grid>
@@ -483,7 +578,7 @@ const Punch = () => {
                     </Grid> */}
 
                     <Grid item xs={12} sm={6} md={4} >
-                        <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }}>Search</Button>
+                        <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }} onClick={fetchIndividualAttendance}>Search</Button>
                     </Grid>
                 </Grid>
             </Box>
