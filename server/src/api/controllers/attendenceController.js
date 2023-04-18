@@ -41,12 +41,12 @@ module.exports.createAttendence = async (req, res) => {
 
 module.exports.getAttendences = async (req, res)=> {
     try{
-        const errors = validationMessages(validationResult(req).mapped());
-        if(isErrorFounds(errors)) return res.status(400).json(errors)
+        // const errors = validationMessages(validationResult(req).mapped());
+        // if(isErrorFounds(errors)) return res.status(400).json(errors)
         const body = req.body;
         const limit = req.body.limit? parseInt(req.query.limit) : 10;
         const arg = {}
-        const checkInTime = new Date(req.body.checkInTime);
+        const checkInTime = new Date();
         // req.body.checkInTime;
 
         

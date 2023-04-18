@@ -28,6 +28,11 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 const useStyles = makeStyles((theme) => ({
     cardWrapper: {
         display: 'flex',
@@ -143,7 +148,7 @@ const Punch = () => {
     } else {
         decodedUser = ''
     }
-    
+
     const classes = useStyles()
 
     const [open, setOpen] = useState(false);
@@ -250,7 +255,7 @@ const Punch = () => {
             if (res.status === 200 || res.status === 201) {
                 console.log("created punch data", data);
                 toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-                localStorage.setItem('punchedInTime',data?.info?.checkInTime)
+                localStorage.setItem('punchedInTime', data?.info?.checkInTime)
                 const localTime = formatAMPM(new Date(data?.info?.checkInTime))
                 setPunchedTime(localTime)
                 setIsPunchedIn(true)
@@ -300,6 +305,19 @@ const Punch = () => {
         return diffInHours.toFixed(2)
     }
 
+    const searchedDate = (dateStr) => {
+    
+        const date = new Date(dateStr);
+
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const lastDateOfMonth = new Date(year, month, 0).getDate();
+
+        const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${lastDateOfMonth.toString().padStart(2, '0')}`;
+
+        console.log(formattedDate);
+    }
+
     const overTime = (sDate, eDate) => {
         const time = parseFloat(totalHour(sDate, eDate)) - 9
         if (time <= 0) return 0
@@ -310,7 +328,7 @@ const Punch = () => {
     let hours = Math.floor(timeDiff / (1000 * 60 * 60));
     let minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
 
-    
+
     function updateTime() {
         minutes++;
         if (minutes === 60) {
@@ -326,6 +344,7 @@ const Punch = () => {
 
 
     const getInfo = async () => {
+
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
             method: "GET",
             headers: {
@@ -335,8 +354,9 @@ const Punch = () => {
             credentials: 'include',
             withCredentials: true
         })
+
         const data = await res.json()
-        console.log("Data", data);
+        // console.log(" Table Data", data);
         if (res.status === 200) {
             setPunchedInfo(data.punched)
             setAttendenceList(data.attendenceList)
@@ -346,7 +366,7 @@ const Punch = () => {
                 setIsPunchedIn(true)
                 const localTime = formatAMPM(new Date(data?.punched?.checkInTime))
                 setPunchedTime(localTime)
-                console.log("Checkin Time",data?.punched?.checkInTime);
+                // console.log("Checkin Time", data?.punched?.checkInTime);
             } else {
                 setIsPunchedIn(false)
             }
@@ -355,25 +375,25 @@ const Punch = () => {
         }
     }
 
-    useEffect(()=>{
-        if(localStorage.getItem('punchedInTime')){
+    useEffect(() => {
+        if (localStorage.getItem('punchedInTime')) {
             const intervalId = setInterval(updateTime, 60000);
 
             return () => clearInterval(intervalId);
         }
-        
-    },[localStorage.getItem('punchedInTime')])
+
+    }, [localStorage.getItem('punchedInTime')])
     useEffect(() => {
         getInfo()
     }, [])
 
 
-    useLayoutEffect(()=>{
-        if(localStorage.getItem('punchedInTime')){
+    useLayoutEffect(() => {
+        if (localStorage.getItem('punchedInTime')) {
             document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
         }
-        
-    },[])
+
+    }, [])
 
     return (
         <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
@@ -407,19 +427,19 @@ const Punch = () => {
             {/* Searching Div */}
             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={4} md={3} >
+                    <Grid item xs={12} sm={6} md={4} >
                         <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
                     </Grid>
                     {/* Select Month */}
-                    <Grid item xs={12} sm={4} md={3} >
-                        <FormControl sx={{ width: '100%' }}>
+                    <Grid item xs={12} sm={6} md={4} >
+                        {/* <FormControl sx={{ width: '100%' }}>
                             <InputLabel id="demo-simple-select-label">Select Month</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select Month"
-                            // onChange={handleChange}
+                            onChange={(e)=>{console.log(e.target.value)}}
                             >
                                 <MenuItem value={'jan'}>January</MenuItem>
                                 <MenuItem value={'feb'}>February</MenuItem>
@@ -434,10 +454,16 @@ const Punch = () => {
                                 <MenuItem value={'nov'}>November</MenuItem>
                                 <MenuItem value={'dec'}>December</MenuItem>
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            {/* <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}  sx={{ border:"2px solid green",maxHeight: 200, width: '100%' }}> */}
+                            <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
+                            {/* </DemoContainer> */}
+                        </LocalizationProvider>
+
                     </Grid>
                     {/* Leave Status */}
-                    <Grid item xs={12} sm={4} md={3} >
+                    {/* <Grid item xs={12} sm={4} md={3} >
 
                         <FormControl sx={{ width: '100%' }}>
                             <InputLabel id="demo-simple-select-label">Select Year</InputLabel>
@@ -446,17 +472,18 @@ const Punch = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select year"
+                                onChange={(e)=>{console.log(e.target.value)}}
                             // onChange={handleChange}
                             >
-                                <MenuItem value={10}>2021</MenuItem>
+                                <MenuItem value={0}>2021</MenuItem>
                                 <MenuItem value={20}>2022</MenuItem>
                                 <MenuItem value={30}>2023</MenuItem>
                             </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid item xs={12} sm={4} md={3} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}>Search</Button>
+                    <Grid item xs={12} sm={6} md={4} >
+                        <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }}>Search</Button>
                     </Grid>
                 </Grid>
             </Box>
@@ -485,7 +512,7 @@ const Punch = () => {
                                         {row?.key}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row?.checkInTime?formatAMPM(new Date(row?.checkInTime)):""}
+                                        {row?.checkInTime ? formatAMPM(new Date(row?.checkInTime)) : ""}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}
