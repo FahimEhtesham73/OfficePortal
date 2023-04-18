@@ -2,7 +2,9 @@ const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
-const User = require('../models/userModel')
+const User = require('../models/userModel');
+
+
 module.exports.createAttendence = async (req, res) => {
     console.log("Hitted");
     try{
@@ -37,13 +39,14 @@ module.exports.createAttendence = async (req, res) => {
     }
 }
 
-
 module.exports.getAttendences = async (req, res)=> {
     try{
-        const query = req.body;
+        const errors = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(errors)) return res.status(400).json(errors)
+        const body = req.body;
         const limit = req.body.limit? parseInt(req.query.limit) : 10;
         const arg = {}
-        const checkInTime = new Date()
+        const checkInTime = new Date(req.body.checkInTime);
         // req.body.checkInTime;
 
         
@@ -53,60 +56,54 @@ module.exports.getAttendences = async (req, res)=> {
         const isPunchedIn = await Attendence.findOne({
             userId: req.user._id,
             createdAt: {$gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString()}
-        })
-        // .lean().select({userId:1, status: 1, checkInTime: 1, checkOutTime: 1});
+        }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
+        // .lean();
 
-        for(let q in query){
-            if(q === "usersId"){
-                arg['usersId'] = query[q]
-            }
-            if(q === "month"){
-                
-            }
-        }
-        const q = [{
-            userId: {$in: [req.user._id]},
-            
-        }]
+
+        let todaysDate = new Date();
+
+        arg['usersId'] = body['userId'] || req.user._id;
+        arg['monthDateYear'] = body["monthDateYear"] ? new Date(body['monthDateYear']) : todaysDate;
+
+    
 
         let dates = []
-        let todaysDate = new Date();
-        let month = todaysDate.getMonth()+1
-        let year = todaysDate.getFullYear()
-        let days = todaysDate.getDate()
+        let month = arg['monthDateYear'].getMonth()+1
+        let year = arg['monthDateYear'].getFullYear()
+        let days = arg['monthDateYear'].getDate()
         const firstDate = new Date(`01/${month}/${year}`).setHours(0,0,0,0);
-        let lastDay = new Date(todaysDate.getFullYear(), todaysDate.getMonth() + 1, 0).setHours(23,59,59,999);
+        let lastDay = new Date(arg['monthDateYear'].getFullYear(), todaysDate.getMonth() + 1, 0).setHours(23,59,59,999);
         console.log(new Date(lastDay).toLocaleString());
        
         const allAttendence = await Attendence.find({
-            userId: req.body.userId || req.user._id,
-            checkInTime: {$gte: new Date(firstDate).toISOString(), $lte: new Date(lastDay).toISOString()}
-        }).select({userId:1, checkInTime:1, status:1, checkOutTime: 1}).lean()
+            userId: arg.usersId,
+            checkInTime: {
+                            $gte: new Date(firstDate).toISOString(),
+                            $lte: new Date(lastDay).toISOString()
+                        }
+        }).select("-createdAt -updatedAt -createdBy -updatedBy -__v").lean()
 
+        const userName = await User.findOne({_id: arg.usersId}).select("firstName").lean()
         
         for (let i =1; i <= days; i++){
             let name = `${month}/${i}/${year}`;
             dates.push(name)
         }
 
-        // console.log(dates);
-        let response = []
         let dateObj = {}
         for(let d of dates){
             dateObj[d] = {}
         }
-
-
+        
         let obj = {}
         for(let att of allAttendence){
             let dateStringToLocale = att.checkInTime.toLocaleDateString().split(" ")[0];
             
             if(dateStringToLocale in dateObj){
-                dateObj[dateStringToLocale] = att
+                dateObj[dateStringToLocale] = {...att, name: userName?.firstName}
             }
         }
 
-        console.log(dateObj);
         let arr = [];
         for(let d in dateObj){
             arr.push({key: d,...dateObj[d]})
