@@ -28,7 +28,6 @@ import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -311,16 +310,25 @@ const Punch = () => {
     }
 
     const searchedDate = (dateStr) => {
-
+        const todayDate = new Date()
+        const latestYear = todayDate.getFullYear()
+        const latestMonth = todayDate.getMonth() + 1;
+        const latestDate = todayDate.getDate()
+        
         const date = new Date(dateStr);
-
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         const lastDateOfMonth = new Date(year, month, 0).getDate();
 
-        const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${lastDateOfMonth.toString().padStart(2, '0')}`;
+        let formattedDate
+        if((latestYear===year) && (latestMonth===month)){
+            formattedDate = `${year}-${month.toString().padStart(2, '0')}-${latestDate.toString().padStart(2, '0')}`;
+        }else{
+            formattedDate = `${year}-${month.toString().padStart(2, '0')}-${lastDateOfMonth.toString().padStart(2, '0')}`;
+        }
+        
         setFilteredDate(formattedDate)
-        console.log(formattedDate);
+
     }
 
     const overTime = (sDate, eDate) => {
@@ -416,7 +424,7 @@ const Punch = () => {
             },
         })
         const data = await res.json()
-        console.log("All User", data);
+        // console.log("All User", data);
         if (res.status === 200) {
             setAllUser(data)
             setLoading(false)
@@ -435,7 +443,7 @@ const Punch = () => {
                 "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify({
-                "userId": decodedUser._id,
+                "userId": filteredId,
                 "monthDateYear": filteredDate
             }),
             credentials: 'include',
@@ -459,6 +467,7 @@ const Punch = () => {
         }
 
     }, [localStorage.getItem('punchedInTime')])
+
     useEffect(() => {
         getInfo()
         getPunchedInfo()
@@ -527,55 +536,12 @@ const Punch = () => {
                             </Select>
                         </FormControl>
                     </Grid>
-                    {/* Select Month */}
+                    {/* Select Month And Year*/}
                     <Grid item xs={12} sm={6} md={4} >
-                        {/* <FormControl sx={{ width: '100%' }}>
-                            <InputLabel id="demo-simple-select-label">Select Month</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Select Month"
-                            onChange={(e)=>{console.log(e.target.value)}}
-                            >
-                                <MenuItem value={'jan'}>January</MenuItem>
-                                <MenuItem value={'feb'}>February</MenuItem>
-                                <MenuItem value={'mar'}>March</MenuItem>
-                                <MenuItem value={'apr'}>April</MenuItem>
-                                <MenuItem value={'may'}>May</MenuItem>
-                                <MenuItem value={'june'}>June</MenuItem>
-                                <MenuItem value={'july'}>July</MenuItem>
-                                <MenuItem value={'aug'}>August</MenuItem>
-                                <MenuItem value={'sep'}>September</MenuItem>
-                                <MenuItem value={'oct'}>October</MenuItem>
-                                <MenuItem value={'nov'}>November</MenuItem>
-                                <MenuItem value={'dec'}>December</MenuItem>
-                            </Select>
-                        </FormControl> */}
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
                         </LocalizationProvider>
-
                     </Grid>
-                    {/* Leave Status */}
-                    {/* <Grid item xs={12} sm={4} md={3} >
-
-                        <FormControl sx={{ width: '100%' }}>
-                            <InputLabel id="demo-simple-select-label">Select Year</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Select year"
-                                onChange={(e)=>{console.log(e.target.value)}}
-                            // onChange={handleChange}
-                            >
-                                <MenuItem value={0}>2021</MenuItem>
-                                <MenuItem value={20}>2022</MenuItem>
-                                <MenuItem value={30}>2023</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid> */}
 
                     <Grid item xs={12} sm={6} md={4} >
                         <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }} onClick={fetchIndividualAttendance}>Search</Button>
@@ -601,7 +567,7 @@ const Punch = () => {
                                     key={ind}
                                 >
                                     <StyledTableCell component="th" scope="row">
-                                        {decodedUser?.firstName}
+                                        {row?.name}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         {row?.key}

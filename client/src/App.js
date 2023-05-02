@@ -46,4 +46,7 @@ const App = () => {
   );
 }
 
+
+// What is Redux?
+
 export default App;
