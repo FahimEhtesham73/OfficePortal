@@ -8,5 +8,6 @@ export const skillData = [
         _id: "2",
         title: "Node JS",
         tools: "Backend Engineering"
-    }
+    },
+    
 ]

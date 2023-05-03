@@ -55,7 +55,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-// Modal Styling
+// Modal Styling 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
