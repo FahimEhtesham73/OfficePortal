@@ -1,15 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import Loading from '../Hook/Loading/Loading.js';
 import { useParams } from 'react-router-dom';
+import userInfo from '../Hook/useUseInfo.js';
 
 import imageSrc from '../../images/saimom.jpg'
 import { Button, TextField, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SendIcon from '@mui/icons-material/Send';
-
+import CancelIcon from '@mui/icons-material/Cancel';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { toast } from 'react-toastify';
 
+// import { skillData } from '../../data/dummyData.js';
+const skillData = [
+    {
+        _id: "1",
+        title: "React JS",
+        tools: "Frontend Engineering"
+    },
+    {
+        _id: "2",
+        title: "Node JS",
+        tools: "Backend Engineering"
+    }
+]
+
+const goalName = [
+    {
+        _id: "1",
+        goalName: ["aws", "azure"],
+        goalType: "Cloud Knowledge"
+    },
+    {
+        _id: "2",
+        goalName: ["Deep Learning",],
+        goalType: "Machine Learning"
+    }
+]
 
 const Profile = () => {
     const { id } = useParams()
@@ -25,6 +55,8 @@ const Profile = () => {
         leaveSetting: false
     })
 
+    const userInfoData = userInfo();
+
     const [intro, setIntro] = useState({
         personalPhone: "",
         nationality: "",
@@ -35,9 +67,36 @@ const Profile = () => {
     const [expertField, setExpertField] = useState({
         title: "",
         tools: ""
+    });
+
+    const [goalSettingField, setgoalSettingField] = useState({
+        goalName: "",
+        goalType: ""
+    })
+    const [educationField, setEducationField] = useState({
+        institution: "",
+        location: "",
+        endYear: "",
+        startYear: "",
+        degree: ""
+    })
+
+    const [experience, setExperience] = useState({
+        company: "",
+        location: "",
+        title: "",
+        startYear: "",
+        endYear: ""
+    })
+
+    const [leaveSettings, setleaveSettings] = useState({
+        casualLeave: "",
+        sickLeave: ""
     })
 
     const [expertise, setExpertise] = useState([])
+  
+   
 
     let name
     let value
@@ -60,7 +119,7 @@ const Profile = () => {
             tools: ""
         })
     }
-
+console.log("array of expertices", expertise);
     const getSingleUser = async () => {
         setLoading(true)
         const res = await fetch(`${process.env.REACT_APP_URL}/users/getsingleuser/${id}`, {
@@ -81,7 +140,7 @@ const Profile = () => {
                 maritalStatus: tempInfo?.maritalStatus,
                 bloodGroup: tempInfo?.bloodGroup
             })
-            setExpertise(tempInfo?.expertise)
+            // setExpertise(tempInfo?.expertise)
             setLoading(false)
         } else {
             setLoading(false)
@@ -122,6 +181,7 @@ const Profile = () => {
         getSingleUser()
     }, [])
 
+  
     return (
 
         loading ? <Loading /> :
@@ -184,7 +244,9 @@ const Profile = () => {
                                             <div class="pro-edit">
                                                 {/* <a data-bs-target="#profile_info" data-bs-toggle="modal"
                                             class="edit-icon" href="#"></a> */}
-                                                <EditIcon onClick={() => { console.log("Clicked"); }} />
+                                                {(userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ?
+                                                    <EditIcon onClick={() => { console.log("Clicked"); }} /> : ""}
+
                                             </div>
                                         </div>
                                     </div>
@@ -202,16 +264,28 @@ const Profile = () => {
                                             <div class="card-body">
                                                 <h3 class="card-title" >Personal Informations
                                                     {
-                                                        !cardEdit.intro ?
+                                                        (userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ? (!cardEdit.intro ?
+
                                                             <Tooltip title='Edit'>
                                                                 <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, intro: true }) }} />
                                                             </Tooltip> :
-                                                            <Tooltip title='Save'>
-                                                                <SendIcon className='edit-icon' onClick={() => {
-                                                                    updateUser('intro')
-                                                                    setCardEdit({ ...cardEdit, intro: false })
-                                                                }} />
-                                                            </Tooltip>
+                                                            <>
+                                                                <Tooltip title='Save' sx={{ marginLeft: "10px" }}>
+                                                                    <SendIcon className='edit-icon' onClick={() => {
+                                                                        updateUser('intro')
+                                                                        setCardEdit({ ...cardEdit, intro: false })
+                                                                    }} />
+                                                                </Tooltip>
+                                                                <Tooltip title="Cancel">
+                                                                    <CancelIcon className='edit-icon'
+                                                                        onClick={() => setCardEdit({ ...cardEdit, intro: false })}
+                                                                    />
+                                                                </Tooltip>
+
+                                                            </>
+
+                                                        ) : ""
+
                                                     }
 
                                                 </h3>
@@ -260,24 +334,51 @@ const Profile = () => {
                                         <div class="card profile-box flex-fill">
                                             <div class="card-body">
                                                 <h3 class="card-title">Expertise
-                                                    <Tooltip title='Save'>
+                                                    {/* <Tooltip title='Save'>
                                                         <SendIcon className='edit-icon' onClick={() => {
                                                             updateUser('expertise')
                                                         }} />
-                                                    </Tooltip>
+                                                    </Tooltip> */}
+                                                    {(userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ?
+                                                        <>
+                                                            {cardEdit.expertise ? (
+                                                                <>
+                                                                    <Tooltip sx={{ marginLeft: "10px" }}>
+                                                                        <SendIcon className='edit-icon' />
+                                                                    </Tooltip>
+                                                                    <Tooltip>
+                                                                        <CancelIcon className='edit-icon'
+                                                                            onClick={() => setCardEdit({ ...cardEdit, expertise: false })}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </>
+
+                                                            ) : ""}
+                                                            {!cardEdit.expertise && <Tooltip title='Edit' sx={{ marginLeft: "10px" }}>
+                                                                <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, expertise: true }) }} />
+                                                            </Tooltip>}
+                                                        </>
+                                                        : ""
+                                                    }
                                                 </h3>
                                                 <div class="experience-box">
 
                                                     <ul class="experience-list">
                                                         {
-                                                            expertise?.map((val, ind) => {
+                                                            skillData?.map((val, ind) => {
                                                                 return (
                                                                     <>
+                                                                    
                                                                         <li key={ind}>
+                                                                        
                                                                             <div class="experience-user">
                                                                                 <div class="before-circle"></div>
                                                                             </div>
                                                                             <div class="experience-content">
+                                                                                {cardEdit.expertise && <Tooltip>
+                                                                        <CancelIcon className='edit-icon' />
+                                                                    </Tooltip>}
+                                                                            
                                                                                 <div class="timeline-content">
                                                                                     <a href="#/" class="name">{val?.title}</a>
                                                                                     <div>{val?.tools}</div>
@@ -293,15 +394,22 @@ const Profile = () => {
 
                                                     </ul>
 
-                                                    <input type="text" placeholder='Add Expertise Field Name' name="title" value={expertField.title} onChange={(e) => {
-                                                        handleFields(e, 'expert')
-                                                    }} />
-                                                    <br />
-                                                    <input type="text" placeholder='Add Stack Name' name="tools" style={{ marginTop: "10px", marginBottom: "10px" }} value={expertField.tools} onChange={(e) => {
-                                                        handleFields(e, 'expert')
-                                                    }} />
-                                                    <br />
-                                                    <Button variant='contained' onClick={() => { addExpertise() }}>Add</Button>
+                                                    {cardEdit.expertise && (<>
+
+                                                        <input type="text" placeholder='Add Expertise Field Name' name="title" value={expertField.title} onChange={(e) => {
+                                                            handleFields(e, 'expert')
+                                                        }} />
+                                                        <br />
+                                                        <input type="text" placeholder='Add Stack Name' name="tools" style={{ marginTop: "10px", marginBottom: "10px" }} value={expertField.tools} onChange={(e) => {
+                                                            handleFields(e, 'expert')
+                                                        }} />
+                                                        <br />
+                                                        <Button variant='contained' onClick={() => { addExpertise() }}>Add</Button>
+                                                    </>
+
+                                                    )
+                                                    }
+
 
                                                 </div>
                                             </div>
@@ -310,7 +418,29 @@ const Profile = () => {
                                     <div class="col-md-6 d-flex">
                                         <div class="card profile-box flex-fill">
                                             <div class="card-body">
-                                                <h3 class="card-title">Goal Setting<EditIcon className='edit-icon' onClick={() => { console.log("Clicked"); }} /></h3>
+                                                <h3 class="card-title">Goal Setting
+                                                    {(userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ?
+                                                        <>
+                                                            {cardEdit.goalSetting ? (
+                                                                <>
+                                                                    <Tooltip sx={{ marginLeft: "10px" }}>
+                                                                        <SendIcon className='edit-icon' />
+                                                                    </Tooltip>
+                                                                    <Tooltip>
+                                                                        <CancelIcon className='edit-icon'
+                                                                            onClick={() => setCardEdit({ ...cardEdit, goalSetting: false })}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </>
+
+                                                            ) : ""}
+                                                            {!cardEdit.goalSetting && <Tooltip title='Edit' sx={{ marginLeft: "10px" }}>
+                                                                <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, goalSetting: true }) }} />
+                                                            </Tooltip>}
+                                                        </>
+                                                        : ""
+                                                    }
+                                                </h3>
                                                 <div class="experience-box">
                                                     <ul class="experience-list">
                                                         <li>
@@ -318,6 +448,9 @@ const Profile = () => {
                                                                 <div class="before-circle"></div>
                                                             </div>
                                                             <div class="experience-content">
+                                                            {cardEdit.goalSetting && <Tooltip>
+                                                                        <CancelIcon className='edit-icon' />
+                                                                    </Tooltip>}
                                                                 <div class="timeline-content">
                                                                     <a href="#/" class="name">Cloud Knowledge</a>
                                                                     <div>AWS</div>
@@ -349,7 +482,28 @@ const Profile = () => {
                                     <div class="col-md-6 d-flex">
                                         <div class="card profile-box flex-fill">
                                             <div class="card-body">
-                                                <h3 class="card-title">Education Informations <EditIcon className='edit-icon' onClick={() => { console.log("Clicked"); }} /></h3>
+                                                <h3 class="card-title">Education Informations {(userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ?
+                                                    <>
+                                                        {cardEdit.eduInfo ? (
+                                                            <>
+                                                                <Tooltip sx={{ marginLeft: "10px" }}>
+
+                                                                    <SendIcon className='edit-icon' />
+                                                                </Tooltip>
+                                                                <Tooltip>
+                                                                    <CancelIcon className='edit-icon'
+                                                                        onClick={() => setCardEdit({ ...cardEdit, eduInfo: false })}
+                                                                    />
+                                                                </Tooltip>
+                                                            </>
+
+                                                        ) : ""}
+                                                        {!cardEdit.eduInfo && <Tooltip title='Edit' sx={{ marginLeft: "10px" }}>
+                                                            <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, eduInfo: true }) }} />
+                                                        </Tooltip>}
+                                                    </>
+                                                    : ""
+                                                }</h3>
                                                 <div class="experience-box">
                                                     <ul class="experience-list">
                                                         <li>
@@ -357,6 +511,9 @@ const Profile = () => {
                                                                 <div class="before-circle"></div>
                                                             </div>
                                                             <div class="experience-content">
+                                                            {cardEdit.eduInfo && <Tooltip>
+                                                                        <CancelIcon className='edit-icon' />
+                                                                    </Tooltip>}
                                                                 <div class="timeline-content">
                                                                     <a href="#/" class="name">Ahsanullah University Of Science And Technology</a>
                                                                     <div>Bsc Computer Science</div>
@@ -389,6 +546,34 @@ const Profile = () => {
                                                             </div>
                                                         </li>
                                                     </ul>
+
+                                                    {cardEdit.eduInfo && (<>
+
+<input type="text" placeholder='Add Institution' name="institution" value={expertField.title} onChange={(e) => {
+    handleFields(e, 'eduInfo')
+}} />
+<br />
+<input type="date" placeholder='Add Start Year' name="startYear" style={{ marginTop: "10px", marginBottom: "10px" }} value={expertField.tools} onChange={(e) => {
+    handleFields(e, 'eduInfo')
+}} />
+<br/>
+<input type="date" placeholder='Add End Year' name="endYear" style={{ marginTop: "10px", marginBottom: "10px" }} value={expertField.tools} onChange={(e) => {
+    handleFields(e, 'eduInfo')
+}} />
+<br />
+<input type="text" placeholder='Degree' name="degree" value={expertField.title} onChange={(e) => {
+    handleFields(e, 'eduInfo')
+}} />
+<br />
+<input type="text" placeholder='Location' name="location" value={expertField.title} onChange={(e) => {
+    handleFields(e, 'eduInfo')
+}} />
+<br />
+<Button variant='contained' onClick={() => { addExpertise() }}>Add</Button>
+</>
+
+)
+}
                                                 </div>
                                             </div>
                                         </div>
@@ -396,7 +581,27 @@ const Profile = () => {
                                     <div class="col-md-6 d-flex">
                                         <div class="card profile-box flex-fill">
                                             <div class="card-body">
-                                                <h3 class="card-title">Experience <EditIcon className='edit-icon' onClick={() => { console.log("Clicked"); }} /></h3>
+                                                <h3 class="card-title">Experience {(userInfoData?._id.toString() === id || userInfoData?.role.alias === "Admin") ?
+                                                    <>
+                                                        {cardEdit.experience ? (
+                                                            <>
+                                                                <Tooltip sx={{ marginLeft: "10px" }}>
+                                                                    <SendIcon className='edit-icon' />
+                                                                </Tooltip>
+                                                                <Tooltip>
+                                                                    <CancelIcon className='edit-icon'
+                                                                        onClick={() => setCardEdit({ ...cardEdit, experience: false })}
+                                                                    />
+                                                                </Tooltip>
+                                                            </>
+
+                                                        ) : ""}
+                                                        {!cardEdit.experience && <Tooltip title='Edit' sx={{ marginLeft: "-10px" }}>
+                                                            <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, experience: true }) }} />
+                                                        </Tooltip>}
+                                                    </>
+                                                    : ""
+                                                }</h3>
                                                 <div class="experience-box">
                                                     <ul class="experience-list">
                                                         <li>
@@ -404,6 +609,9 @@ const Profile = () => {
                                                                 <div class="before-circle"></div>
                                                             </div>
                                                             <div class="experience-content">
+                                                            {cardEdit.experience && <Tooltip title='delete'>
+                                                                        <CancelIcon className='edit-icon' />
+                                                                    </Tooltip>}
                                                                 <div class="timeline-content">
                                                                     <a href="#/" class="name">Full Stack Developer(NodeJS) at CoreDevs ltd.</a>
                                                                     <span class="time">Sep 2021 - December 2021</span>
@@ -433,16 +641,39 @@ const Profile = () => {
                                     <div class="col-md-12 d-flex">
                                         <div class="card profile-box flex-fill">
                                             <div class="card-body">
-                                                <h3 class="card-title">Leave Setting <EditIcon className='edit-icon' onClick={() => { console.log("Clicked"); }} /></h3>
+                                                <h3 class="card-title">Leave Setting
+                                                    {(userInfoData?.role.alias === "Admin") ?
+                                                        <>
+                                                            {cardEdit.leaveSetting ? (
+                                                                <>
+                                                                    <Tooltip sx={{ marginLeft: "10px" }}>
+                                                                        <SendIcon className='edit-icon' />
+                                                                    </Tooltip>
+                                                                    <Tooltip>
+                                                                        <CancelIcon className='edit-icon'
+                                                                            onClick={() => setCardEdit({ ...cardEdit, leaveSetting: false })}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </>
+
+                                                            ) : ""}
+                                                            {!cardEdit.leaveSetting && <Tooltip title='Edit' sx={{ marginLeft: "-10px" }}>
+                                                                <EditIcon className='edit-icon' onClick={() => { setCardEdit({ ...cardEdit, leaveSetting: true }) }} />
+                                                            </Tooltip>}
+                                                        </>
+                                                        : ""
+                                                    }
+
+                                                </h3>
                                                 <ul class="personal-info">
 
                                                     <li style={{ display: "flex", alignItems: "center", }}>
                                                         <div class="title">Annual Casual Leave</div>
-                                                        <TextField id="outlined-search" label="11" type="search" disabled />
+                                                        <TextField id="outlined-search" label="11" type="search" disabled={cardEdit.leaveSetting ? false : true} />
                                                     </li>
                                                     <li style={{ display: "flex", alignItems: "center", }}>
                                                         <div class="title">Annual Sick Leave</div>
-                                                        <TextField id="outlined-search" label="7" type="search" disabled />
+                                                        <TextField id="outlined-search" label="7" type="search" disabled={cardEdit.leaveSetting ? false : true} />
                                                     </li>
                                                 </ul>
                                             </div>
