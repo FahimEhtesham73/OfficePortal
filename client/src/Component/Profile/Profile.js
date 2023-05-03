@@ -54,6 +54,7 @@ const Profile = () => {
     }
 
     const addExpertise = () => {
+        console.log(expertise);
         setExpertise([...expertise, expertField])
         setExpertField({
             title: "",
