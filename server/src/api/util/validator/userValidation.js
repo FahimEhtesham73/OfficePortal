@@ -1,4 +1,5 @@
 const {check, body} = require("express-validator")
+const mongoose = require('mongoose')
 
 // firstName, lastName, email, password, designation, role, department,empId,joiningDate
 module.exports.createEmployeeValidation = [
@@ -13,8 +14,24 @@ module.exports.createEmployeeValidation = [
     body("joiningDate").notEmpty().withMessage("Date cannot be empty")
 ]
 
+module.exports.searchEmployeeValidation = [
+    body('empName').isString().withMessage("Invalid user Name"),
+    body("userId").custom(v=> {
+        if(v){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true;
+    }),
+    body("deptId").custom(v=> {
+        if(v){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true;
+    })
+    
+]
+
 module.exports.signinDataValidation = [
     body("email").notEmpty().isEmail().withMessage("Invalid Email").normalizeEmail(),
     body("password").notEmpty().isString().isLength({min: 5}).withMessage("Invalid Password")
-
 ]
