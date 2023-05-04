@@ -29,8 +29,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
 import { toast } from 'react-toastify';
 import Skeleton from '@mui/material/Skeleton';
-// importing images
-import saimom from '../images/saimom.jpg'
+import Cookies from 'js-cookie';
+
 import userRole from './Hook/userHook';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -75,6 +75,8 @@ function BootstrapDialogTitle(props) {
 
 
 const AllEmployees = () => {
+  const jwt = Cookies.get('_token')
+
   const [loading, setLoading] = useState(false)
   const [openModal, setOpenModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -86,7 +88,10 @@ const AllEmployees = () => {
   const [user, setUser] = useState({
     firstName: "", lastName: "", email: "", password: "", designation: "", role: "", department: "", empId: "", joiningDate: ""
   })
-  const [menuItemUserId,setMenuItemUserId] = useState('')
+  const [filterInfo, setFilterInfo] = useState({
+    empName: "", userId: "", desgId: ""
+  })
+  const [menuItemUserId, setMenuItemUserId] = useState('')
   const navigate = useNavigate()
 
   let name
@@ -99,6 +104,16 @@ const AllEmployees = () => {
     // console.log("Name: ",name,"value: ",value);
     setUser({ ...user, [name]: value })
   }
+
+  let filterName
+  let filterValue
+
+  const setFilteredInputValue = (e) => {
+    filterName = e.target.name
+    filterValue = e.target.value
+    setFilterInfo({ ...filterInfo, [filterName]: filterValue })
+  }
+
   // console.log(user);
   const open = Boolean(anchorEl);
 
@@ -124,7 +139,8 @@ const AllEmployees = () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/depts/all`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
       },
     })
     const data = await res.json()
@@ -140,7 +156,8 @@ const AllEmployees = () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/designations/all`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
       },
     })
     const data = await res.json()
@@ -157,7 +174,8 @@ const AllEmployees = () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/roles/all`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
       },
     })
     const data = await res.json()
@@ -174,7 +192,8 @@ const AllEmployees = () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/users/getalluser`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
       },
     })
     const data = await res.json()
@@ -199,11 +218,11 @@ const AllEmployees = () => {
   const createEmployee = async () => {
     if (isEmptyObject(user)) return toast.warning('Fill All the fields', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
-
     const res = await fetch(`${process.env.REACT_APP_URL}/users/create`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
       },
       body: JSON.stringify(user),
       credentials: 'include',
@@ -230,6 +249,40 @@ const AllEmployees = () => {
   }
 
 
+  const filterUser = async () => {
+    if (filterInfo.desgId === 'All') {
+      getAllUser()
+    } else {
+      setLoading(true)
+      const res = await fetch(`${process.env.REACT_APP_URL}/users/searchuser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + jwt
+        },
+        body: JSON.stringify(filterInfo),
+        credentials: 'include',
+      })
+
+      const data = await res.json()
+      console.log(data);
+      if (res.status === 200) {
+        setFilterInfo({
+          desgId: "", empName: "", userId: ""
+        })
+        setAllUser(data)
+        setLoading(false)
+      } else if (res.status === 400) {
+        setLoading(false)
+        toast.warning('Invalid Input Value', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+      } else {
+        setLoading(false)
+        toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+      }
+    }
+  }
+
+
   useEffect(() => {
     getAllUser()
     getAllDepartment()
@@ -251,34 +304,41 @@ const AllEmployees = () => {
         <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", marginTop: "40px", maxWidth: "2618px" }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={3}>
-              <TextField id="outlined-search" label="Employee ID" type="search" sx={{ width: '100%' }} />
+              <TextField id="outlined-search" label="Employee ID" type="search" sx={{ width: '100%' }} name='userId' value={filterInfo.userId} onChange={(e) => { setFilteredInputValue(e) }} />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <TextField id="outlined-search" label="Employee Name" type="search" sx={{ width: '100%' }} />
+              <TextField id="outlined-search" label="Employee Name" type="search" sx={{ width: '100%' }} name='empName' value={filterInfo.empName} onChange={(e) => { setFilteredInputValue(e) }} />
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <FormControl sx={{ width: "100%" }}>
-                <InputLabel id="demo-simple-select-label">Designation</InputLabel>
+              <FormControl sx={{ width: '100%' }}>
+                <InputLabel id="demo-simple-select-label">Designation *</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  // value={age}
-                  label="Age"
-                // onChange={handleChange}
+                  name='desgId'
+                  value={filterInfo.desgId}
+                  label="Select leave type"
+                  onChange={(e) => {
+                    setFilteredInputValue(e)
+                  }}
                 >
-                  <MenuItem value={10}>Associate Software Engineer</MenuItem>
-                  <MenuItem value={20}>Associate AI Engineer</MenuItem>
-                  <MenuItem value={30}>Team Lead</MenuItem>
-                  <MenuItem value={30}>Senior AI Engineer</MenuItem>
-                  <MenuItem value={30}>Facility Manager</MenuItem>
+                  <MenuItem value="All">All</MenuItem>
+                  {
+                    designation && designation.map((des) => {
+                      return (
+                        <MenuItem value={des._id}>{des.name}</MenuItem>
+                      )
+                    })
+                  }
+
                 </Select>
               </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Button variant="contained" sx={{ width: '100%', height: "55px" }}>Search</Button>
+              <Button variant="contained" sx={{ width: '100%', height: "55px" }} onClick={filterUser}>Search</Button>
             </Grid>
           </Grid>
         </Box>
@@ -318,7 +378,8 @@ const AllEmployees = () => {
                         <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }}>
                           <CardHeader
                             action={
-                              <IconButton aria-label="settings" onClick={(e)=>{handleClick(e)
+                              <IconButton aria-label="settings" onClick={(e) => {
+                                handleClick(e)
                                 setMenuItemUserId(val._id)
                               }}>
                                 <MoreVertIcon />
@@ -348,7 +409,7 @@ const AllEmployees = () => {
                               <Typography textAlign="center" >View profile</Typography>
                             </MenuItem>
                           </Menu>
-                          
+
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                             <CardContent>
                               <Avatar alt='Employee' src={val.imagePath} sx={{ width: 120, height: 120 }} />

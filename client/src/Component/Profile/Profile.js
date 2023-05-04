@@ -11,6 +11,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Cookies from 'js-cookie';
 
 import { toast } from 'react-toastify';
 
@@ -42,6 +43,7 @@ const goalName = [
 ]
 
 const Profile = () => {
+    const jwt = Cookies.get('_token')
     const { id } = useParams()
     const [loading, setLoading] = useState(false)
     const [userData, setUserData] = useState({})
@@ -126,7 +128,8 @@ console.log("array of expertices", expertise);
         const res = await fetch(`${process.env.REACT_APP_URL}/users/getsingleuser/${id}`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
             },
         })
         const data = await res.json()
@@ -164,7 +167,8 @@ console.log("array of expertices", expertise);
         const res = await fetch(`${process.env.REACT_APP_URL}/users/updateUser/${id}`, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify(sentData)
         })

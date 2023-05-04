@@ -128,39 +128,40 @@ module.exports.searchUser = async (req, res) => {
         console.log(req.body);
         const erros = validationMessages(validationResult(req).mapped());
         if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
-        const dept = req.body.deptId
+        const desgntn = req.body.desgId
         const userId = req.body.userId
         const empName = req.body.empName
 
 
         const matchQuery = {};
         if (userId) {
-          matchQuery['_id'] = new monngoose.Types.ObjectId(userId);
+          matchQuery['empId'] = userId;
         }
-        if (dept) {
-          matchQuery['department._id'] = new monngoose.Types.ObjectId(dept);
+        if (desgntn) {
+          matchQuery['designation._id'] = new monngoose.Types.ObjectId(desgntn);
         }
         if (empName) {
           matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } } ];
         }
 
-
         const result = await User.aggregate([
             {
                 $lookup: {
-                    from: "departments",
-                    localField: "department",
+                    from: "designations",
+                    localField: "designation",
                     foreignField: "_id",
-                    as: "department"
+                    as: "designation"
                 }
             },
-            { $unwind: '$department' },
+            { $unwind: '$designation' },
             { $match: matchQuery },
         ])
+        console.log(matchQuery);
 
         return res.status(200).send(result)
 
     } catch (e) {
         console.log(e);
+        return res.status(500).json({"message":"Something went wrong"});
     }
 }
