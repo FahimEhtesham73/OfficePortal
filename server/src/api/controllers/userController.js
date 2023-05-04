@@ -110,7 +110,7 @@ module.exports.getSingleUser = async (req, res) => {
 module.exports.updateSingleUser = async (req, res) => {
     console.log(req.body);
     try {
-        const id = req.params.id
+        const id = req.params.id;
         const updateUser = await User.findByIdAndUpdate({ _id: id }, req.body, { new: true }).populate("role", "alias")
             .populate("designation", "name")
             .populate("department", "name")

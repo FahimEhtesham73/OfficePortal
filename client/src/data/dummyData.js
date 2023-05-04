@@ -9,5 +9,6 @@ export const skillData = [
         title: "Node JS",
         tools: "Backend Engineering"
     },
-    
+
 ]
+
