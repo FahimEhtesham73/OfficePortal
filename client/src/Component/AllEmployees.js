@@ -120,6 +120,7 @@ const AllEmployees = () => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -291,6 +292,7 @@ const AllEmployees = () => {
   }, [])
 
   return (
+
     <>
       <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px" }}>
 
