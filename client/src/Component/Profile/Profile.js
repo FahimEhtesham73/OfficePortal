@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import userInfo from "../Hook/useUseInfo.js";
 import dayjs from "dayjs";
 import imageSrc from "../../images/saimom.jpg";
-import { Button, TextField, Tooltip } from "@mui/material";
+import { Button, MenuItem, Select, TextField, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -17,8 +17,19 @@ import { toast } from "react-toastify";
 import { styled, MuiThemeProvider } from '@material-ui/core/styles';
 import { red } from "@mui/material/colors";
 import moment from "moment"
+import Cookies from 'js-cookie';
+import {makeStyles} from "@material-ui/core"
+
+
+const useStyles = makeStyles(theme => ({
+    mainPofileStyle : {
+        color: "red",
+    }
+}))
 
 const Profile = () => {
+  const jwt = Cookies.get('_token')
+  const styles = useStyles();
     const { id } = useParams();
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState({});
@@ -163,7 +174,7 @@ const Profile = () => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    // "Authorize:
+                    "Authorization": "Bearer " + jwt
                 },
             }
         );
@@ -237,6 +248,7 @@ const Profile = () => {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": "Bearer " + jwt 
                 },
                 body: JSON.stringify(sentData),
             }
@@ -277,8 +289,8 @@ const Profile = () => {
         const res = await fetch(`${process.env.REACT_APP_URL}/designations/all`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
-                
+                "Content-Type": "application/json",
+                // "Authorization": "Bearer " + jwt
             },
         })
         const data = await res.json()
@@ -326,7 +338,7 @@ const Profile = () => {
                                         </div>
                                         <div class="profile-basic">
                                             <div class="row">
-                                                <div class="col-md-5">
+                                                <div class="col-md-5" >
                                                     <div class="profile-info-left">
                                                         <h3 class="user-name m-t-0 mb-0">
                                                             {!cardEdit.main ? (
@@ -334,7 +346,10 @@ const Profile = () => {
 
                                                             ) : (
                                                                 <>
-                                                                    <input
+                                                                    <TextField
+                                                                    label="Frist Name"
+                                                                    size="small"
+                                                                    sx={{width:.7}}
                                                                         type="text"
                                                                         name="firstName"
                                                                         placeholder="firstame"
@@ -347,7 +362,11 @@ const Profile = () => {
 
                                                                     <br />
 
-                                                                    <input
+                                                                    <TextField
+                                                                    label="Last Name"
+                                                                    size="small"
+                                                                    sx={{width:.7}}
+
                                                                         style={{ marginTop: "10px" }}
                                                                         type="text"
                                                                         name="lastName"
@@ -368,7 +387,10 @@ const Profile = () => {
                                                             : (
                                                                 <>
                                                                     <br />
-                                                                    <select name="designation"
+                                                                    <Select name="designation"
+                                                                    label="Select designation"
+                                                                    size="small"
+                                                                    sx={{width: .7}}
                                                                     value={mainInfo?.designation}
                                                                         onChange={(e) => {
                                                                             setMainInfo({ ...mainInfo, designation: e.target.value })
@@ -378,18 +400,21 @@ const Profile = () => {
 
                                                                         {designation.map((val, ind) => {
                                                                             return (
-                                                                                <option key={val._id} value={val?._id}>{val?.name}</option>
+                                                                                <MenuItem  key={val._id} value={val?._id}>{val?.name}</MenuItem>
                                                                             )
                                                                         })}
-                                                                    </select>
+                                                                    </Select>
                                                                 </>
                                                             )
                                                         }
 
                                                         <div class="staff-id">
-                                                            Employee ID : {!cardEdit.main ? userData?.empId : <>
-                                                                <input
-                                                                    style={{ marginTop: "10px" }}
+                                                            {!cardEdit.main ?`Employee ID : ${userData?.empId }` : <>
+                                                                <TextField
+                                                                size="small"
+                                                                sx={{maxWidth: .7}}
+                                                                label="Employee Id"
+                                                                    style={{ marginTop: "10px", width:"70%" }}
 
                                                                     type="text"
                                                                     name="empId"
@@ -402,14 +427,16 @@ const Profile = () => {
                                                             </>}
                                                         </div>
                                                         <div class="small doj ">
-                                                            Date of Join :{" "}
-                                                            {!cardEdit.main ? moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD") : <>
+                                                            
+                                                            {!cardEdit.main ? `Date of Join : ${moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")} `: <>
 
-                                                                <input
+                                                                <TextField
                                                                     style={{ marginTop: "10px" }}
-
+                                                                    sx={{width:.7}}
+                                                                    size="small"
                                                                     type="date"
                                                                     name="joiningDate"
+                                                                    label="Joining Date"
                                                                     value={moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")}
                                                                     onChange={(e) => {
                                                                         console.log(e.target.value);
@@ -420,36 +447,24 @@ const Profile = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-7">
-                                                    <ul class="personal-info">
-                                                        {/* <li>
-                                                            <div class="title">Phone:</div>
-                                                            {!cardEdit.main ? <div>
-                                                                {userData?.personalPhone
-                                                                    ? userData?.personalPhone
-                                                                    : "N/A"}
-                                                            </div> : <>
-                                                                <input
-                                                                    type="text"
-                                                                    name="personalPhone"
-                                                                    value={userData?.personalPhone}
-                                                                    onChange={(e) => {
-                                                                        handleFields(e, "intro");
-                                                                    }}
-                                                                />
-                                                            </>}
-
-                                                        </li> */}
+                                                <div class="col-md-7" >
+                                                    <ul class="personal-info" >
+                                                        
                                                         <li>
-                                                            <div class="title">Email:</div>
+                                                            
                                                             {!cardEdit.main ? <div>
+                                                                {/* <div class="title">Email:</div> */}
+                                                                Email : {" "}
                                                                 <span class="__cf_email__">
                                                                     {userData?.email ? userData?.email : "N/A"}
                                                                 </span>
                                                             </div> : <>
-                                                                <input
+                                                                <TextField
                                                                     type="email"
+                                                                    label="Email"
                                                                     name="email"
+                                                                    size="small"
+                                                                    sx={{width: .5}}
                                                                     value={mainInfo?.email}
                                                                     onChange={(e) => {
                                                                         handleFields(e, "main");
@@ -459,15 +474,19 @@ const Profile = () => {
 
                                                         </li>
                                                         <li>
-                                                            <div class="title">Birthday:</div>
                                                             {!cardEdit.main ? <div>
+                                                            {/* <div class="title">Birthday:</div> */}
+                                                            Birthday : {" "}
                                                                 <span class="__cf_email__">
                                                                     {mainInfo?.birthDate ?moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD") : "N/A"}
                                                                 </span>
                                                             </div> : <>
-                                                                <input
+                                                                <TextField
+                                                                    sx={{width: .5}}
+
                                                                     type="date"
                                                                     name="birthDate"
+                                                                    size="small"
                                                                     value={moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD")}
                                                                     onChange={(e) => {
                                                                         handleFields(e, "main");
@@ -688,6 +707,8 @@ const Profile = () => {
                                                                         className="edit-icon"
                                                                         onClick={() => {
                                                                             updateUser("skills");
+                                                                            setCardEdit({...cardEdit, skills: false})
+
                                                                         }}
                                                                     />
                                                                 </Tooltip>
@@ -814,7 +835,11 @@ const Profile = () => {
                                                                 <Tooltip sx={{ marginLeft: "10px" }}>
                                                                     <SendIcon
                                                                         className="edit-icon"
-                                                                        onClick={() => updateUser("goal")}
+                                                                        onClick={() => {
+                                                                            updateUser("goal");
+                                                                            setCardEdit({...cardEdit, goalSetting: false})
+                                                                        } }
+                                                                        
                                                                     />
                                                                 </Tooltip>
                                                                 <Tooltip title="Cancel">
@@ -943,7 +968,9 @@ const Profile = () => {
                                                             <>
                                                                 <Tooltip sx={{ marginLeft: "10px" }}>
                                                                     <SendIcon className="edit-icon"
-                                                                        onClick={() => updateUser("eduInfo")}
+                                                                        onClick={() => 
+                                                                          {  updateUser("eduInfo"); setCardEdit({...cardEdit, eduInfo: false})}
+                                                                    }
                                                                     />
                                                                 </Tooltip>
                                                                 <Tooltip title='cancel'>
@@ -1151,7 +1178,7 @@ const Profile = () => {
                                                             <>
                                                                 <Tooltip sx={{ marginLeft: "10px" }}>
                                                                     <SendIcon className="edit-icon"
-                                                                        onClick={() => updateUser("experiences")}
+                                                                        onClick={() => {updateUser("experiences"); setCardEdit({...cardEdit, experience: false})}}
                                                                     />
                                                                 </Tooltip>
                                                                 <Tooltip title='cancel'>

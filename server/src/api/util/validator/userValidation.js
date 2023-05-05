@@ -16,12 +16,13 @@ module.exports.createEmployeeValidation = [
 
 module.exports.searchEmployeeValidation = [
     body('empName').isString().withMessage("Invalid user Name"),
-    body("userId").custom(v=> {
-        if(v){
-            return mongoose.isObjectIdOrHexString(v)
-        }
-        return true;
-    }),
+    body("userId").isString().withMessage("Invalid Employee Id"),
+    // .custom(v=> {
+    //     if(v){
+    //         return mongoose.isObjectIdOrHexString(v)
+    //     }
+    //     return true;
+    // }),
     body("deptId").custom(v=> {
         if(v){
             return mongoose.isObjectIdOrHexString(v)

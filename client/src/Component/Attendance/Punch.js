@@ -31,6 +31,7 @@ import { toast } from 'react-toastify';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import userRole from '../Hook/userHook';
 
 const useStyles = makeStyles((theme) => ({
     cardWrapper: {
@@ -420,7 +421,8 @@ const Punch = () => {
         const res = await fetch(`${process.env.REACT_APP_URL}/users/getalluser`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
             },
         })
         const data = await res.json()
@@ -512,7 +514,8 @@ const Punch = () => {
                 </Card>
             </Box>
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
+            {
+                userRole() === 'Admin' && <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6} md={4} >
                         <FormControl sx={{ width: "100%" }}>
@@ -548,6 +551,8 @@ const Punch = () => {
                     </Grid>
                 </Grid>
             </Box>
+            }
+            
             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom: "30px", minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>

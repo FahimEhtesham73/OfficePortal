@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const Attendence = require("../models/attendenceModel");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
-const User = require('../models/userModel');
+const User = require('../models/userModel')
 
 
 module.exports.createAttendence = async (req, res) => {
@@ -162,3 +162,59 @@ module.exports.getTodayAttendence = async (req, res) => {
     }
 }
 
+module.exports.getAllUserAttendenceSheet = async (req,res) =>{
+    console.log( new Date("2023-04-01T18:00:00.000+00:00"));
+    console.log( new Date("2023-04-30").toISOString());
+    const result = await Attendence.aggregate([
+        {
+          $match: {
+            checkInTime: {
+              $gte: new Date(new Date("2023-04-01T18:00:00.000+00:00")),
+              $lt: new Date(new Date("2023-04-30T18:00:00.000+00:00"))
+            }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              userId: "$userId",
+              day: { $dayOfMonth: "$checkInTime" }
+            },
+            attendance: { $push: "$$ROOT" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            userId: "$_id.userId",
+            days: {
+              $map: {
+                input: { $range: [1, 32] },
+                as: "day",
+                in: {
+                  $cond: {
+                    if: { $gt: ["$$day", { $dayOfMonth: new Date() }] },
+                    then: {
+                      date: { $dateToString: { format: "%Y-%m-%d", date: { $add: [new Date(), { $multiply: [-1, { $subtract: ["$$day", { $dayOfMonth: new Date() }] }] }] } } },
+                      attendance: "absent"
+                    },
+                    else: {
+                      date: { $dateToString: { format: "%Y-%m-%d", date: { $add: [new Date(), { $multiply: [-1, { $subtract: [{ $dayOfMonth: new Date() }, "$$day"] }] }] } } },
+                      attendance: { $cond: { if: { $in: ["$$day", { $dayOfMonth: "$attendance.checkInTime" }] }, then: "$attendance", else: "absent" } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          $group: {
+            _id: "$userId",
+            attendance: { $push: "$days" }
+          }
+        }
+      ])
+
+    return res.status(200).send(result)
+}

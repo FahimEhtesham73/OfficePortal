@@ -1,4 +1,6 @@
 
+const fs = require("fs");
+const path = require("path")
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
 const Module = require("../models/moduleModel");
@@ -114,12 +116,20 @@ module.exports.updateSingleUser = async (req, res) => {
         if (isErrorFounds(errors)) return res.status(400).json({ "message": errors })
         const data = req.body;
         const id = req.params.id;
-        if(req.user._id.toString() !== id || req.user.role.name !== "admin" ) return res.status(403).json({ "message": "Forbidden" }) 
-        const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data}}, { new: true }).populate("role", "alias")
-            .populate("designation", "name")
-            .populate("department", "name")
-        console.log(updateUser);
-        return res.status(200).json(updateUser)
+        console.log(req.user);
+        console.log(req.user._id === id.toString() );
+        if(req.user._id == id.toString() || req.user.role.alias === "Admin" ) {
+
+            const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data}}, { new: true }).populate("role", "alias")
+                .populate("designation", "name")
+                .populate("department", "name")
+            console.log(updateUser);
+            return res.status(200).json(updateUser)
+        }
+        
+        else{
+            return res.status(403).json({ "message": "Forbidden" }) 
+        }
 
     } catch (e) {
         console.log(e);
@@ -132,39 +142,59 @@ module.exports.searchUser = async (req, res) => {
         console.log(req.body);
         const erros = validationMessages(validationResult(req).mapped());
         if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
-        const dept = req.body.deptId
+        const desgntn = req.body.desgId
         const userId = req.body.userId
         const empName = req.body.empName
 
 
         const matchQuery = {};
         if (userId) {
-          matchQuery['_id'] = new monngoose.Types.ObjectId(userId);
+          matchQuery['empId'] = userId;
         }
-        if (dept) {
-          matchQuery['department._id'] = new monngoose.Types.ObjectId(dept);
+        if (desgntn) {
+          matchQuery['designation._id'] = new monngoose.Types.ObjectId(desgntn);
         }
         if (empName) {
           matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } } ];
         }
 
-
         const result = await User.aggregate([
             {
                 $lookup: {
-                    from: "departments",
-                    localField: "department",
+                    from: "designations",
+                    localField: "designation",
                     foreignField: "_id",
-                    as: "department"
+                    as: "designation"
                 }
             },
-            { $unwind: '$department' },
+            { $unwind: '$designation' },
             { $match: matchQuery },
         ])
+        console.log(matchQuery);
 
         return res.status(200).send(result)
 
     } catch (e) {
         console.log(e);
+        return res.status(500).json({"message":"Something went wrong"});
+    }
+}
+
+module.exports.profileImgUpload = async(req, res)=> {
+    try{
+        const fileName = req.headers.fileName;
+        const readStream = fs.createReadStream(fileName);
+        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`);
+        writeStream.write();
+        writeStream.on("error", (err)=> {
+            res.status(400).json({"message": "File not uploded"})
+        })
+        writeStream.on("finish", ()=> {
+            res.status(200).json({"message": "file uploded successfully"})
+        })
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("something went wrong on single user get function")
     }
 }
