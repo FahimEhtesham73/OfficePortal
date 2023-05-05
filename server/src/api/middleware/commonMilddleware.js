@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const { verifyToken } = require("../services/userServices");
 
 async function Authorize (req, res, next){
-    console.log("Hit AUth");
         try{
             let headerToken = req.header("Authorization").split(" ")[1].trim();
             const isTokenValid = verifyToken(headerToken);

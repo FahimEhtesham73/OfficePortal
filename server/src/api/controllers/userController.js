@@ -1,4 +1,6 @@
 
+const fs = require("fs");
+const path = require("path")
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
 const Module = require("../models/moduleModel");
@@ -108,14 +110,26 @@ module.exports.getSingleUser = async (req, res) => {
 }
 
 module.exports.updateSingleUser = async (req, res) => {
-    console.log(req.body);
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        console.log(errors);
+        if (isErrorFounds(errors)) return res.status(400).json({ "message": errors })
+        const data = req.body;
         const id = req.params.id;
-        const updateUser = await User.findByIdAndUpdate({ _id: id }, req.body, { new: true }).populate("role", "alias")
-            .populate("designation", "name")
-            .populate("department", "name")
-        console.log(updateUser);
-        return res.status(200).json(updateUser)
+        console.log(req.user);
+        console.log(req.user._id === id.toString() );
+        if(req.user._id == id.toString() || req.user.role.alias === "Admin" ) {
+
+            const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data}}, { new: true }).populate("role", "alias")
+                .populate("designation", "name")
+                .populate("department", "name")
+            console.log(updateUser);
+            return res.status(200).json(updateUser)
+        }
+        
+        else{
+            return res.status(403).json({ "message": "Forbidden" }) 
+        }
 
     } catch (e) {
         console.log(e);
@@ -163,5 +177,24 @@ module.exports.searchUser = async (req, res) => {
     } catch (e) {
         console.log(e);
         return res.status(500).json({"message":"Something went wrong"});
+    }
+}
+
+module.exports.profileImgUpload = async(req, res)=> {
+    try{
+        const fileName = req.headers.fileName;
+        const readStream = fs.createReadStream(fileName);
+        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`);
+        writeStream.write();
+        writeStream.on("error", (err)=> {
+            res.status(400).json({"message": "File not uploded"})
+        })
+        writeStream.on("finish", ()=> {
+            res.status(200).json({"message": "file uploded successfully"})
+        })
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).json("something went wrong on single user get function")
     }
 }
