@@ -184,7 +184,7 @@ module.exports.profileImgUpload = async(req, res)=> {
     try{
         const fileName = req.headers.fileName;
         const readStream = fs.createReadStream(fileName);
-        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`);
+        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`, {flags: 'w'});
         writeStream.write();
         writeStream.on("error", (err)=> {
             res.status(400).json({"message": "File not uploded"})
