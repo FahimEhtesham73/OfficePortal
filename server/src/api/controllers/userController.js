@@ -108,10 +108,14 @@ module.exports.getSingleUser = async (req, res) => {
 }
 
 module.exports.updateSingleUser = async (req, res) => {
-    console.log(req.body);
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        console.log(errors);
+        if (isErrorFounds(errors)) return res.status(400).json({ "message": errors })
+        const data = req.body;
         const id = req.params.id;
-        const updateUser = await User.findByIdAndUpdate({ _id: id }, req.body, { new: true }).populate("role", "alias")
+        if(req.user._id.toString() !== id || req.user.role.name !== "admin" ) return res.status(403).json({ "message": "Forbidden" }) 
+        const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data}}, { new: true }).populate("role", "alias")
             .populate("designation", "name")
             .populate("department", "name")
         console.log(updateUser);

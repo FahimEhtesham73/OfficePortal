@@ -163,6 +163,7 @@ const Profile = () => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    // "Authorize:
                 },
             }
         );
@@ -277,6 +278,7 @@ const Profile = () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
+                
             },
         })
         const data = await res.json()
