@@ -3,6 +3,8 @@ const roleRouters = require("../routers/roleRouter");
 const departmentRouters = require("../routers/departmentRouter");
 const designationRouters = require("../routers/designationRouter");
 const attendenceRouters = require("../routers/attendenceRouter");
+const projectRouters = require("../routers/projectRouter");
+
 
 
 
@@ -14,10 +16,8 @@ module.exports = (app) => {
     app.use(`${v1}/roles`, roleRouters);
     app.use(`${v1}/depts`, departmentRouters);
     app.use(`${v1}/designations`, designationRouters);
-    app.use(`${v1}/attendence`, attendenceRouters)
-
-
-    
+    app.use(`${v1}/attendence`, attendenceRouters);
+    app.use(`${v1}/projects`, projectRouters);
 
 
 }

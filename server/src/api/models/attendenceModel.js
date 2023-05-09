@@ -10,6 +10,5 @@ const attendenceSchema = new Schema({
     updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
 },{timestamps: true})
 
-attendenceSchema.plugin(require('mongoose-autopopulate'));
 
 module.exports = model("Attendence", attendenceSchema);

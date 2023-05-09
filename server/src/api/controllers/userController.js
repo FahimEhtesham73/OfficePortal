@@ -182,16 +182,20 @@ module.exports.searchUser = async (req, res) => {
 
 module.exports.profileImgUpload = async(req, res)=> {
     try{
-        const fileName = req.headers.fileName;
-        const readStream = fs.createReadStream(fileName);
-        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`, {flags: 'w'});
-        writeStream.write();
+        const fileName = req.headers.filename;
+        let contentLength = parseInt(req.headers['content-length'])
+        if (isNaN(contentLength) || contentLength <= 0 ) {
+          return res.status(411).json({"message": "no file found"})
+        }        
+        const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`);
         writeStream.on("error", (err)=> {
             res.status(400).json({"message": "File not uploded"})
         })
         writeStream.on("finish", ()=> {
+            writeStream.close()
             res.status(200).json({"message": "file uploded successfully"})
         })
+        req.pipe(writeStream);
 
     }catch(e){
         console.log(e);
