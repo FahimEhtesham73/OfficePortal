@@ -3,9 +3,7 @@ const roleRouters = require("../routers/roleRouter");
 const departmentRouters = require("../routers/departmentRouter");
 const designationRouters = require("../routers/designationRouter");
 const attendenceRouters = require("../routers/attendenceRouter");
-
-
-
+const holidayRouters = require("../routers/holidayRouter")
 
 
 const v1 = "/api/v1"
@@ -15,10 +13,7 @@ module.exports = (app) => {
     app.use(`${v1}/depts`, departmentRouters);
     app.use(`${v1}/designations`, designationRouters);
     app.use(`${v1}/attendence`, attendenceRouters)
-
-
-    
-
+    app.use(`${v1}/holiday`, holidayRouters)
 
 }
 

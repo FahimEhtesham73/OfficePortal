@@ -54,7 +54,7 @@ const Attendancesheet = () => {
     const month = date.getMonth() + 1
     const [searchingDate, setSearchinDate] = useState('')
     const [attendanceData, setAttendanceData] = useState('')
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     // Finding total number of days in this current Month
     function daysInMonth(month, year) {
@@ -69,13 +69,13 @@ const Attendancesheet = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                  "Authorization": "Bearer " + jwt
+                "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify({ searchingDate }),
         })
 
         const data = await res.json()
-
+        console.log("attendence date", data);
         if (res.status === 200) {
             setAttendanceData(data)
             setLoading(false)
@@ -93,67 +93,79 @@ const Attendancesheet = () => {
 
     return (
         <>
-        {
-            loading ? <> <Loading /> </>: 
-        <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
-            </Box>
+            {
+                loading ? <> <Loading /> </> :
+                    <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
+                        </Box>
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
+                        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-                        <DatePicker label={'Select Date'} views={['month', 'year']} onChange={(e) => {
-                            console.log(e);
-                            if (e.$y === year && e.$M +1 === month) {
-                                setSearchinDate('')
-                            } else {
-                                setSearchinDate(e.$d)
-                            }
-                        }} />
-                    </DemoContainer>
-                </LocalizationProvider>
-                <Button variant="contained" sx={{ minWidth: 365, height: 55, margin: "10px 20px 40px 20px" }} onClick={getAttendanceSheet}>Search</Button>
-                <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <StyledTableCell sx={{ fontWeight: "bold" }}>Employee</StyledTableCell>
-                                {
-                                    daysInMonth(month, year).map(val => {
-                                        return (
-                                            <StyledTableCell sx={{ fontWeight: "bold" }}>{val}</StyledTableCell>
-                                        )
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+                                    <DatePicker label={'Select Date'} views={['month', 'year']} onChange={(e) => {
+                                        console.log(e);
+                                        if (e.$y === year && e.$M + 1 === month) {
+                                            setSearchinDate('')
+                                        } else {
+                                            setSearchinDate(e.$d)
+                                        }
+                                    }} />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <Button variant="contained" sx={{ minWidth: 365, height: 55, margin: "10px 20px 40px 20px" }} onClick={getAttendanceSheet}>Search</Button>
+                            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <StyledTableCell sx={{ fontWeight: "bold" }}>Employee</StyledTableCell>
+                                            {
+                                                daysInMonth(month, year).map(val => {
+                                                    return (
+                                                        <StyledTableCell sx={{ fontWeight: "bold" }}>{val}</StyledTableCell>
+                                                    )
 
-                                    })
-                                }
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {attendanceData && attendanceData.map((row, ind) => (
-                                <StyledTableRow
-                                    key={row.user}
-                                >
-                                    <StyledTableCell component="th" scope="row">
-                                        {row.user}
-                                    </StyledTableCell>
-                                    {
-                                        row?.attendance.map((val) => {
-                                            return (
+                                                })
+                                            }
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {attendanceData && attendanceData.map((row, ind) => (
+                                            <StyledTableRow
+                                                key={row.user}
+                                            >
+                                                <StyledTableCell component="th" scope="row">
+                                                    {row.user}
+                                                </StyledTableCell>
+                                                {
+                                                    row?.attendance.map((val) => {
+                                                        return (
 
-                                                <StyledTableCell>{val.present === true ? <CheckIcon style={{ color: 'green' }} /> : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>
-                                            )
-                                        })
-                                    }
-                                </StyledTableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-        </Box>
-        }
+                                                            <StyledTableCell>{val.present === true ? (
+                                                                <>
+                                                                    <CheckIcon style={{ color: 'green' }} />
+                                                                    {
+                                                                       val?.aId && val.aId.map(aStatus=>{
+                                                                            return(
+                                                                                <p>{aStatus}</p>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </>
+                                                            )
+                                                                : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>
+                                                        )
+                                                    })
+                                                }
+                                            </StyledTableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    </Box>
+            }
         </>
 
     )

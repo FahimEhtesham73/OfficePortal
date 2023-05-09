@@ -8,7 +8,7 @@ router.route("/create").post(Authorize, createAttendence) //punch in
 router.route("/getall").post(Authorize,  getAttendences) //get all attendeces
 router.route("/update").put(Authorize, updateAttendenceValidation, updateAttendece) //update a attendece
 router.route("/today").post(Authorize, getTodayAttendence)
-router.route("/alluseratendance").post(Authorize,getAllUserAttendenceSheet)
+router.route("/alluseratendance").post(getAllUserAttendenceSheet)
 
 module.exports = router;
 // getAttendenceValidation,

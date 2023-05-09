@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -28,6 +28,8 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -84,6 +86,7 @@ function BootstrapDialogTitle(props) {
     );
 }
 
+
 BootstrapDialogTitle.propTypes = {
     children: PropTypes.node,
     onClose: PropTypes.func.isRequired,
@@ -101,8 +104,26 @@ const rows = [
 ];
 
 const Holidays = () => {
+    const jwt = Cookies.get('_token')
+
+    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+
+    const [holidayInput, setHolidayInput] = useState({
+        holidayName: "",
+        holidayDate: ""
+    })
+    const [holidayInfo, setHolidayInfo] = useState([])
+    const [singleHolidayInfo,setSingleHolidayInfo] = useState({
+        holidayName: "",
+        holidayDate: ""
+    })
+    const [selectedDate, setSelectedDate] = useState(null)
+
+    const [toggle, setToggle] = useState('')
+    const [eidtId, setEditId] = useState('')
+
 
     // For Action icon open
     const handleClick = (event) => {
@@ -118,6 +139,12 @@ const Holidays = () => {
     };
     // For Modal Close
     const handleClickClose = () => {
+        setHolidayInput({
+            holidayName: "",
+            holidayDate: ""
+        })
+        setSelectedDate(null)
+        setToggle('')
         setOpen(false);
     };
     const settings = ['Edit', 'Delete'];
@@ -138,17 +165,159 @@ const Holidays = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
         >
-            {settings.map((setting) => (
-                <MenuItem key={setting} onClick={()=>{handleClickOpen()
-                    handleClose()
-                }}>
-                    <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-            ))}
+            <MenuItem onClick={() => {
+                setToggle('Edit')
+                handleClickOpen()
+                handleClose()
+                getSingleHoliday()
+            }}>
+                <Typography textAlign="center">Edit</Typography>
+            </MenuItem>
+            <MenuItem onClick={() => {
+                setToggle('Delete')
+                handleClickOpen()
+                handleClose()
+                
+            }}>
+                <Typography textAlign="center">Delete</Typography>
+            </MenuItem>
         </Menu>
     )
+    const getSingleHoliday = async () => {
+        setLoading(true)
+        const res = await fetch(`${process.env.REACT_APP_URL}/holiday/getsingleholiday/${eidtId}`, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+        })
+        const data = await res.json()
+        console.log("Single Holiday", data);
+        if (res.status === 200) {
+            setHolidayInput({
+                holidayName:data[0].holidayName,
+                holidayDate:data[0].date
+            })
+            // setSelectedDate(data[0].date)
+            setLoading(false)
+        } else {
+            setLoading(false)
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+
+    }
+
+    const updateHoliday = async () =>{
+        setLoading(true)
+        const res = await fetch(`${process.env.REACT_APP_URL}/holiday/updatesingleholiday/${eidtId}`, {
+            method: "put",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            body:JSON.stringify(holidayInput)
+        })
+        const data = await res.json()
+        console.log("Single Holiday", data);
+        if (res.status === 200) {
+            toast.success('Created Successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            setHolidayInput({
+                holidayName: "",
+                holidayDate: ""
+            })
+            setSelectedDate(null)
+            handleClickClose()
+            setLoading(false)
+            getAllHoliday()
+        } else {
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            handleClickClose()
+            setLoading(false)
+        }
+    }
+    // Check if there is any null or empty string in create employee field 
+    function isEmptyObject(o) {
+        return Object.keys(o).some(function (x) {
+            return o[x] === '' || o[x] === null;
+        });
+    }
+
+    const createHoliday = async () => {
+        if (isEmptyObject(holidayInput)) return toast.warning('Fill All the fields', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        setLoading(true)
+
+        const res = await fetch(`${process.env.REACT_APP_URL}/holiday/createholiday`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            body: JSON.stringify(holidayInput),
+            credentials: 'include',
+            // withCredentials: true
+        })
+
+        const data = await res.json()
+        if (res.status === 201) {
+            toast.success('Created Successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            setHolidayInput({
+                holidayName: "",
+                holidayDate: ""
+            })
+            setSelectedDate(null)
+            handleClickClose()
+            setLoading(false)
+            getAllHoliday()
+        } else {
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            handleClickClose()
+            setLoading(false)
+        }
+    }
+
+    const formattedDate = (param) => {
+        const date = new Date(param);
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const convertedDate = date.toLocaleDateString('en-US', options);
+        return convertedDate
+    }
+
+    const formattedDay = (param) => {
+        const date = new Date(param);
+
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        return dayOfWeek
+    }
+
+    const getAllHoliday = async () => {
+        setLoading(true)
+        const res = await fetch(`${process.env.REACT_APP_URL}/holiday/getallholiday`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+        })
+        const data = await res.json()
+        // console.log("All User", data);
+        if (res.status === 200) {
+            setHolidayInfo(data)
+            setLoading(false)
+        } else {
+            setLoading(false)
+            toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }
+
+    }
+
+    useEffect(() => {
+        getAllHoliday()
+    }, [])
+
     return (
-        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
+        <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Holidays 2023</Typography>
                 <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
@@ -167,25 +336,28 @@ const Holidays = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, ind) => (
+                        {holidayInfo.map((row, ind) => (
                             <StyledTableRow
                                 key={row.name}
                             >
                                 <StyledTableCell component="th" scope="row">
-                                    {row.No}
+                                    {ind + 1}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.title}
+                                    {row.holidayName}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.holiday}
+                                    {formattedDate(row.date)}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.day}
+                                    {formattedDay(row.date)}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     <IconButton aria-label="settings" >
-                                        <MoreVertIcon onClick={handleClick} />
+                                        <MoreVertIcon onClick={(e) => {
+                                            handleClick(e)
+                                            setEditId(row._id)
+                                        }} />
                                     </IconButton>
                                     {menu}
                                 </StyledTableCell>
@@ -202,21 +374,33 @@ const Holidays = () => {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
-                    Add Holiday
+                    {toggle === 'Edit' ? 'Update Holiday' : 'Add Holiday'}
                 </BootstrapDialogTitle>
                 <DialogContent >
-                    <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
+                    <TextField id="outlined-search" label="Holiday Name *" value={holidayInput.holidayName} type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onChange={(e) => { setHolidayInput({ ...holidayInput, holidayName: e.target.value }) }} />
                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                         <DemoContainer components={['DatePicker']} >
-                            <DatePicker label="Add Date *" sx={{ width: 365, maxHeight: 345,}}/>
+                            <DatePicker label="Add Date *" value={selectedDate} sx={{ width: 365, maxHeight: 345, }} onChange={(e) => {
+                                // console.log(e);
+                                setHolidayInput({ ...holidayInput, holidayDate: e.$d })
+                                setSelectedDate(e)
+                            }} />
                         </DemoContainer>
                     </LocalizationProvider>
                 </DialogContent>
-                <DialogActions sx={{display:"flex",justifyContent:"center"}}>
-                    <Button variant="contained" sx={{borderRadius:"50px",width:150}}autoFocus onClick={handleClickClose}>
-                        Submit
-                    </Button>
-                </DialogActions>
+                {
+                    toggle === 'Edit' ?
+                        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={updateHoliday}>
+                                Update
+                            </Button>
+                        </DialogActions> :
+                        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={createHoliday}>
+                                Submit
+                            </Button>
+                        </DialogActions>
+                }
             </BootstrapDialog>
         </Box>
     )

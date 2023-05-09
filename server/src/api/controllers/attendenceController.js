@@ -176,20 +176,20 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
     if (searchingDate === '') {
       const todayYear = new Date().getFullYear()
       const todayMonth = new Date().getMonth() + 1
-      const todayDate = new Date().getDay()
+      const todayDate = new Date().getDate() 
       firstDate = `${todayYear}-${todayMonth}-01`
-      lastDate = `${todayYear}-${todayMonth}-${todayDate}`
+      lastDate = `${todayYear}-${todayMonth}-${todayDate + 1}`
       range = [1, todayDate + 1]
     } else {
       const month = new Date(searchingDate).getMonth() + 1
       const year = new Date(searchingDate).getFullYear()
       const daysInMonth = new Date(year, month, 0).getDate()
       firstDate = `${year}-${month}-01`
-      lastDate = `${year}-${month}-${daysInMonth}`
+      lastDate = `${year}-${month}-${daysInMonth + 1}`
       range = [1, daysInMonth + 1]
   
     }
-  
+  // console.log(firstDate,lastDate);
     const result = await Attendence.aggregate([
       {
         $match: {
@@ -198,7 +198,7 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
             $lte: new Date(lastDate)
           },
         }
-      },
+      },     
       {
         $lookup: {
           from: "users",
@@ -209,28 +209,33 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
       },
       {
         $unwind: "$user"
-      },
-  
+      },  
       {
         $group: {
           _id: {
             userId: "$userId",
-            day: { $dayOfMonth: "$checkInTime" }
+            day: { $dayOfMonth: "$checkInTime" },
+            aID:"$status"
           },
-          count: { $sum: 1 }
+          count: { $sum: 1 },
         }
       },
       {
         $group: {
           _id: "$_id.userId",
+          // {
+          //   userID:"$_id.userId",
+          //   status:"$_id.status"
+          // },
           attendance: {
             $push: {
               day: "$_id.day",
               present: {
                 $cond: [{ $gte: ["$count", 1] }, true, false]
-              }
+              },
+              aId:"$_id.aID"
             }
-          },
+          }
         }
       },
       {
@@ -246,7 +251,7 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
       },
       {
         $project: {
-          _id: 0,
+          _id:0,
           user: '$user.firstName',
           attendance: {
             $map: {
@@ -259,6 +264,13 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
                     { $in: ["$$day", "$attendance.day"] },
                     { $arrayElemAt: ["$attendance.present", { $indexOfArray: ["$attendance.day", "$$day"] }] },
                     false
+                  ]
+                },
+                aId:{
+                  $cond: [
+                    { $in: ["$$day", "$attendance.day"] },
+                    { $arrayElemAt: ["$attendance.aId", { $indexOfArray: ["$attendance.day", "$$day"] }] },
+                    []
                   ]
                 }
               }
