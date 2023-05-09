@@ -24,6 +24,7 @@ import LeaveStatusLead from "./Component/Leave/LeaveStatusLead";
 import Teamlead from "./Component/TeamLead/Teamlead";
 import AdminCombinedProtected from "./Component/Protected Router/AdminCombinedProtected";
 import AuthenticateUser from "./Component/Protected Router/AuthenticateUser";
+import Project from "./Component/Project/Project";
 
 const App = () => {
   return (
@@ -39,6 +40,8 @@ const App = () => {
         <Route path='/leaveemployee' element={<LeaveEmployee/>}/>
         <Route path='/leaveadmin' element={<AdminCombinedProtected><LeaveStatusLead/></AdminCombinedProtected> }/>
         <Route path='/teamlead' element={<Teamlead/>}/>
+        <Route path='/projects' element={<AuthenticateUser><Project /></AuthenticateUser>}/>
+
         {/* All Employees */}
       </Routes>
       <ToastContainer />

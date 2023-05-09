@@ -28,7 +28,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import LoginIcon from '@mui/icons-material/Login'
+import LoginIcon from '@mui/icons-material/Login';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 // Importing Component
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
@@ -305,6 +306,27 @@ const Topnavbar = (props) => {
                       <EngineeringIcon />
                     </ListItemIcon>
                     <ListItemText primary={'Team Leads'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('projects') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <AccountTreeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Projects'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
               </>
