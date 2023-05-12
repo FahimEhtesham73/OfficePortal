@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     alternatePhone: String,
     bloodGroup: String,
     joiningDate: Date,
-    experinces: [{company: String, location: String, title:String, startYear: Date, endYear: Date }],
+    experinces: [{company: String, location: String, title:String, startYear: Date, endYear: Date, contribution: String }],
     // expertises:[{skillName: String, skillType: String, level: Boolean}],
     goals: [{goalName: String, goalType: String}],
     skills: [{title: String, tools:String}],

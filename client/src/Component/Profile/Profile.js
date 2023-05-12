@@ -14,18 +14,71 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from "react-toastify";
-import { styled, MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import { red } from "@mui/material/colors";
 import moment from "moment"
 import Cookies from 'js-cookie';
 import {makeStyles} from "@material-ui/core"
-
+import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { styled } from '@mui/system';
 
 const useStyles = makeStyles(theme => ({
     mainPofileStyle : {
         color: "red",
     }
 }))
+
+const blue = {
+    100: '#DAECFF',
+    200: '#b6daff',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E5',
+    900: '#003A75',
+  };
+
+  const grey = {
+    50: '#f6f8fa',
+    100: '#eaeef2',
+    200: '#d0d7de',
+    300: '#afb8c1',
+    400: '#8c959f',
+    500: '#6e7781',
+    600: '#57606a',
+    700: '#424a53',
+    800: '#32383f',
+    900: '#24292f',
+  };
+
+  const StyledTextarea = styled(TextareaAutosize)(
+    ({ theme }) => `
+    width: 320px;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 12px 12px 0 12px;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+  
+    &:hover {
+      border-color: ${blue[400]};
+    }
+  
+    &:focus {
+      border-color: ${blue[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+    }
+  
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+  );
 
 const Profile = () => {
   const jwt = Cookies.get('_token')
@@ -97,11 +150,11 @@ const Profile = () => {
         empId: userData?.empId,
         birthDate: userData?.birthDate,
         joiningDate: userData?.joiningDate,
+        role: userData?.role?.alias
 
 
     })
 
-    console.log("dayjs", dayjs(mainInfo?.joiningDate));
 
 
     let name;
@@ -163,7 +216,8 @@ const Profile = () => {
             company: "",
             startYear: "",
             endYear: "",
-            location: ""
+            location: "",
+            contribution: ""
         });
     };
     const getSingleUser = async () => {
@@ -179,7 +233,7 @@ const Profile = () => {
             }
         );
         const data = await res.json();
-        // console.log(data);
+        console.log(data);
         const tempInfo = data[0];
         if (res.status === 200) {
             setUserData(data[0]);
@@ -473,6 +527,9 @@ const Profile = () => {
                                                             </>}
 
                                                         </li>
+                                                        {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
+                                (
+
                                                         <li>
                                                             {!cardEdit.main ? <div>
                                                             {/* <div class="title">Birthday:</div> */}
@@ -495,6 +552,7 @@ const Profile = () => {
                                                             </>}
                                                             
                                                         </li>
+                                )}
                                                     </ul>
                                                 </div>
                                             </div>
@@ -605,6 +663,8 @@ const Profile = () => {
                                                 )}
                                             </h3>
                                             <ul class="personal-info">
+                                                {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) && (
+
                                                 <li>
                                                     <div class="title">Phone</div>
                                                     {!cardEdit.intro ? (
@@ -620,6 +680,7 @@ const Profile = () => {
                                                         />
                                                     )}
                                                 </li>
+                                                )}
                                                 <li>
                                                     <div class="title">Nationality</div>
                                                     {!cardEdit.intro ? (
@@ -650,6 +711,10 @@ const Profile = () => {
                                                         />
                                                     )}
                                                 </li>
+                                                    {
+                                                        (userInfoData?.role?.alias === "Admin" || userInfoData?._id.toString() === id)
+                                                        && (
+
                                                 <li>
                                                     <div class="title">Marital status</div>
                                                     {!cardEdit.intro ? (
@@ -665,6 +730,8 @@ const Profile = () => {
                                                         />
                                                     )}
                                                 </li>
+                                                        )
+                                                    }
                                                 <li>
                                                     <div class="title">Blood Group</div>
                                                     {!cardEdit.intro ? (
@@ -687,16 +754,12 @@ const Profile = () => {
                             </div>
                             {/* skills And Goal Setting */}
                             <div class="row">
-                                <div class="col-md-6 d-flex">
+                                <div class={`col-md-${(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) ? "6": "12" } d-flex`}>
                                     <div class="card profile-box flex-fill">
                                         <div class="card-body">
                                             <h3 class="card-title">
                                                 skills
-                                                {/* <Tooltip title='Save'>
-                                                        <SendIcon className='edit-icon' onClick={() => {
-                                                            updateUser('skills')
-                                                        }} />
-                                                    </Tooltip> */}
+                                               
                                                 {userInfoData?._id.toString() === id ||
                                                     userInfoData?.role.alias === "Admin" ? (
                                                     <>
@@ -822,6 +885,8 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
+                                (
                                 <div class="col-md-6 d-flex">
                                     <div class="card profile-box flex-fill">
                                         <div class="card-body">
@@ -953,6 +1018,8 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                )}
                             </div>
                             {/* Education And Experience */}
                             <div class="row">
@@ -1015,7 +1082,15 @@ const Profile = () => {
                                                                     <div class="experience-content">
                                                                         {cardEdit.eduInfo && (
                                                                             <Tooltip title='delete'>
-                                                                                <DeleteIcon className="edit-icon" />
+                                                                                <DeleteIcon className="edit-icon"
+                                                                                onClick={() =>
+                                                                                    setEducations(
+                                                                                        educations.filter(
+                                                                                            (val, indx) => indx !== ind
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                                />
                                                                             </Tooltip>
                                                                         )}
                                                                         <div class="timeline-content">
@@ -1024,7 +1099,7 @@ const Profile = () => {
                                                                             </a>
                                                                             <div>{val.degree}</div>
                                                                             <span class="time">
-                                                                                {val.startYear}-{val.endYear}
+                                                                                {val?.startYear && new Date(val.startYear).toLocaleDateString()}  {val?.endYear && `- ${new Date(val.endYear).toLocaleDateString()}`}
                                                                             </span>
                                                                         </div>
                                                                     </div>
@@ -1039,11 +1114,25 @@ const Profile = () => {
                                                         {/* <input type="text" placeholder='Institution' name="institution" value={educationField.institution} onChange={(e) => {
                                                             handleFields(e, 'eduInfo')
                                                         }} /> */}
-
+<TextField
+                                                            id="outlined-search"
+                                                            label="Degree / Certifiacation*"
+                                                            name="degree"
+                                                            value={educationField.degree}
+                                                            type="text"
+                                                            sx={{
+                                                                width: .9,
+                                                                margin: "10px 20px 0px 0px",
+                                                            }}
+                                                            onChange={(e) => {
+                                                                handleFields(e, "eduInfo");
+                                                            }}
+                                                        />
+                                                        <br />
                                                         <TextField
 
                                                             id="outlined-search"
-                                                            label="Institution"
+                                                            label="Institution*"
                                                             name="institution"
                                                             value={educationField.institution}
                                                             type="text"
@@ -1097,7 +1186,7 @@ const Profile = () => {
                                                                         },
                                                                     }}
                                                                     // slotProps={{ textField: { size: 'small' } }}
-                                                                    label="End Year"
+                                                                    label="End Year "
                                                                     value={dayjs(educationField.endYear)}
                                                                     onChange={(e) =>
                                                                         setEducationField({
@@ -1111,21 +1200,7 @@ const Profile = () => {
                                                             </DemoContainer>
                                                         </LocalizationProvider>
                                                         {/* <br /> */}
-                                                        <TextField
-                                                            id="outlined-search"
-                                                            label="Degree"
-                                                            name="degree"
-                                                            value={educationField.degree}
-                                                            type="text"
-                                                            sx={{
-                                                                width: .9,
-                                                                margin: "10px 20px 0px 0px",
-                                                            }}
-                                                            onChange={(e) => {
-                                                                handleFields(e, "eduInfo");
-                                                            }}
-                                                        />
-                                                        <br />
+                                                        
                                                         <TextField
                                                             id="outlined-search"
                                                             label="Location"
@@ -1146,10 +1221,8 @@ const Profile = () => {
 
                                                         <Button
                                                             disabled={(educationField.institution &&
-                                                                educationField.degree &&
-                                                                educationField.startYear &&
-                                                                educationField.endYear &&
-                                                                educationField.location) ? false : true}
+                                                                educationField.degree 
+                                                            ) ? false : true}
                                                             sx={{
                                                                 // width: .5
                                                             }}
@@ -1170,7 +1243,7 @@ const Profile = () => {
                                     <div class="card profile-box flex-fill">
                                         <div class="card-body">
                                             <h3 class="card-title">
-                                                Experience{" "}
+                                                Experiences{" "}
                                                 {userInfoData?._id.toString() === id ||
                                                     userInfoData?.role.alias === "Admin" ? (
                                                     <>
@@ -1229,17 +1302,34 @@ const Profile = () => {
                                                                     <div class="experience-content">
                                                                         {cardEdit.experience && (
                                                                             <Tooltip title="delete">
-                                                                                <DeleteIcon className="edit-icon" />
+                                                                                <DeleteIcon className="edit-icon"
+                                                                                onClick={() =>
+                                                                                    setExperiences(
+                                                                                        experinces.filter(
+                                                                                            (val, indx) => indx !== ind
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                                 />
                                                                             </Tooltip>
                                                                         )}
                                                                         <div class="timeline-content">
                                                                             <a href="#/" class="name">
-                                                                                {val?.title} at {val?.company}.
+                                                                                {val?.title} {val?.contribution? "on": "at"} {val?.company}.
                                                                             </a>
-                                                                            <span class="time">
-                                                                                {val?.startYear} -{" "}
-                                                                                {val.endYear ? val.endYear : "Ongoing"}
+                                                                            <br />
+                                                                            {val?.contribution && (
+
+                                                                            <span>
+                                                                                {val.contribution}
                                                                             </span>
+                                                                            )}
+                                                                            <span class="time">
+                                                                                {val?.startYear && new Date(val.startYear).toLocaleDateString()} -{" "}
+                                                                                {val.endYear ? new Date(val.endYear).toLocaleDateString() : "Ongoing"}
+                                                                            </span>
+                                                                            {/* <br /> */}
+                                                                            <span>{val?.location}</span>
                                                                         </div>
                                                                     </div>
                                                                 </li>
@@ -1256,7 +1346,7 @@ const Profile = () => {
 
                                                         <TextField
                                                             id="outlined-search"
-                                                            label="Company"
+                                                            label="Company / Project*"
                                                             name="company"
                                                             value={experienceField.company}
                                                             type="text"
@@ -1272,7 +1362,7 @@ const Profile = () => {
                                                         <br />
                                                         <TextField
                                                             id="outlined-search"
-                                                            label="Designation"
+                                                            label="Designation*"
                                                             name="title"
                                                             value={experienceField.title}
                                                             type="text"
@@ -1285,9 +1375,26 @@ const Profile = () => {
                                                             }}
                                                         />
                                                         <br />
+                                                        <StyledTextarea
+                                                            id="outlined-search"
+                                                            label="Major Role or Cntribution "
+                                                            name="contribution"
+                                                            type="textarea"
+                                                            aria-label="minimum height"
+                                                            minRows={2}
+                                                            placeholder="Major Role / Contribution <If it's a project>"
+                                                            sx={{
+                                                                width: .9,
+                                                                margin: "10px 20px 0px 0px",
+                                                            }}
+                                                            onChange={(e) => {
+                                                                handleFields(e, "experiences");
+                                                            }}
+                                                        />
+                                                        <br />
                                                         <TextField
                                                             id="outlined-search"
-                                                            label="Location"
+                                                            label="Work Location*"
                                                             name="location"
                                                             value={experienceField.location}
                                                             type="text"
@@ -1354,7 +1461,7 @@ const Profile = () => {
 
                                                         <Button
                                                             variant="contained"
-                                                            disabled={(experienceField.company && experienceField.endYear && experienceField.startYear && experienceField.location && experienceField.title) ? false : true}
+                                                            disabled={(experienceField.company  && experienceField.startYear && experienceField.location && experienceField.title) ? false : true}
                                                             onClick={() => {
                                                                 addExperineces();
                                                             }}
@@ -1369,6 +1476,9 @@ const Profile = () => {
                                 </div>
                             </div>
                             {/* Leave Setting */}
+                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
+                                (
+
                             <div class="row">
                                 <div class="col-md-12 d-flex">
                                     <div class="card profile-box flex-fill">
@@ -1442,6 +1552,7 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
+                                )}
                         </div>
                     </div>
                 </div>

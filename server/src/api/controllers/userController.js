@@ -87,7 +87,17 @@ module.exports.deleteSingleUser = async (req, res) => {
 
 module.exports.allUser = async (req, res) => {
     try {
-        const users = await User.find().populate("designation", "name")
+        const users = await User.aggregate([
+
+            {
+                $project: {
+                  "password": 0,
+
+                }
+            },
+
+        
+        ])
         return res.status(200).json(users)
     } catch (e) {
         console.log(e);
@@ -102,6 +112,7 @@ module.exports.getSingleUser = async (req, res) => {
         const users = await User.find({ _id: id }).populate("role", "alias")
             .populate("designation", "name")
             .populate("department", "name")
+            .select({password: 0, updatedAt: 0, createdAt: 0, updatedBy: 0})
         return res.status(200).json(users)
     } catch (e) {
         console.log(e);
@@ -202,3 +213,4 @@ module.exports.profileImgUpload = async(req, res)=> {
         return res.status(500).json("something went wrong on single user get function")
     }
 }
+
