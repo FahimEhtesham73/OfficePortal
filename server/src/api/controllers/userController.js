@@ -1,5 +1,6 @@
 
 const fs = require("fs");
+const {readFile} = require("fs/promises")
 const path = require("path")
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
@@ -112,7 +113,12 @@ module.exports.getSingleUser = async (req, res) => {
         const users = await User.find({ _id: id }).populate("role", "alias")
             .populate("designation", "name")
             .populate("department", "name")
-            .select({password: 0, updatedAt: 0, createdAt: 0, updatedBy: 0})
+            .select({password: 0, updatedAt: 0, createdAt: 0, updatedBy: 0}).lean()
+
+            // console.log(users[0].imagePath);
+        // const imageBase64 = await readFile(users[0].imagePath, {encoding: "base64"});
+        // console.log(imageBase64);
+        // users[0].imageBase64 = imageBase64
         return res.status(200).json(users)
     } catch (e) {
         console.log(e);
@@ -214,3 +220,81 @@ module.exports.profileImgUpload = async(req, res)=> {
     }
 }
 
+module.exports.fileUpload = async (req, res) => {
+    try{
+        const type = req.body.type;
+       console.log(type);
+        const user = await User.findOne({_id: req.body.userId}).lean();
+        if(!user) return res.status(400).json({"message": "user not found"});
+
+        const data = {};
+        console.log(req.body);
+        if(type == "img"){
+            data.imagePath = req.userPath;
+        }else if(type === "cv"){
+            data.cvPath = req.userPath;
+        }
+        console.log("data", data);
+
+        const result = await User.findByIdAndUpdate({_id: req.body.userId}, {$set: {
+            ...data
+        }})
+        return res.status(200).json({"message": "file uploaded successfully"});
+        
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({"message": "Something went wrong"});
+    }
+}
+
+module.exports.viewCv = async (req, res) => {
+    try{
+        console.log(req.body);
+        const userId = req.body.userId;
+        const user = await User.findById({_id: userId}).lean();
+        if(! user?.cvPath) return res.status(400).json({"message": "data not found"});
+        console.log(user.cvPath);
+        let data = await readFile(user?.cvPath, {encoding: "base64"})
+        return res.status(200).json({"data": data})
+        
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({"message": "Something went wrong"});
+    }
+}
+
+module.exports.viewImage =  async(req, res) => {
+    const { filename } = req.params;
+    const user = await User.findOne({_id: req.query.id}).lean();
+    const filePath = user.imagePath;
+
+    console.log(filePath);
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Set the appropriate content type based on the file extension
+    //   const contentType = getContentType(filename);
+      res.set('Content-Type', "image/png");
+  
+      // Read the file and send it as a response
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      res.status(404).json({ message: 'Image not found' });
+    }
+  };
+  
+  // Utility function to determine the content type based on file extension
+  function getContentType(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+  
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      default:
+        return 'application/octet-stream';
+    }
+  }

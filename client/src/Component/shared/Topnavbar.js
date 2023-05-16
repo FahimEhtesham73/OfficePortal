@@ -35,6 +35,9 @@ import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
 import PunchClockIcon from '@mui/icons-material/PunchClock';
 import userRole from '../Hook/userHook';
+import { profileImg } from '../functions/commonFunc';
+import userInfo from '../Hook/useUseInfo';
+import { getSingleUser } from '../../api/userApi';
 
 
 
@@ -75,12 +78,14 @@ const Topnavbar = (props) => {
   const navigate = useNavigate()
   const theme = useTheme();
   const [open, setOpen] = useState(true);
-
+  const profileInfo = userInfo();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLeave, setOpenLeave] = useState(false)
-  const [width, setWidth] = useState(window.innerWidth)
+  const [width, setWidth] = useState(window.innerWidth);
+  const [profileImagePath, setProfileImagePath] = useState();
 
-  const token = Cookies.get('_info')
+  const token = Cookies.get('_info');
+  const jwtToken = Cookies.get("_token") 
   // console.log(token);
   let decode = ''
   if (token) {
@@ -99,6 +104,7 @@ const Topnavbar = (props) => {
   const handleClick = () => {
     setOpenLeave(!openLeave);
   };
+  console.log("profile", profileInfo);
 
   // For Profile Settings
   const handleOpenUserMenu = (event) => {
@@ -112,6 +118,21 @@ const Topnavbar = (props) => {
   const saveMenuData = (text) => {
     navigate(`/${text}`)
   }
+
+  const loginUser = () =>{
+
+    getSingleUser(profileInfo?._id, jwtToken).then(d=> {
+      console.log("d",d);
+      setProfileImagePath(d?.data[0]?.imagePath)
+    }).catch(e=> {
+      console.log(e);
+    })
+
+  }
+
+  useEffect(()=> {
+    loginUser()
+  })
 
   const drawer = (
     <div>
@@ -375,7 +396,7 @@ const Topnavbar = (props) => {
                 <Typography variant="p" component="div" sx={{ marginRight: "15px" }}>{decode?.firstName}</Typography>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    <Avatar imgProps={{crossOrigin: "false"}} alt="Remy Sharp"  src={profileImg(profileImagePath)} />
                   </IconButton>
                 </Tooltip>
                 <Menu

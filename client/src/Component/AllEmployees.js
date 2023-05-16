@@ -34,6 +34,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import userRole from './Hook/userHook';
 import { Link, useNavigate } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
+import { profileImg } from './functions/commonFunc';
 
 
 // Modal Styling
@@ -172,7 +173,6 @@ const AllEmployees = () => {
     }
 
   }
-
   const getAllRoles = async () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/roles/all`, {
       method: "GET",
@@ -449,7 +449,7 @@ const AllEmployees = () => {
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                             <CardContent>
-                              <Avatar alt='Employee' src={val.imagePath} sx={{ width: 120, height: 120 }} />
+                              <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
                             </CardContent>
                             <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.firstName} {val.lastName}</Typography>
                             <Typography sx={{ fontSize: '13px' }}>{val?.designation?.name}</Typography>

@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import userInfo from "../Hook/useUseInfo.js";
 import dayjs from "dayjs";
 import imageSrc from "../../images/saimom.jpg";
-import { Button, MenuItem, Select, TextField, Tooltip } from "@mui/material";
+import { Avatar, Button, DialogContent, FormControl, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -18,10 +18,58 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { red } from "@mui/material/colors";
 import moment from "moment"
 import Cookies from 'js-cookie';
-import {makeStyles} from "@material-ui/core"
+import {  makeStyles} from "@material-ui/core"
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
+import AddIcon from '@mui/icons-material/Add';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import CloseIcon from '@mui/icons-material/Close';
+import DialogActions from '@mui/material/DialogActions';
+import UploadIcon from '@mui/icons-material/Upload';
+import Input from '@mui/material/Input';
+import { fileUpload, getCvApi } from "../../api/userApi.js";
+import { profileImg } from "../functions/commonFunc.js";
 
+
+
+// Modal Styling
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(3)
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+  
+    },
+  }));
+  
+  
+  function BootstrapDialogTitle(props) {
+    const { children, onClose, ...other } = props;
+  
+    return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
+  }
+  
+  
 const useStyles = makeStyles(theme => ({
     mainPofileStyle : {
         color: "red",
@@ -84,6 +132,8 @@ const Profile = () => {
   const jwt = Cookies.get('_token')
   const styles = useStyles();
     const { id } = useParams();
+    const [file, setFile] = useState();
+    const [imageFile, setImageFile] = useState();
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState({});
     const [cardEdit, setCardEdit] = useState({
@@ -96,7 +146,17 @@ const Profile = () => {
         experience: false,
         leaveSetting: false,
     });
+    const [openModal, setOpenModal] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+  // For Modal open
+  const handleModalOpen = () => {
+    setOpenModal(true);
+  };
 
+  // For Modal Close
+  const handleModalClose = () => {
+    setOpenModal(false);
+  };
     const userInfoData = userInfo();
 
     // const [userMain, setUserMain] = useState({})
@@ -182,7 +242,7 @@ const Profile = () => {
             setMainInfo({ ...mainInfo, [name]: value })
         }
     };
-    console.log("main", mainInfo);
+    // console.log("main", mainInfo);
 
     const addskills = () => {
         setSkills([...skills, skillFiled]);
@@ -233,8 +293,8 @@ const Profile = () => {
             }
         );
         const data = await res.json();
-        console.log(data);
         const tempInfo = data[0];
+        // console.log("tempinfo", tempInfo);
         if (res.status === 200) {
             setUserData(data[0]);
             setIntro({
@@ -269,6 +329,12 @@ const Profile = () => {
         }
     };
 
+    const getImagePath = (imagePath) => {
+        const pathArray = imagePath.split("/");
+        const lastTwo = `${pathArray[pathArray.length-2]}/${pathArray[pathArray.length-1]}`
+        console.log("last two", lastTwo);
+        return lastTwo;
+    }
     const updateUser = async (card) => {
         console.log("Card Name", card);
 
@@ -294,7 +360,7 @@ const Profile = () => {
         if(card === "main"){
             sentData = {...mainInfo}
         }
-        console.log("data", sentData);
+        // console.log("data", sentData);
 // return;
         const res = await fetch(
             `${process.env.REACT_APP_URL}/users/updateUser/${id}`,
@@ -308,7 +374,7 @@ const Profile = () => {
             }
         );
         const data = await res.json();
-        console.log("user Data", data);
+        // console.log("user Data", data);
         if (res.status === 200) {
             setUserData(data);
             setMainInfo({
@@ -348,7 +414,6 @@ const Profile = () => {
             },
         })
         const data = await res.json()
-        console.log("Designations", data);
         if (res.status === 200) {
             setDesignation(data.roles)
         } else {
@@ -356,9 +421,39 @@ const Profile = () => {
         }
 
     }
+
+    const getCv = async () => {
+        try{
+            const data = await getCvApi({userId: id}, jwt);
+            if(data.status !== 200) {
+            toast.warning("Cv not found", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+            }else if(data.status === 200 ){
+                const response = await data.json();
+
+                var a = document.createElement("a"); //Create <a>
+                a.href = "data:application/pdf;base64," +  response.data; //Image Base64 Goes here
+                a.download = `${userInfoData?.firstName}_cv.pdf`; 
+                // console.log(a);//File name Here
+                a.click(); //Downloaded file
+                // getCv()
+            }else{
+            toast.warning("Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+            }
+        }catch(err){
+            toast.warning("Cv not found", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+        }
+    }
+
+
+    
+  
     useEffect(() => {
         getSingleUser();
     }, []);
+    // console.log(userData.imageBase64);
 
     useEffect(() => {
         getAllDesignations()
@@ -372,9 +467,18 @@ const Profile = () => {
                 <div class="content container-fluid">
                     <div class="page-header">
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-8">
                                 <h3 class="page-title">Profile</h3>
                             </div>
+                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && (
+                            <div class="col-sm-4">
+                            {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
+          {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
+            Add CV
+          </Button>} 
+                            </div>
+
+                            )}
                         </div>
                     </div>
                     {/* Intro */}
@@ -385,9 +489,42 @@ const Profile = () => {
                                     <div class="profile-view">
                                         <div class="profile-img-wrap">
                                             <div class="profile-img">
-                                                <a href="#">
-                                                    <img alt="" src={userData?.imagePath} />
-                                                </a>
+                                                {/* <a href="#"> */}
+                                                    {/* {geeeetImg()} */}
+                                                    <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(userData?.imagePath)} sx={{ width: 120, height: 120 }} />
+
+                                                    <div class="middle">
+                                                    <label for="file-input" style={{color: "#2776d3"}}>
+                                                        <UploadIcon sx={{color: "#2776D3"}} />
+                                                        Upload
+                                                    </label>
+                                                    <input id="file-input" type="file"  style={{display: "none"}}
+                                                    
+                                                    onChange={(e)=> {
+                                                        
+                                                        let formData = new FormData();
+                                                        formData.append("type", "img")
+                                                        formData.append("userId", id)
+                                                        formData.append("file", e.target.files[0])
+                                                        fileUpload(formData, jwt).then( d => {
+                                                            // setOpenModal(false)
+                                                            getSingleUser()
+                                                            toast.success("img uploaded successfully", {
+                                                                position: toast.POSITION.TOP_CENTER,
+                                                                autoClose: 2000,
+                                                                pauseOnHover: false,
+                                                            })
+                                                        }).catch(err=> {
+                                                            toast.warning("Something went wrong", {
+                                                                position: toast.POSITION.TOP_CENTER,
+                                                                autoClose: 2000,
+                                                                pauseOnHover: false,
+                                                            });
+                                                        })
+                                                    }}
+                                                />                                                    
+                                                    </div>
+                                                {/* </a> */}
                                             </div>
                                         </div>
                                         <div class="profile-basic">
@@ -409,7 +546,7 @@ const Profile = () => {
                                                                         placeholder="firstame"
                                                                         value={mainInfo.firstName}
                                                                         onChange={(e) => {
-                                                                            console.log(e.target.value);
+                                                                            // console.log(e.target.value);
                                                                             handleFields(e, "main");
                                                                         }}
                                                                     />
@@ -493,7 +630,7 @@ const Profile = () => {
                                                                     label="Joining Date"
                                                                     value={moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")}
                                                                     onChange={(e) => {
-                                                                        console.log(e.target.value);
+                                                                        // console.log(e.target.value);
                                                                         handleFields(e, "main");
                                                                     }}
                                                                 />
@@ -553,6 +690,21 @@ const Profile = () => {
                                                             
                                                         </li>
                                 )}
+
+                                {
+                                    (userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
+                                    (
+    
+                                                            <li>
+                                                                <Button
+                                                                variant="contained"
+                                                                onClick={()=> {
+                                                                    
+                                                                       getCv()
+                                                                }} >View CV</Button>
+                                                            </li>
+                                    )
+                                }
                                                     </ul>
                                                 </div>
                                             </div>
@@ -589,7 +741,7 @@ const Profile = () => {
                                                                 className="edit-icon"
                                                                 onClick={() => {
                                                                     updateUser("main");
-                                                                    console.log("main info", mainInfo);
+                                                                    // console.log("main info", mainInfo);
                                                                     setCardEdit({ ...cardEdit, main: false });
                                                                 }}
                                                             />
@@ -942,7 +1094,7 @@ const Profile = () => {
                                             </h3>
                                             <div class="experience-box">
                                                 <ul class="experience-list">
-                                                    {goals.map((val, ind) => {
+                                                    {goals?.map((val, ind) => {
                                                         return (
                                                             <>
                                                                 <li key={ind}>
@@ -1072,7 +1224,7 @@ const Profile = () => {
                                             </h3>
                                             <div class="experience-box">
                                                 <ul class="experience-list">
-                                                    {educations.map((val, ind) => {
+                                                    {educations?.map((val, ind) => {
                                                         return (
                                                             <>
                                                                 <li key={ind}>
@@ -1355,7 +1507,7 @@ const Profile = () => {
                                                                 margin: "10px 20px 0px 0px",
                                                             }}
                                                             onChange={(e) => {
-                                                                console.log(e.target.value);
+                                                                // console.log(e.target.value);
                                                                 handleFields(e, "experiences");
                                                             }}
                                                         />
@@ -1557,8 +1709,63 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+
+
+
+            {/* modal */}
+    <BootstrapDialog
+    onClose={handleModalClose}
+    aria-labelledby="customized-dialog-title"
+    open={openModal}
+  >
+    <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
+      Add CV
+    </BootstrapDialogTitle>
+    <DialogContent sx={{
+      display: "flex", justifyContent: "center", flexDirection: "column",
+      overflowY: "auto"
+    }}>
+
+      <input  label="cv " name='file' onChange={(e)=> {
+        setFile(e.target.files[0])
+      }} accept="application/pdf"  
+      encType="multipart/form-data"
+      type="file" sx={{ minWidth: 365, maxHeight: 345, margin: "0px 20px 10px 0px" }}
+      
+      required />
+      
+    </DialogContent>
+    <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+      <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={()=> {
+        let formData = new FormData();
+        formData.append("type", "cv")
+        formData.append("userId", id)
+        formData.append("file", file)
+        fileUpload(formData, jwt).then( d => {
+            setOpenModal(false)
+            toast.success("Cv uploaded successfully", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 2000,
+                pauseOnHover: false,
+            })
+        }).catch(err=> {
+            toast.warning("Something went wrong", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 2000,
+                pauseOnHover: false,
+            });
+        })
+           
+      }}  >
+        Upload
+      </Button>
+    </DialogActions>
+  </BootstrapDialog>
         </>
     );
+
+   
 };
 
 export default Profile;

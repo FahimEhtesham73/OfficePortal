@@ -8614,9 +8614,9 @@ button.close {
 }
 
 .profile-view .profile-img-wrap {
-    height: 100px;
+    /* height: 100px;
     width: 100px;
-    position: absolute
+    position: absolute */
 }
 
 @media(max-width:575px) {
@@ -9134,3 +9134,25 @@ button.close {
     text-overflow: ellipsis;
     white-space: nowrap
 }
+
+.profile-img img{
+    object-fit: cover;
+}
+.middle {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+.profile-img:hover .image {
+    opacity: 0.3;
+  }
+
+  .profile-img:hover .middle {
+    opacity: 1;
+  }
