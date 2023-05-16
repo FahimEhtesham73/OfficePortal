@@ -211,7 +211,7 @@ const Topnavbar = (props) => {
                     >
                       <GridOnIcon />
                     </ListItemIcon>
-                    <ListItemText primary={'Attendance Sheet'} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={'Attendence Sheet'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
                 {/* Holidays */}

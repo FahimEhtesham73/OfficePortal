@@ -9,11 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+import InfoIcon from '@mui/icons-material/Info';
+
 import Loading from '../Hook/Loading/Loading';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -63,6 +60,8 @@ const Attendancesheet = () => {
             (value, index) => 1 + index * 1)
     }
 
+    console.log("Attendence Data", attendanceData);
+
     const getAttendanceSheet = async () => {
         setLoading(true)
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/alluseratendance`, {
@@ -83,6 +82,24 @@ const Attendancesheet = () => {
         else {
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             setLoading(false)
+        }
+    }
+
+    const isCheckLateTime = (date) => {
+        const givenDate = new Date(date);
+
+        // Create a new date object with the desired time (8:30 AM)
+        const targetTime = new Date();
+        targetTime.setHours(8);
+        targetTime.setMinutes(30);
+        targetTime.setSeconds(0);
+        targetTime.setMilliseconds(0);
+
+        // Compare the hours and minutes of the given date with the target time
+        if (givenDate.getHours() > targetTime.getHours() || (givenDate.getHours() === targetTime.getHours() && givenDate.getMinutes() > targetTime.getMinutes())) {
+            return true
+        } else {
+            return false
         }
     }
 
@@ -131,35 +148,56 @@ const Attendancesheet = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {attendanceData && attendanceData.map((row, ind) => (
-                                            <StyledTableRow
-                                                key={row.user}
-                                            >
-                                                <StyledTableCell component="th" scope="row">
-                                                    {row.user}
-                                                </StyledTableCell>
-                                                {
-                                                    row?.attendance.map((val) => {
-                                                        return (
+                                        {
+                                            attendanceData && attendanceData.map((row, ind) => (
+                                                <StyledTableRow
+                                                    key={row.user}
+                                                >
+                                                    <StyledTableCell component="th" scope="row">
+                                                        {row.user}
+                                                    </StyledTableCell>
+                                                    {
+                                                        row?.attendance.map((val) => {
+                                                            return (
 
-                                                            <StyledTableCell>{val.present === true ? (
-                                                                <>
-                                                                    <CheckIcon style={{ color: 'green' }} />
-                                                                    {
-                                                                       val?.aId && val.aId.map(aStatus=>{
-                                                                            return(
-                                                                                <p>{aStatus}</p>
-                                                                            )
-                                                                        })
-                                                                    }
-                                                                </>
+                                                                <StyledTableCell>{val.present === true ? (
+                                                                    <>
+                                                                        <CheckIcon style={{ color: 'green' }} />
+                                                                        {
+                                                                            val?.aId && val.aId.map(aStatus => {
+                                                                                var color = {}
+                                                                                switch (aStatus) {
+                                                                                    case 'HD':
+                                                                                        color['color'] = '#b1b148'
+                                                                                        break;
+                                                                                    case 'WAO':
+                                                                                        color['color'] = 'black'
+                                                                                        break;
+                                                                                    case 'WOH':
+                                                                                        color['color'] = 'blue'
+                                                                                        break;
+                                                                                    case 'WFH':
+                                                                                        color['color'] = '#ff1105b8'
+                                                                                        break;
+                                                                                    default:
+                                                                                        color['color'] = 'black'
+                                                                                }
+                                                                                return (
+                                                                                    <p style={color}>{aStatus}</p>
+                                                                                )
+                                                                            })
+
+
+                                                                        }
+                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon /> : ""}
+                                                                    </>
+                                                                )
+                                                                    : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>
                                                             )
-                                                                : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>
-                                                        )
-                                                    })
-                                                }
-                                            </StyledTableRow>
-                                        ))}
+                                                        })
+                                                    }
+                                                </StyledTableRow>
+                                            ))}
                                     </TableBody>
                                 </Table>
                             </TableContainer>

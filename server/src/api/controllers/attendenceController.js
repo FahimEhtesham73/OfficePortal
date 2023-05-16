@@ -215,7 +215,8 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
           _id: {
             userId: "$userId",
             day: { $dayOfMonth: "$checkInTime" },
-            aID:"$status"
+            aID:"$status",
+            checkIn:"$checkInTime"
           },
           count: { $sum: 1 },
         }
@@ -223,17 +224,14 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
       {
         $group: {
           _id: "$_id.userId",
-          // {
-          //   userID:"$_id.userId",
-          //   status:"$_id.status"
-          // },
           attendance: {
             $push: {
               day: "$_id.day",
               present: {
                 $cond: [{ $gte: ["$count", 1] }, true, false]
               },
-              aId:"$_id.aID"
+              aId:"$_id.aID",
+              checkIn:"$_id.checkIn"
             }
           }
         }
@@ -270,6 +268,13 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
                   $cond: [
                     { $in: ["$$day", "$attendance.day"] },
                     { $arrayElemAt: ["$attendance.aId", { $indexOfArray: ["$attendance.day", "$$day"] }] },
+                    []
+                  ]
+                },
+                checkIn:{
+                  $cond: [
+                    { $in: ["$$day", "$attendance.day"] },
+                    { $arrayElemAt: ["$attendance.checkIn", { $indexOfArray: ["$attendance.day", "$$day"] }] },
                     []
                   ]
                 }

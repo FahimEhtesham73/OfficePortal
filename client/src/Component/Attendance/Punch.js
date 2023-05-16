@@ -260,12 +260,13 @@ const Punch = () => {
             if (res.status === 200 || res.status === 201) {
                 console.log("created punch data", data);
                 toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-                localStorage.setItem('punchedInTime', data?.info?.checkInTime)
+                // localStorage.setItem('punchedInTime', data?.info?.checkInTime)
                 const localTime = formatAMPM(new Date(data?.info?.checkInTime))
                 setPunchedTime(localTime)
                 setIsPunchedIn(true)
                 document.getElementById("time").innerText = `00:00`
                 getInfo()
+                getPunchedInfo()
             } else {
                 toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             }
@@ -294,9 +295,10 @@ const Punch = () => {
         const data = await res.json()
         // console.log("Punched Out",data);
         if (res.status === 200) {
-            localStorage.removeItem('punchedInTime')
+            // localStorage.removeItem('punchedInTime')
             setIsPunchedIn(false)
             const localTime = formatAMPM(new Date(data.data.checkOutTime))
+            document.getElementById("time").innerText = ''
             toast.success(`You Punched Out At ${localTime}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             getInfo()
         }
@@ -335,26 +337,35 @@ const Punch = () => {
     const overTime = (sDate, eDate) => {
         const time = parseFloat(totalHour(sDate, eDate)) - 9
         if (time <= 0) return 0
-        else return time
+        else return time.toFixed(2)
     }
 
-    let timeDiff = new Date().getTime() - new Date(localStorage.getItem('punchedInTime')).getTime()
-    let hours = Math.floor(timeDiff / (1000 * 60 * 60));
-    let minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
-
+    let timeDiff 
+    // new Date(localStorage.getItem('punchedInTime')).getTime()
+    let hours 
+    let minutes 
+    let hoursText
+    let minutesText
 
     function updateTime() {
+        console.log("Hitted");
+        console.log("punched update Time",punchedInfo.checkInTime);
+        timeDiff = new Date().getTime() - new Date(punchedInfo.checkInTime).getTime()
+        hours = Math.floor(timeDiff / (1000 * 60 * 60));
+        minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+
         minutes++;
         if (minutes === 60) {
             hours++;
             minutes = 0;
         }
-        const hoursText = hours?.toString()?.padStart(2, "0");
-        const minutesText = minutes?.toString()?.padStart(2, "0");
+        hoursText = hours?.toString()?.padStart(2, "0");
+        minutesText = minutes?.toString()?.padStart(2, "0");
 
         document.getElementById("time").innerText = `${hoursText} : ${minutesText}`
 
     }
+
 
 
     const getInfo = async () => {
@@ -374,7 +385,7 @@ const Punch = () => {
         })
 
         const data = await res.json()
-        console.log(" Table Data", data);
+        // console.log(" Table Data", data);
         if (res.status === 200) {
             setAttendenceList(data.attendenceList)
         } else {
@@ -397,7 +408,7 @@ const Punch = () => {
         })
 
         const data = await res.json()
-        // console.log(" Punched Data", data);
+        console.log(" Punched Data", data);
         if (res.status === 200) {
             setPunchedInfo(data.punched)
             // setAttendenceList(data.attendenceList)
@@ -462,13 +473,20 @@ const Punch = () => {
     }
 
     useEffect(() => {
-        if (localStorage.getItem('punchedInTime')) {
+        if (punchedInfo?.checkInTime && !punchedInfo?.checkOutTime) {
+            console.log("punched UseEffect",punchedInfo.checkInTime);
             const intervalId = setInterval(updateTime, 60000);
 
             return () => clearInterval(intervalId);
         }
 
-    }, [localStorage.getItem('punchedInTime')])
+        // if (localStorage.getItem('punchedInTime')) {
+        //     const intervalId = setInterval(updateTime, 60000);
+
+        //     return () => clearInterval(intervalId);
+        // }
+
+    }, [punchedInfo])
 
     useEffect(() => {
         getInfo()
@@ -478,11 +496,17 @@ const Punch = () => {
 
 
     useLayoutEffect(() => {
-        if (localStorage.getItem('punchedInTime')) {
-            document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
+        // if (localStorage.getItem('punchedInTime')) {
+        //     document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
+        // }
+         if (punchedInfo?.checkInTime && !punchedInfo?.checkOutTime) {
+            updateTime()
+            console.log("Another Effect",punchedInfo?.checkInTime,hoursText,minutesText);
+            
+            document.getElementById("time").innerText = `${hoursText?.toString()?.padStart(2, "0")} : ${minutesText?.toString()?.padStart(2, "0")}`
         }
 
-    }, [])
+    }, [punchedInfo])
 
     return (
         <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
@@ -515,9 +539,9 @@ const Punch = () => {
             </Box>
             {/* Searching Div */}
             {
-                userRole() === 'Admin' && <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} md={4} >
+                {userRole() === 'Admin' &&  <Grid item xs={12} sm={6} md={4} >
                         <FormControl sx={{ width: "100%" }}>
                             <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
                             <Select
@@ -538,7 +562,7 @@ const Punch = () => {
                                 }
                             </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid>}
                     {/* Select Month And Year*/}
                     <Grid item xs={12} sm={6} md={4} >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -611,7 +635,7 @@ const Punch = () => {
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
                         <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
                         <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
-                    </FormGroup>``
+                    </FormGroup>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>

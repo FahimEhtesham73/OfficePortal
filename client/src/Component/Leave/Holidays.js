@@ -131,6 +131,7 @@ const Holidays = () => {
     };
     // For Action icon close
     const handleClose = () => {
+        setEditId("")
         setAnchorEl(null);
     };
     // For Modal open
@@ -175,7 +176,7 @@ const Holidays = () => {
             </MenuItem>
             <MenuItem onClick={() => {
                 setToggle('Delete')
-                handleClickOpen()
+                deleteHoliday()
                 handleClose()
                 
             }}>
@@ -234,6 +235,33 @@ const Holidays = () => {
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             handleClickClose()
             setLoading(false)
+        }
+    }
+
+
+    const deleteHoliday = async () =>{
+        setLoading(true)
+        const res = await fetch(`${process.env.REACT_APP_URL}/holiday/deleteholiday/${eidtId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+            credentials:'include'
+        })
+        const data = await res.json()
+        console.log("Single Holiday", data);
+        if (res.status === 200) {
+            toast.success('Deleted Successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            handleClose()
+            setLoading(false)
+            getAllHoliday()
+            setEditId("")
+        } else {
+            toast.warning("Something Went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            handleClose()
+            setLoading(false)
+            setEditId("")
         }
     }
     // Check if there is any null or empty string in create employee field 
@@ -324,7 +352,7 @@ const Holidays = () => {
                     Add Holiday
                 </Button>
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw",marginBottom:"100px" }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
