@@ -34,3 +34,40 @@ module.exports.getAttendenceValidation = [
         return true;
     })
 ]
+
+
+module.exports.modifyAttendenceValidation = [
+    body("aid").custom(v=> {
+        if(v){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true
+    }),
+    body("userId").notEmpty().custom(v=> {
+        if(v){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true
+    }).withMessage("Invalid"),
+    body("status").custom(v=> {
+        if(!Array.isArray(v)){
+            return false
+        }
+        return true
+    }).customSanitizer(val=> {
+        for(let i = 0; i < val.length; i++){
+            if(!val[i]){
+                val.splice(i,1)
+            }
+        }
+        return val
+    }),
+
+    // body("checkInTime").custom().withMessage("required"),
+    body("modifiedCheckOutTime").custom((v, {req})=> {
+        if(new Date(v).getTime() > new Date(req.body.modifiedCheckOutTime).getTime()){
+            return true
+        }
+        return true
+    }).withMessage("invalid date time")
+]

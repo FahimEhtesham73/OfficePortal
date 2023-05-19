@@ -498,7 +498,7 @@ const Profile = () => {
                                                         <UploadIcon sx={{color: "#2776D3"}} />
                                                         Upload
                                                     </label>
-                                                    <input id="file-input" type="file"  style={{display: "none"}}
+                                                    <input id="file-input" accept="image/*" type="file"  style={{display: "none"}}
                                                     
                                                     onChange={(e)=> {
                                                         
@@ -508,14 +508,25 @@ const Profile = () => {
                                                         formData.append("file", e.target.files[0])
                                                         fileUpload(formData, jwt).then( d => {
                                                             // setOpenModal(false)
-                                                            getSingleUser()
-                                                            toast.success("img uploaded successfully", {
-                                                                position: toast.POSITION.TOP_CENTER,
-                                                                autoClose: 2000,
-                                                                pauseOnHover: false,
-                                                            })
+                                                            if(d.status === 200){
+                                                                toast.success("img uploaded successfully", {
+                                                                    position: toast.POSITION.TOP_CENTER,
+                                                                    autoClose: 2000,
+                                                                    pauseOnHover: false,
+                                                                })
+                                                                getSingleUser()
+                                                            }
+                                                            else{
+                                                                
+                                                                toast.warning("Something went wrong", {
+                                                                    position: toast.POSITION.TOP_CENTER,
+                                                                    autoClose: 2000,
+                                                                    pauseOnHover: false,
+                                                                });
+                                                            }
                                                         }).catch(err=> {
-                                                            toast.warning("Something went wrong", {
+                                                            console.log(err.response.data.message);
+                                                            toast.warning(err?.response?.data?.message||"Something went wrong", {
                                                                 position: toast.POSITION.TOP_CENTER,
                                                                 autoClose: 2000,
                                                                 pauseOnHover: false,
@@ -1750,7 +1761,7 @@ const Profile = () => {
                 pauseOnHover: false,
             })
         }).catch(err=> {
-            toast.warning("Something went wrong", {
+            toast.warning(err?.response?.data?.message||"Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 2000,
                 pauseOnHover: false,

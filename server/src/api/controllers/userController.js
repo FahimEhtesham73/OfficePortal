@@ -222,6 +222,7 @@ module.exports.profileImgUpload = async(req, res)=> {
 
 module.exports.fileUpload = async (req, res) => {
     try{
+        if(req.fileValidationError) return res.status(400).json({"message": req.fileValidationError})
         const type = req.body.type;
        console.log(type);
         const user = await User.findOne({_id: req.body.userId}).lean();
@@ -242,7 +243,7 @@ module.exports.fileUpload = async (req, res) => {
         return res.status(200).json({"message": "file uploaded successfully"});
         
     }catch(err){
-        console.log(err);
+        console.log("err",err);
         return res.status(500).json({"message": "Something went wrong"});
     }
 }
@@ -282,19 +283,3 @@ module.exports.viewImage =  async(req, res) => {
     }
   };
   
-  // Utility function to determine the content type based on file extension
-  function getContentType(filename) {
-    const extension = filename.split('.').pop().toLowerCase();
-  
-    switch (extension) {
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'png':
-        return 'image/png';
-      case 'gif':
-        return 'image/gif';
-      default:
-        return 'application/octet-stream';
-    }
-  }

@@ -8,7 +8,6 @@ const User = require('../models/userModel')
 
 module.exports.createAttendence = async (req, res) => {
   try {
-    console.log("shuvo");
     const checkInTime = new Date(req.body.checkInTime);
     // const timeZone = req.body.tz;
     const status = req.body.status;
@@ -17,12 +16,35 @@ module.exports.createAttendence = async (req, res) => {
     // return;
     // console.log(startDay, endDay);
 
+
     const isUserAlreadyPunchedIn = await Attendence.findOne({
       userId: req.user._id,
       createdAt: { $gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString() }
     }).lean();
     console.log(isUserAlreadyPunchedIn);
+
     if (isUserAlreadyPunchedIn) return res.status(400).json({ "message": "User already punched in" });
+
+    let args = {};
+    for (let arg in req.body){
+      if(arg === "userId"){
+        args['userId'] = req.body["userId"]; 
+      }
+      if(arg === "checkInTime"){
+        args['checkInTime'] = req.body["checkInTime"]; 
+
+      }
+      if(arg === "status"){
+        args['status'] = req.body["status"]; 
+
+      }
+      if(arg === "checkOutTime"){
+        args['checkOutTime'] = req.body["checkOutTime"]; 
+        args['isModified'] = true;
+      }
+      
+
+    }
     const userAttendence = await new Attendence({
       userId: req.user._id,
       status: status,
@@ -59,9 +81,13 @@ module.exports.getAttendences = async (req, res) => {
     let month = arg['monthDateYear'].getMonth() + 1
     let year = arg['monthDateYear'].getFullYear()
     let days = arg['monthDateYear'].getDate()
-    const firstDate = new Date(`01/${month}/${year}`).setHours(0, 0, 0, 0);
-    let lastDay = new Date(arg['monthDateYear'].getFullYear(), todaysDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
-    console.log(new Date(lastDay).toLocaleString());
+    const firstDate = new Date(`${month}/01/${year}`).setHours(0, 0, 0, 0);
+    // let lastDay = new Date(arg['monthDateYear'].getFullYear(), todaysDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
+    let lastDay = new Date(arg['monthDateYear'].setHours(23,59,59,999));
+
+    console.log("first date", new Date(firstDate));
+    console.log("last date", new Date(lastDay));
+    
 
     const allAttendence = await Attendence.find({
       userId: arg.usersId,
@@ -70,6 +96,20 @@ module.exports.getAttendences = async (req, res) => {
         $lte: new Date(lastDay).toISOString()
       }
     }).select("-createdAt -updatedAt -createdBy -updatedBy -__v").lean()
+
+    let totalHours = 0;
+    // console.log("all", allAttendence);
+    allAttendence.forEach(item => {
+      if(item?.checkInTime  && item?.checkOutTime){
+
+        const checkInTime = item?.modifiedCheckInTime? new Date(item.modifiedCheckInTime): new Date(item.checkInTime);
+        const checkOutTime = item?.modifiedCheckOutTime? new Date(item.modifiedCheckOutTime) : new Date(item.checkOutTime);
+        const timeDiff = totalHour(checkInTime.getTime(), checkOutTime.getTime());
+        // const hours = Math.abs(timeDiff) / 36e5; // Divide by milliseconds in an hour
+        totalHours += parseFloat(timeDiff);
+      }
+});
+// console.log(totalHours);
 
     const userName = await User.findOne({ _id: arg.usersId }).select("firstName").lean()
 
@@ -93,10 +133,11 @@ module.exports.getAttendences = async (req, res) => {
 
     let arr = [];
     for (let d in dateObj) {
-      arr.push({ key: d, ...dateObj[d], name: userName?.firstName })
+      arr.push({ key: d, ...dateObj[d], name: userName?.firstName, userId: userName?._id })
     }
+    console.log();
 
-    return res.status(200).json({ "attendenceList": arr })
+    return res.status(200).json({ "attendenceList": arr , "totalHours": totalHours})
 
   } catch (err) {
     console.log("err", err);
@@ -113,21 +154,28 @@ module.exports.updateAttendece = async (req, res) => {
     const data = {
       ...req.body.updateData,
     }
+    
 
     const attendence = await Attendence.findOne({ _id: attendeceId, userId: userId }).lean();
-    console.log(attendence);
     if (!attendence) return res.status(404).json({ "message": "Not found" });
-    const updatedDoc = await Attendence.findOneAndUpdate({
-      _id: attendeceId, userId: userId
-    }, {
-      $set: {
-        ...data,
-        updatedBy: req.user._id
-      }
-    }, { new: true })
-      .select({ userId: 1, status: 1, checkInTime: 1, checkOutTime: 1 }).lean()
+    if( attendence.userId.toString() === req.user._id || req.user.role.alias === "Admin" ) {
+      // console.log(attendence);
+      const updatedDoc = await Attendence.findOneAndUpdate({
+        _id: attendeceId, userId: userId
+      }, {
+        $set: {
+          ...data,
+          updatedBy: req.user._id,
+          isModified: true,
+        }
+      }, { new: true })
+        .select({ userId: 1, status: 1, checkInTime: 1, checkOutTime: 1 }).lean()
+  
+      return res.status(200).json({ "message": "Updated successfully", data: updatedDoc })
+      
+    } 
 
-    return res.status(200).json({ "message": "Updated successfully", data: updatedDoc })
+    return res.status(403).json({"message": "You can not authorize to modify others user attendence"})
   } catch (err) {
     console.log("err", err);
     return res.status(500).json({ "message": "Something went wrong" });
@@ -339,4 +387,78 @@ module.exports.todaysPunchInUsers = async (req, res)=> {
     return res.status(500).json({ "message": "Something went wrong" });
 
   }
+}
+
+
+module.exports.modifiedORCreateAttendence = async (req, res) => {
+  try{
+    const erros = validationMessages(validationResult(req).mapped());
+    if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
+    const data = req.body;
+    console.log("data", data);
+    console.log(req.user._id.toString() === data.userId.toString());
+    if(req.user.role.alias === "Admin" || req.user._id.toString() === data.userId.toString())
+    {
+      if(!data.aId){
+        let truncateData = {}
+        truncateData.userId = data.userId;
+        truncateData.isModified = true;
+        truncateData.status = data.status;
+  
+        for(d in data){
+          if(d === "checkInTime" && !data["checkInTime"]){
+            truncateData["checkInTime"] = new Date(data["modifiedCheckInTime"])
+          }
+          if(d === "checkOutTime" && !data["checkOutTime"]){
+            truncateData["checkOutTime"] = new Date(data["modifiedCheckOutTime"])
+          }
+        }
+
+        const stratOftheDay = new Date(new Date(truncateData.checkInTime).setHours(0,0,0,0));
+        const endOftheDay = new Date(new Date(truncateData.checkInTime).setHours(23,59,59,999))
+        
+        
+        console.log("start ", stratOftheDay);
+        console.log("end ", endOftheDay);
+        
+        console.log("truncate",truncateData);
+        // return
+        const isAttendenceAvailbe = await Attendence.findOne({userId: truncateData.userId, checkInTime:{$gte: stratOftheDay}, checkOutTime: {$lte: endOftheDay}}).lean();
+        console.log("avilabe attendence", isAttendenceAvailbe);
+        if(isAttendenceAvailbe) return res.status(400).json({'message': "Attendece available already"});
+        const newAttendece = await new Attendence({...truncateData}).save(); 
+        return res.status(200).json({"message": "Succesfull", data: newAttendece})
+      }else{
+
+        console.log("else",data);
+        // return
+
+        const att = await Attendence.findOne({_id: data.aId}).lean();
+        console.log(att);
+
+        const updatedAttendence = await Attendence.findOneAndUpdate({_id: data?.aId}, {$set: {...data, isModified: true}}, {new: true}).lean();
+        return res.status(200).json({"message": "Successfull", data: updatedAttendence})
+  
+      }
+
+    }
+    return res.status(403).json({"message": 'Permission denied'})
+
+
+  }catch(err){
+    console.log(err);
+    return res.status(500).json({ "message": "Something went wrong" });
+
+  }
+}
+
+
+
+
+/*************************** helper function *****************/
+const totalHour = (sDate, eDate) => {
+  const diffInMilliseconds = Math.abs(eDate - sDate);
+  const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+  // console.log(diffInHours);
+  return diffInHours.toFixed(2)
 }

@@ -22,16 +22,22 @@ import CloseIcon from '@mui/icons-material/Close';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { makeStyles } from '@material-ui/core';
+import { Tooltip, makeStyles } from '@material-ui/core';
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
-
+import EditIcon from '@mui/icons-material/Edit';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import userRole from '../Hook/userHook';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { DateTimePicker, TimePicker } from '@mui/x-date-pickers';
+
+import dayjs from 'dayjs';
+import { modifySingleAttendene } from '../../api/attendenceApi';
 
 const useStyles = makeStyles((theme) => ({
     cardWrapper: {
@@ -163,14 +169,38 @@ const Punch = () => {
     const [allUser, setAllUser] = useState([])
     const [loading, setLoading] = useState(false)
     const [filteredId, setFilteredId] = useState("")
-    const [filteredDate,setFilteredDate] = useState('')
+    const [filteredDate, setFilteredDate] = useState('')
+    const [totalWH, setTotalWH] = useState();
+    const [editingrow, setEditingrow] = useState(false);
+    const [startDateTime, setStartDateTime] = useState("");
+    const [endDateTime, setEndDateTime] = useState("");
+    const [updateAttendence, setUpdateAttendence] = useState({})
     // For Modal open
+    // console.log("position", position);
+
+    const [open1, setOpen1] = useState(false)
     const handleClickOpen = () => {
         setOpen(true);
     };
     // For Modal Close
     const handleClickClose = () => {
         setOpen(false);
+    };
+
+
+    const handleModalOpen1 = () => {
+        setOpen1(true);
+    };
+
+  
+
+    // For Modal Close
+    const handleModalClose1 = () => {
+        setOpen1(false);
+        setUpdateAttendence({});
+        setPosition([])
+        setCheckBoxDisableHome(false);
+        setCheckBoxDisableOffice(false)
     };
 
     // Convert Date
@@ -197,43 +227,69 @@ const Punch = () => {
     }
 
     const handlePosition = (e) => {
+        console.log("hadnle position",e.target.value);
         if (e.target.value === 'WFH') {
-            if (position.includes('WFH')) {
+            if (position?.includes('WFH')) {
                 setCheckBoxDisableHome(false)
-                const temp = position.filter((val) => { return val !== 'WFH' })
+                const temp = position?.filter((val) => { return val !== 'WFH' })
                 setPosition(temp)
             } else {
                 setCheckBoxDisableHome(true)
                 setCheckBoxDisableOffice(false)
-                const unchekedFilter = position.filter((val) => { return val !== 'WAO' })
+                const unchekedFilter = position?.filter((val) => { return val !== 'WAO' })
                 setPosition([...unchekedFilter, 'WFH'])
             }
 
         }
         else if (e.target.value === 'WAO') {
-            if (position.includes('WAO')) {
+            if (position?.includes('WAO')) {
                 setCheckBoxDisableOffice(false)
-                const temp = position.filter((val) => { return val !== 'WAO' })
+                const temp = position?.filter((val) => { return val !== 'WAO' })
                 setPosition(temp)
             } else {
                 setCheckBoxDisableOffice(true)
                 setCheckBoxDisableHome(false)
-                const unchekedFilter = position.filter((val) => { return val !== 'WFH' })
+                const unchekedFilter = position?.filter((val) => { return val !== 'WFH' }) 
                 setPosition([...unchekedFilter, 'WAO'])
             }
 
         } else {
-            if (position.includes(e.target.value)) {
-                const unchekedFilter = position.filter((val) => { return e.target.value !== val })
+            if (position?.includes(e.target.value)) {
+                const unchekedFilter = position?.filter((val) => { return e.target.value !== val })
                 setPosition(unchekedFilter)
             } else {
-                setPosition([...position, e.target.value])
+                
+                setPosition([...position  , e.target.value])
             }
 
         }
 
     }
     // console.log("work position", position);
+
+
+    const handleUpateSingleAttendece = (ind) => {
+        handleModalOpen1()
+        let a =  attendenceList.find((item, i)=> i === ind);
+        setUpdateAttendence({...a});
+        setStartDateTime(a?.checkInTime || a?.key)
+        setEndDateTime(a?.checkOutTime || a?.key)
+
+        setPosition(a?.status || [] )
+
+        console.log("postion", position);
+         if(a?.status?.includes('WAO')){
+             setCheckBoxDisableOffice(true);
+             setCheckBoxDisableHome(false)
+            //  setPosition([...a?.status])
+
+         }
+         else if(a?.status?.includes('WFH')){                                                  
+             setCheckBoxDisableHome(true)
+             setCheckBoxDisableOffice(false)
+            //  setPosition([...a?.status])
+         }
+    }
 
     const punchIn = async () => {
         if (position.length === 0) {
@@ -265,6 +321,7 @@ const Punch = () => {
                 setPunchedTime(localTime)
                 setIsPunchedIn(true)
                 document.getElementById("time").innerText = `00:00`
+                setPosition([])
                 getInfo()
             } else {
                 toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
@@ -301,6 +358,36 @@ const Punch = () => {
             getInfo()
         }
     }
+console.log(updateAttendence);
+    const updateUserAttendence = async () => {
+        try{
+
+            const data = {
+                aId: updateAttendence?._id || "",
+                userId : updateAttendence?.userId,
+                checkInTime: updateAttendence?.checkInTime || "",
+                checkOutTime: updateAttendence?.checkOutTime || "",
+                status: position?.length && position,
+                modifiedCheckInTime : startDateTime,
+                modifiedCheckOutTime: endDateTime
+            
+            }
+            console.log("data", data);
+            
+            const att = await modifySingleAttendene(data, jwt);
+            if(att.status === 200){
+                handleModalClose1()
+                toast.success("Successfully Updated", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+                getInfo(data?.userId);
+            }else{
+                toast.warning(att?.data?.message || "Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+            }
+        }catch(err){
+                toast.warning("Something went wrong!", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+        }
+    }
 
 
     const totalHour = (sDate, eDate) => {
@@ -315,19 +402,19 @@ const Punch = () => {
         const latestYear = todayDate.getFullYear()
         const latestMonth = todayDate.getMonth() + 1;
         const latestDate = todayDate.getDate()
-        
+
         const date = new Date(dateStr);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         const lastDateOfMonth = new Date(year, month, 0).getDate();
 
         let formattedDate
-        if((latestYear===year) && (latestMonth===month)){
+        if ((latestYear === year) && (latestMonth === month)) {
             formattedDate = `${year}-${month.toString().padStart(2, '0')}-${latestDate.toString().padStart(2, '0')}`;
-        }else{
+        } else {
             formattedDate = `${year}-${month.toString().padStart(2, '0')}-${lastDateOfMonth.toString().padStart(2, '0')}`;
         }
-        
+
         setFilteredDate(formattedDate)
 
     }
@@ -357,7 +444,7 @@ const Punch = () => {
     }
 
 
-    const getInfo = async () => {
+    const getInfo = async (userId) => {
 
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
             method: "POST",
@@ -366,7 +453,7 @@ const Punch = () => {
                 "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify({
-                "userId": decodedUser._id,
+                "userId": userId || decodedUser._id ,
                 "monthDateYear": new Date()
             }),
             credentials: 'include',
@@ -377,6 +464,7 @@ const Punch = () => {
         console.log(" Table Data", data);
         if (res.status === 200) {
             setAttendenceList(data.attendenceList)
+            setTotalWH(data?.totalHours)
         } else {
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         }
@@ -437,7 +525,7 @@ const Punch = () => {
 
     }
 
-    const fetchIndividualAttendance = async()=>{
+    const fetchIndividualAttendance = async () => {
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/getall`, {
             method: "POST",
             headers: {
@@ -455,7 +543,10 @@ const Punch = () => {
         const data = await res.json()
         console.log(" Table Data", data);
         if (res.status === 200) {
-            setAttendenceList(data.attendenceList)
+            setAttendenceList(data.attendenceList);
+            console.log(data);
+            setTotalWH(data?.totalHours)
+
         } else {
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         }
@@ -516,43 +607,51 @@ const Punch = () => {
             {/* Searching Div */}
             {
                 userRole() === 'Admin' && <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={6} md={4} >
-                        <FormControl sx={{ width: "100%" }}>
-                            <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Age"
-                                onChange={(e) => {
-                                    setFilteredId(e.target.value)
-                                }}
-                            >
-                                {
-                                    allUser && allUser.map((val, ind) => {
-                                        return (
-                                            <MenuItem value={val._id}>{val.firstName}</MenuItem>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    {/* Select Month And Year*/}
-                    <Grid item xs={12} sm={6} md={4} >
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
-                        </LocalizationProvider>
-                    </Grid>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6} md={4} >
+                            <FormControl sx={{ width: "100%" }}>
+                                <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    // value={age}
+                                    label="Age"
+                                    onChange={(e) => {
+                                        setFilteredId(e.target.value)
+                                    }}
+                                >
+                                    {
+                                        allUser && allUser.map((val, ind) => {
+                                            return (
+                                                <MenuItem value={val._id}>{val.firstName}</MenuItem>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        {/* Select Month And Year*/}
+                        <Grid item xs={12} sm={6} md={4} >
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
+                            </LocalizationProvider>
+                        </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} >
-                        <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }} onClick={fetchIndividualAttendance}>Search</Button>
+                        <Grid item xs={12} sm={6} md={4} >
+                            <Button variant="contained" sx={{ height: '55px', maxHeight: 200, width: '100%' }} onClick={fetchIndividualAttendance}>Search</Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Box>
+                </Box>
             }
-            
+
+            <Box sx={{ width: "60%", margin: "10px auto" }}>
+                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Total Working Hours</Typography>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{totalWH}</Typography>
+                    </Box>
+                </Card>
+            </Box>
             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom: "30px", minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -563,6 +662,8 @@ const Punch = () => {
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Punch Out</StyledTableCell>
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Total Hour</StyledTableCell>
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Overtime</StyledTableCell>
+                            <StyledTableCell sx={{ fontWeight: "bold" }}>Actions</StyledTableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -570,24 +671,72 @@ const Punch = () => {
                             attendenceList.map((row, ind) => (
                                 <StyledTableRow
                                     key={ind}
+                                    // style={{ backgroundColor: row?.isModified ? "#FEA1A1" : "" }}
                                 >
+
                                     <StyledTableCell component="th" scope="row">
                                         {row?.name}
                                     </StyledTableCell>
+
+
                                     <StyledTableCell component="th" scope="row">
                                         {row?.key}
                                     </StyledTableCell>
-                                    <StyledTableCell component="th" scope="row">
-                                        {row?.checkInTime ? formatAMPM(new Date(row?.checkInTime)) : ""}
+                                    <StyledTableCell component="th" scope="row" style={{color: row?.modifiedCheckOutTime? "red": "black"}} >
+                                        {row?.modifiedCheckInTime === row?.checkInTime ? <>
+                                            {row?.checkInTime ? formatAMPM(new Date(row?.checkInTime)) : ""}
+                                        
+                                        </> : <>
+                                        {row?.modifiedCheckInTime && formatAMPM(new Date(row?.modifiedCheckInTime)) }
+                                        {/* <br /> */}
+                                        {row?.checkInTime ? (<> <br /> {formatAMPM(new Date(row?.checkInTime))} </>)  : ""}
+                                        
+                                        </>}
+                                        {row?.modifiedCheckInTime && (<Tooltip title="edited">
+                                                <PriorityHighIcon sx={{ color: "red" }} />
+                                            </Tooltip>)}
+
+                                    </StyledTableCell>
+                                    <StyledTableCell component="th" scope="row" style={{color: row?.modifiedCheckOutTime? "red": "black"}}>
+                                    {row?.modifiedCheckOutTime === row?.checkOutTime ? <>
+                                            {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}
+                                        
+                                        </> : <>
+                                        {row?.modifiedCheckOutTime && formatAMPM(new Date(row?.modifiedCheckOutTime)) }
+                                        {/* <br /> */}
+                                        {row?.checkOutTime ? (<> <br/>{ formatAMPM(new Date(row?.checkOutTime)) } </>) : ""}
+                                        
+                                        </>}
+                                        {row?.modifiedCheckOutTime && (<Tooltip title="edited">
+                                                <PriorityHighIcon sx={{ color: "red" }} />
+                                            </Tooltip>)}
+
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}
+                                        {/* {row?.modifiedCheckOutTime ? totalHour(new Date(row?.modifiedCheckInTime) || new Date())} */}
+                                        {(row?.checkOutTime || row?.modifiedCheckOutTime) ? totalHour(new Date(row?.modifiedCheckInTime || row?.checkInTime).getTime(), new Date(row?.modifiedCheckOutTime || row?.checkOutTime).getTime()) : ""}
+                                        {/* {row?.checkOutTime ? totalHour(new Date(row.checkInTime).getTime(), new Date(row.checkOutTime).getTime()) : ""} */}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row?.checkOutTime ? totalHour(new Date(row.checkInTime).getTime(), new Date(row.checkOutTime).getTime()) : ""}
+                                        {/* {row?.checkOutTime ? overTime(new Date(row.checkInTime), new Date(row.checkOutTime)) : ""} */}
+                                        {(row?.checkOutTime || row?.modifiedCheckOutTime) ? overTime(new Date(row?.modifiedCheckInTime || row?.checkInTime).getTime(), new Date(row?.modifiedCheckOutTime || row?.checkOutTime).getTime()) : ""}
+
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {row?.checkOutTime ? overTime(new Date(row.checkInTime), new Date(row.checkOutTime)) : ""}
+                                        <Tooltip title="Edit">
+                                            <EditIcon onClick={(e) => {
+                                            
+                                            handleUpateSingleAttendece(ind)
+
+                                                }} />
+                                        </Tooltip>
+                                        
+                                        {/* {row?.isModified && (
+                                            <Tooltip title="edited">
+                                                <PriorityHighIcon sx={{ color: "red" }} />
+                                            </Tooltip>
+
+                                        )} */}
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))
@@ -605,6 +754,9 @@ const Punch = () => {
                     Select Your Position
                 </BootstrapDialogTitle>
                 <DialogContent >
+                    <Typography>
+                        Name
+                    </Typography>
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
@@ -620,6 +772,139 @@ const Punch = () => {
                         punchIn()
                     }}>
                         Punch
+                    </Button>
+                </DialogActions>
+            </BootstrapDialog>
+
+
+            {/* modal for attendence update */}
+
+            <BootstrapDialog
+                onClose={handleModalClose1}
+                aria-labelledby="customized-dialog-title"
+                open={open1}
+            >
+                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose1}>
+                    Attendence Update
+                </BootstrapDialogTitle>
+                <DialogContent >
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={["TimePicker"]}>
+                            <TimePicker
+                                sx={{
+                                    width: .9,
+                                }}
+                                slotProps={{
+                                    textField: {
+                                        error: false,
+                                    },
+                                }}
+                                // selectedSections={"all"}
+                                // views={['hours', 'minutes', 'seconds']}
+                                // inputFormat="HH:mm:ss"
+                                // renderInput={(props) => <TextField {...props} />}
+                                
+                                value={dayjs(startDateTime && startDateTime)}
+                                label="Start Time"
+                                
+                                onChange={(e)=> {
+                                    console.log("start time", e);
+                                    let customizeDateTime = new Date(startDateTime);
+                                    const extractTime = new Date(e["$d"]).toTimeString();
+                                    const splitinngTime = extractTime.split(" ")[0].split(":");
+                                    customizeDateTime.setHours(splitinngTime[0])
+                                    customizeDateTime.setMinutes(splitinngTime[1])
+                                    // customizeDateTime.setSeconds()
+                                    console.log(customizeDateTime);
+                                    
+
+
+
+                                    
+                                    
+                                    console.log("full date time customize", customizeDateTime);
+                                    console.log("extract time", extractTime.split(" ")[0]);
+                                    setStartDateTime(customizeDateTime)
+                                    // handleTimeChange("05/01/2023")
+                                }}
+
+
+
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer components={["TimePicker"]}>
+                            <TimePicker
+                                sx={{
+                                    width: .9,
+                                }}
+                                slotProps={{
+                                    textField: {
+                                        error: false,
+                                    },
+                                }}
+                                value={dayjs(endDateTime && endDateTime)}
+                                label="End Time"
+                                onChange={(e)=> {
+                                    console.log("start time", e);
+                                    let customizeDateTime = new Date(endDateTime);
+                                    const extractTime = new Date(e["$d"]).toTimeString();
+                                    const splitinngTime = extractTime.split(" ")[0].split(":");
+                                    customizeDateTime.setHours(splitinngTime[0])
+                                    customizeDateTime.setMinutes(splitinngTime[1])
+                                    // customizeDateTime.setSeconds()
+                                    console.log(customizeDateTime);
+                                    
+
+
+
+                                    
+                                    
+                                    console.log("full date time customize", customizeDateTime);
+                                    console.log("extract time", extractTime.split(" ")[0]);
+                                    setEndDateTime(customizeDateTime)
+                                }}
+
+                            />
+                        </DemoContainer>
+                    </LocalizationProvider>
+                    {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
+                    <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
+                        <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
+                        <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
+                        <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
+                    </FormGroup>
+
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button 
+                    disabled={
+                        (position?.length>0 && 
+                            updateAttendence?.userId 
+                            && startDateTime
+                            &&
+                            (new Date(startDateTime).getTime() < new Date(endDateTime).getTime())
+                            ) ? false: true}
+                    variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                        // punchIn()
+                        // const data = {
+                            //     aId: updateAttendence?._id || "",
+                            //     userId : updateAttendence?.userId,
+                            //     checkInTime: updateAttendence?.checkInTime || "",
+                            //     checkOutTime: updateAttendence?.checkOutTime || "",
+                            //     status: position?.length && position,
+                        //     modifiedCheckInTime : new Date(startDateTime).toLocaleString(),
+                        //     modifiedCheckOutTime: new Date(endDateTime).toLocaleString()
+                        
+                        // }
+                        
+                        updateUserAttendence()
+                        // handleModalClose1()
+
+                    }}>
+                        Update
                     </Button>
                 </DialogActions>
             </BootstrapDialog>
