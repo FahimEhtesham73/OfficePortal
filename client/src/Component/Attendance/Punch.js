@@ -174,7 +174,12 @@ const Punch = () => {
     const [editingrow, setEditingrow] = useState(false);
     const [startDateTime, setStartDateTime] = useState("");
     const [endDateTime, setEndDateTime] = useState("");
-    const [updateAttendence, setUpdateAttendence] = useState({})
+    const [updateAttendence, setUpdateAttendence] = useState({});
+
+    const [checkBoxHD, setCheckBoxHD] = useState(false)
+    const [checkBoxWOH, setCheckBoxWOH] = useState(false)
+
+    
     // For Modal open
     // console.log("position", position);
 
@@ -281,13 +286,19 @@ const Punch = () => {
          if(a?.status?.includes('WAO')){
              setCheckBoxDisableOffice(true);
              setCheckBoxDisableHome(false)
-            //  setPosition([...a?.status])
+             setPosition([...a?.status])
 
          }
          else if(a?.status?.includes('WFH')){                                                  
              setCheckBoxDisableHome(true)
              setCheckBoxDisableOffice(false)
             //  setPosition([...a?.status])
+         }
+        if(a?.status?.includes("HD")){
+            setCheckBoxHD(true)
+         }
+         if(a?.status?.includes("WOH")){
+            setCheckBoxWOH(true)
          }
     }
 
@@ -873,8 +884,8 @@ console.log(updateAttendence);
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
-                        <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
-                        <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
+                        <FormControlLabel control={<Checkbox />} value='WOH' checked= {checkBoxWOH} label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} value='HD' checked={checkBoxHD} label="Half day" />
                     </FormGroup>
 
                 </DialogContent>

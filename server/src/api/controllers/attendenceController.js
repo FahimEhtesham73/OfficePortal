@@ -13,18 +13,19 @@ module.exports.createAttendence = async (req, res) => {
     const status = req.body.status;
     const startDay = new Date(new Date(checkInTime).setHours(0, 0, 0, 0)).toISOString();
     const endDay = new Date(new Date(checkInTime).setHours(23, 59, 59, 59)).toISOString();
-    // return;
-    // console.log(startDay, endDay);
+    
+    console.log(req.body);
+    console.log(startDay, endDay);
 
 
     const isUserAlreadyPunchedIn = await Attendence.findOne({
       userId: req.user._id,
-      createdAt: { $gte: new Date(startDay).toISOString(), $lte: new Date(endDay).toISOString() }
+      checkInTime: { $gte: new Date(startDay), $lte: new Date(endDay) },
+
     }).lean();
     console.log(isUserAlreadyPunchedIn);
 
     if (isUserAlreadyPunchedIn) return res.status(400).json({ "message": "User already punched in" });
-
     let args = {};
     for (let arg in req.body){
       if(arg === "userId"){
@@ -97,19 +98,21 @@ module.exports.getAttendences = async (req, res) => {
       }
     }).select("-createdAt -updatedAt -createdBy -updatedBy -__v").lean()
 
-    let totalHours = 0;
-    // console.log("all", allAttendence);
+    let totalMinutes = 0;
+    let totalWorkingHour = 0;
+    console.log("all", allAttendence);
     allAttendence.forEach(item => {
       if(item?.checkInTime  && item?.checkOutTime){
 
         const checkInTime = item?.modifiedCheckInTime? new Date(item.modifiedCheckInTime): new Date(item.checkInTime);
         const checkOutTime = item?.modifiedCheckOutTime? new Date(item.modifiedCheckOutTime) : new Date(item.checkOutTime);
-        const timeDiff = totalHour(checkInTime.getTime(), checkOutTime.getTime());
-        // const hours = Math.abs(timeDiff) / 36e5; // Divide by milliseconds in an hour
-        totalHours += parseFloat(timeDiff);
+        const timeDiffInMiliSeconds = checkOutTime.getTime() - checkInTime.getTime();
+        const timeDiffMinutes = Math.floor(timeDiffInMiliSeconds / (1000 * 60));
+        totalMinutes += parseFloat(timeDiffMinutes);
       }
-});
-// console.log(totalHours);
+    });
+    // console.log(totalHours);
+    totalWorkingHour = totalMinutes > 0 ? `${Math.floor(totalMinutes / 60)}:${totalMinutes % 60}` : "0"
 
     const userName = await User.findOne({ _id: arg.usersId }).select("firstName").lean()
 
@@ -137,7 +140,7 @@ module.exports.getAttendences = async (req, res) => {
     }
     console.log();
 
-    return res.status(200).json({ "attendenceList": arr , "totalHours": totalHours})
+    return res.status(200).json({ "attendenceList": arr , "totalHours": totalWorkingHour})
 
   } catch (err) {
     console.log("err", err);
@@ -198,12 +201,15 @@ module.exports.getTodayAttendence = async (req, res) => {
 
     const isPunchedIn = await Attendence.findOne({
       userId: req.user._id,
-      createdAt: {
+      $or: [{checkInTime: {
         $gte: new Date(startDay).toISOString(),
         $lte: new Date(endDay).toISOString()
-      }
+      }}, {modifiedCheckInTime: {$gte: new Date(startDay).toISOString(),
+        $lte: new Date(endDay).toISOString()}}]
+     
     }).select("-createdAt -updatedAt -createdBy -updatedBy -__v")
 
+    console.log("is punched in ", isPunchedIn);
     return res.status(200).json({ "punched": isPunchedIn ? isPunchedIn : "" })
 
   } catch (err) {
@@ -404,6 +410,8 @@ module.exports.modifiedORCreateAttendence = async (req, res) => {
         truncateData.userId = data.userId;
         truncateData.isModified = true;
         truncateData.status = data.status;
+        truncateData.modifiedCheckInTime = new Date(data.modifiedCheckInTime);
+        truncateData.modifiedCheckOutTime = new Date(data.modifiedCheckOutTime);
   
         for(d in data){
           if(d === "checkInTime" && !data["checkInTime"]){
@@ -423,7 +431,11 @@ module.exports.modifiedORCreateAttendence = async (req, res) => {
         
         console.log("truncate",truncateData);
         // return
-        const isAttendenceAvailbe = await Attendence.findOne({userId: truncateData.userId, checkInTime:{$gte: stratOftheDay}, checkOutTime: {$lte: endOftheDay}}).lean();
+        const isAttendenceAvailbe = await Attendence.findOne({
+          userId: truncateData.userId, 
+          checkInTime:{$gte: stratOftheDay}, checkOutTime: {$lte: endOftheDay}
+        
+        }).lean();
         console.log("avilabe attendence", isAttendenceAvailbe);
         if(isAttendenceAvailbe) return res.status(400).json({'message': "Attendece available already"});
         const newAttendece = await new Attendence({...truncateData}).save(); 
