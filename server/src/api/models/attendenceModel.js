@@ -6,6 +6,10 @@ const attendenceSchema = new Schema({
     status: {type: [String], enum: ["WFH", "WAO", "HD", "WOH"]}, // IO, WFO, HD,
     // isWOH: Boolean,
     comments: String,
+    isModified: {type: Boolean, default: false},
+    modifiedCheckInTime : Date,
+    modifiedCheckOutTime : Date,
+
     createdBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
     updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
 },{timestamps: true})

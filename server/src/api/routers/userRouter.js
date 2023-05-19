@@ -17,10 +17,9 @@ router.route("/searchuser").post(Authorize,searchEmployeeValidation,searchUser)
 router.route("/imgupload").post(profileImgUpload)
 router.route("/viewcv").post(viewCv)
 
-//stroge location selection
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
-        console.log("original name",file.originalname);
+        // console.log("original name",file.originalname);
     let folder;
     if(req.body.type === "img"){
         folder = "images"
@@ -57,10 +56,24 @@ const upload = multer({
     fileFilter: (req, files, callback)=>{
         const ext = path.extname(files.originalname.trim());
         const allowed = ['.png', '.jpg', '.jpeg', '.pdf'];
+        const imgType = ['.png', '.jpg', '.jpeg']
         if (allowed.includes(ext)) {
+            if(req.body.type === "img" && !imgType.includes(ext)){
+            req.fileValidationError = 'invalid image format'; 
+            callback(null, false); 
+
+            }
+            if(req.body.type === "cv" && ext !== ".pdf"){
+                req.fileValidationError = 'invalid pdf format'; 
+                    callback(null, false); 
+
+                }
           callback(null, true);
         } else {
-          callback(null, false); // handle error in middleware, not here
+            req.fileValidationError = 'invalid file format';
+            callback(null, false); 
+            // handle error in middleware, not here
+            // throw new Error("Invalid image or pdf format")
         }
       },
       
