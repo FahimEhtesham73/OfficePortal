@@ -197,7 +197,7 @@ const Punch = () => {
         setOpen1(true);
     };
 
-  
+
 
     // For Modal Close
     const handleModalClose1 = () => {
@@ -232,7 +232,7 @@ const Punch = () => {
     }
 
     const handlePosition = (e) => {
-        console.log("hadnle position",e.target.value);
+        console.log("hadnle position", e.target.value);
         if (e.target.value === 'WFH') {
             if (position?.includes('WFH')) {
                 setCheckBoxDisableHome(false)
@@ -254,7 +254,7 @@ const Punch = () => {
             } else {
                 setCheckBoxDisableOffice(true)
                 setCheckBoxDisableHome(false)
-                const unchekedFilter = position?.filter((val) => { return val !== 'WFH' }) 
+                const unchekedFilter = position?.filter((val) => { return val !== 'WFH' })
                 setPosition([...unchekedFilter, 'WAO'])
             }
 
@@ -263,24 +263,26 @@ const Punch = () => {
                 const unchekedFilter = position?.filter((val) => { return e.target.value !== val })
                 setPosition(unchekedFilter)
             } else {
+                if(e.target.value !== undefined){
+                    setPosition([...position, e.target.value])
+                }
                 
-                setPosition([...position  , e.target.value])
             }
 
         }
-
     }
-    // console.log("work position", position);
+    console.log("work position", position);
 
 
-    const handleUpateSingleAttendece = (ind) => {
+    const handleUpateSingleAttendece = (row) => {
         handleModalOpen1()
-        let a =  attendenceList.find((item, i)=> i === ind);
-        setUpdateAttendence({...a});
-        setStartDateTime(a?.checkInTime || a?.key)
-        setEndDateTime(a?.checkOutTime || a?.key)
+        let a = row
+        console.log("Row Information", a);
+        setUpdateAttendence({ ...a });
+        setStartDateTime(a?.modifiedCheckInTime ? a?.modifiedCheckInTime : a?.key)
+        setEndDateTime(a?.modifiedCheckOutTime? a?.modifiedCheckOutTime:  a?.key)
 
-        setPosition(a?.status || [] )
+        setPosition(a?.status || [])
 
         console.log("postion", position);
          if(a?.status?.includes('WAO')){
@@ -325,15 +327,16 @@ const Punch = () => {
 
             const data = await res.json()
             if (res.status === 200 || res.status === 201) {
-                console.log("created punch data", data);
+                // console.log("created punch data", data);
                 toast.success("Punched In Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-                localStorage.setItem('punchedInTime', data?.info?.checkInTime)
+                // localStorage.setItem('punchedInTime', data?.info?.checkInTime)
                 const localTime = formatAMPM(new Date(data?.info?.checkInTime))
                 setPunchedTime(localTime)
                 setIsPunchedIn(true)
                 document.getElementById("time").innerText = `00:00`
                 setPosition([])
                 getInfo()
+                getPunchedInfo()
             } else {
                 toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             }
@@ -342,7 +345,7 @@ const Punch = () => {
     }
 
     const punchOut = async () => {
-        console.log("Attendance ID", decoded?._id);
+        // console.log("Attendance ID", decoded?._id);
         const res = await fetch(`${process.env.REACT_APP_URL}/attendence/update`, {
             method: "PUT",
             headers: {
@@ -362,40 +365,41 @@ const Punch = () => {
         const data = await res.json()
         // console.log("Punched Out",data);
         if (res.status === 200) {
-            localStorage.removeItem('punchedInTime')
+            // localStorage.removeItem('punchedInTime')
             setIsPunchedIn(false)
             const localTime = formatAMPM(new Date(data.data.checkOutTime))
+            document.getElementById("time").innerText = ''
             toast.success(`You Punched Out At ${localTime}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             getInfo()
         }
     }
-console.log(updateAttendence);
+    // console.log(updateAttendence);
     const updateUserAttendence = async () => {
-        try{
+        try {
 
             const data = {
                 aId: updateAttendence?._id || "",
-                userId : updateAttendence?.userId,
+                userId: updateAttendence?.userId,
                 checkInTime: updateAttendence?.checkInTime || "",
                 checkOutTime: updateAttendence?.checkOutTime || "",
                 status: position?.length && position,
-                modifiedCheckInTime : startDateTime,
+                modifiedCheckInTime: startDateTime,
                 modifiedCheckOutTime: endDateTime
-            
+
             }
-            console.log("data", data);
-            
+            // console.log("data", data);
+
             const att = await modifySingleAttendene(data, jwt);
-            if(att.status === 200){
+            if (att.status === 200) {
                 handleModalClose1()
                 toast.success("Successfully Updated", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
                 getInfo(data?.userId);
-            }else{
+            } else {
                 toast.warning(att?.data?.message || "Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
             }
-        }catch(err){
-                toast.warning("Something went wrong!", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        } catch (err) {
+            toast.warning("Something went wrong!", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
         }
     }
@@ -433,22 +437,30 @@ console.log(updateAttendence);
     const overTime = (sDate, eDate) => {
         const time = parseFloat(totalHour(sDate, eDate)) - 9
         if (time <= 0) return 0
-        else return time
+        else return time.toFixed(2)
     }
 
-    let timeDiff = new Date().getTime() - new Date(localStorage.getItem('punchedInTime')).getTime()
-    let hours = Math.floor(timeDiff / (1000 * 60 * 60));
-    let minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
-
+    let timeDiff
+    // new Date(localStorage.getItem('punchedInTime')).getTime()
+    let hours
+    let minutes
+    let hoursText
+    let minutesText
 
     function updateTime() {
+        // console.log("Hitted");
+        // console.log("punched update Time",punchedInfo.checkInTime);
+        timeDiff = new Date().getTime() - new Date(punchedInfo.checkInTime).getTime()
+        hours = Math.floor(timeDiff / (1000 * 60 * 60));
+        minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+
         minutes++;
         if (minutes === 60) {
             hours++;
             minutes = 0;
         }
-        const hoursText = hours?.toString()?.padStart(2, "0");
-        const minutesText = minutes?.toString()?.padStart(2, "0");
+        hoursText = hours?.toString()?.padStart(2, "0");
+        minutesText = minutes?.toString()?.padStart(2, "0");
 
         document.getElementById("time").innerText = `${hoursText} : ${minutesText}`
 
@@ -464,7 +476,7 @@ console.log(updateAttendence);
                 "Authorization": "Bearer " + jwt
             },
             body: JSON.stringify({
-                "userId": userId || decodedUser._id ,
+                "userId": userId || decodedUser._id,
                 "monthDateYear": new Date()
             }),
             credentials: 'include',
@@ -472,7 +484,7 @@ console.log(updateAttendence);
         })
 
         const data = await res.json()
-        console.log(" Table Data", data);
+        // console.log(" Table Data", data);
         if (res.status === 200) {
             setAttendenceList(data.attendenceList)
             setTotalWH(data?.totalHours)
@@ -552,10 +564,10 @@ console.log(updateAttendence);
         })
 
         const data = await res.json()
-        console.log(" Table Data", data);
+        // console.log(" Table Data", data);
         if (res.status === 200) {
             setAttendenceList(data.attendenceList);
-            console.log(data);
+            // console.log(data);
             setTotalWH(data?.totalHours)
 
         } else {
@@ -564,13 +576,20 @@ console.log(updateAttendence);
     }
 
     useEffect(() => {
-        if (localStorage.getItem('punchedInTime')) {
+        if (punchedInfo?.checkInTime && !punchedInfo?.checkOutTime) {
+            // console.log("punched UseEffect",punchedInfo.checkInTime);
             const intervalId = setInterval(updateTime, 60000);
 
             return () => clearInterval(intervalId);
         }
 
-    }, [localStorage.getItem('punchedInTime')])
+        // if (localStorage.getItem('punchedInTime')) {
+        //     const intervalId = setInterval(updateTime, 60000);
+
+        //     return () => clearInterval(intervalId);
+        // }
+
+    }, [punchedInfo])
 
     useEffect(() => {
         getInfo()
@@ -580,11 +599,17 @@ console.log(updateAttendence);
 
 
     useLayoutEffect(() => {
-        if (localStorage.getItem('punchedInTime')) {
-            document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
+        // if (localStorage.getItem('punchedInTime')) {
+        //     document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
+        // }
+        if (punchedInfo?.checkInTime && !punchedInfo?.checkOutTime) {
+            updateTime()
+            // console.log("Another Effect",punchedInfo?.checkInTime,hoursText,minutesText);
+
+            document.getElementById("time").innerText = `${hoursText?.toString()?.padStart(2, "0")} : ${minutesText?.toString()?.padStart(2, "0")}`
         }
 
-    }, [])
+    }, [punchedInfo])
 
     return (
         <Box sx={{ marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
@@ -615,11 +640,20 @@ console.log(updateAttendence);
                     </CardContent>
                 </Card>
             </Box>
+            <Box sx={{ width: "60%", margin: "10px auto" }}>
+                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Total Working Hours</Typography>
+                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{totalWH}</Typography>
+                    </Box>
+                </Card>
+            </Box>
             {/* Searching Div */}
-            {
-                userRole() === 'Admin' && <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
+            {/* { */}
+                
+                <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                     <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6} md={4} >
+                        {userRole() === 'Admin' &&  <Grid item xs={12} sm={6} md={4} >
                             <FormControl sx={{ width: "100%" }}>
                                 <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
                                 <Select
@@ -640,7 +674,7 @@ console.log(updateAttendence);
                                     }
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Grid>}
                         {/* Select Month And Year*/}
                         <Grid item xs={12} sm={6} md={4} >
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -653,16 +687,9 @@ console.log(updateAttendence);
                         </Grid>
                     </Grid>
                 </Box>
-            }
+            {/* } */}
 
-            <Box sx={{ width: "60%", margin: "10px auto" }}>
-                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
-                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Total Working Hours</Typography>
-                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{totalWH}</Typography>
-                    </Box>
-                </Card>
-            </Box>
+            
             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", marginBottom: "30px", minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -682,7 +709,7 @@ console.log(updateAttendence);
                             attendenceList.map((row, ind) => (
                                 <StyledTableRow
                                     key={ind}
-                                    // style={{ backgroundColor: row?.isModified ? "#FEA1A1" : "" }}
+                                // style={{ backgroundColor: row?.isModified ? "#FEA1A1" : "" }}
                                 >
 
                                     <StyledTableCell component="th" scope="row">
@@ -693,61 +720,60 @@ console.log(updateAttendence);
                                     <StyledTableCell component="th" scope="row">
                                         {row?.key}
                                     </StyledTableCell>
-                                    <StyledTableCell component="th" scope="row" style={{color: row?.modifiedCheckOutTime? "red": "black"}} >
-                                        {row?.modifiedCheckInTime === row?.checkInTime ? <>
+                                    <StyledTableCell component="th" scope="row" style={{ }} >
+                                        {row?.modifiedCheckInTime === row?.checkInTime ? 
+                                        <>
                                             {row?.checkInTime ? formatAMPM(new Date(row?.checkInTime)) : ""}
-                                        
+
                                         </> : <>
-                                        {row?.modifiedCheckInTime && formatAMPM(new Date(row?.modifiedCheckInTime)) }
-                                        {/* <br /> */}
-                                        {row?.checkInTime ? (<> <br /> {formatAMPM(new Date(row?.checkInTime))} </>)  : ""}
-                                        
+                                            {row?.modifiedCheckInTime &&  <>  {formatAMPM(new Date(row?.modifiedCheckOutTime))} <span style={{color: "grey"}}>(Edited)</span> </>
+                                            }
+                                            {/* <br /> */}
+                                            {row?.checkInTime ? (<> <br /> {formatAMPM(new Date(row?.checkInTime))} </>) : ""}
+
                                         </>}
-                                        {row?.modifiedCheckInTime && (<Tooltip title="edited">
-                                                <PriorityHighIcon sx={{ color: "red" }} />
-                                            </Tooltip>)}
+                                        {/* {row?.modifiedCheckInTime && (<Tooltip title="edited">
+                                            <PriorityHighIcon sx={{ color: "red" }} />
+                                        </Tooltip>)} */}
 
                                     </StyledTableCell>
-                                    <StyledTableCell component="th" scope="row" style={{color: row?.modifiedCheckOutTime? "red": "black"}}>
-                                    {row?.modifiedCheckOutTime === row?.checkOutTime ? <>
+                                    <StyledTableCell component="th" scope="row" style={{  }}>
+                                        {row?.modifiedCheckOutTime === row?.checkOutTime ? <>
                                             {row?.checkOutTime ? formatAMPM(new Date(row?.checkOutTime)) : ""}
-                                        
+
                                         </> : <>
-                                        {row?.modifiedCheckOutTime && formatAMPM(new Date(row?.modifiedCheckOutTime)) }
-                                        {/* <br /> */}
-                                        {row?.checkOutTime ? (<> <br/>{ formatAMPM(new Date(row?.checkOutTime)) } </>) : ""}
-                                        
+                                            {row?.modifiedCheckOutTime && <>  {formatAMPM(new Date(row?.modifiedCheckOutTime))} <span style={{color: "grey"}}>(Edited)</span> </>}
+                                            {/* <br /> */}
+                                            {row?.checkOutTime ? (<> <br />{formatAMPM(new Date(row?.checkOutTime))} </>) : ""}
+
                                         </>}
-                                        {row?.modifiedCheckOutTime && (<Tooltip title="edited">
-                                                <PriorityHighIcon sx={{ color: "red" }} />
-                                            </Tooltip>)}
+                                        {/* {row?.modifiedCheckOutTime && (<Tooltip title="edited">
+                                            <PriorityHighIcon sx={{ color: "red" }} />
+                                        </Tooltip>)} */}
 
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {/* {row?.modifiedCheckOutTime ? totalHour(new Date(row?.modifiedCheckInTime) || new Date())} */}
                                         {(row?.checkOutTime || row?.modifiedCheckOutTime) ? totalHour(new Date(row?.modifiedCheckInTime || row?.checkInTime).getTime(), new Date(row?.modifiedCheckOutTime || row?.checkOutTime).getTime()) : ""}
-                                        {/* {row?.checkOutTime ? totalHour(new Date(row.checkInTime).getTime(), new Date(row.checkOutTime).getTime()) : ""} */}
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
-                                        {/* {row?.checkOutTime ? overTime(new Date(row.checkInTime), new Date(row.checkOutTime)) : ""} */}
                                         {(row?.checkOutTime || row?.modifiedCheckOutTime) ? overTime(new Date(row?.modifiedCheckInTime || row?.checkInTime).getTime(), new Date(row?.modifiedCheckOutTime || row?.checkOutTime).getTime()) : ""}
 
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         <Tooltip title="Edit">
                                             <EditIcon onClick={(e) => {
-                                            
-                                            handleUpateSingleAttendece(ind)
 
-                                                }} />
+                                                handleUpateSingleAttendece(row)
+
+                                            }} />
                                         </Tooltip>
-                                        
-                                        {/* {row?.isModified && (
+
+                                        {row?.isModified && (
                                             <Tooltip title="edited">
                                                 <PriorityHighIcon sx={{ color: "red" }} />
                                             </Tooltip>
 
-                                        )} */}
+                                        )}
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))
@@ -774,7 +800,7 @@ console.log(updateAttendence);
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
                         <FormControlLabel control={<Checkbox />} value='WOH' label="Work On Holiday" />
                         <FormControlLabel control={<Checkbox />} value='HD' label="Half day" />
-                    </FormGroup>``
+                    </FormGroup>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
@@ -814,27 +840,22 @@ console.log(updateAttendence);
                                 // views={['hours', 'minutes', 'seconds']}
                                 // inputFormat="HH:mm:ss"
                                 // renderInput={(props) => <TextField {...props} />}
-                                
+
                                 value={dayjs(startDateTime && startDateTime)}
                                 label="Start Time"
-                                
-                                onChange={(e)=> {
-                                    console.log("start time", e);
+
+                                onChange={(e) => {
+                                    // console.log("start time", e);
                                     let customizeDateTime = new Date(startDateTime);
                                     const extractTime = new Date(e["$d"]).toTimeString();
                                     const splitinngTime = extractTime.split(" ")[0].split(":");
                                     customizeDateTime.setHours(splitinngTime[0])
                                     customizeDateTime.setMinutes(splitinngTime[1])
                                     // customizeDateTime.setSeconds()
-                                    console.log(customizeDateTime);
-                                    
+                                    // console.log(customizeDateTime)
 
-
-
-                                    
-                                    
-                                    console.log("full date time customize", customizeDateTime);
-                                    console.log("extract time", extractTime.split(" ")[0]);
+                                    // console.log("full date time customize", customizeDateTime);
+                                    // console.log("extract time", extractTime.split(" ")[0]);
                                     setStartDateTime(customizeDateTime)
                                     // handleTimeChange("05/01/2023")
                                 }}
@@ -857,23 +878,23 @@ console.log(updateAttendence);
                                 }}
                                 value={dayjs(endDateTime && endDateTime)}
                                 label="End Time"
-                                onChange={(e)=> {
-                                    console.log("start time", e);
+                                onChange={(e) => {
+                                    // console.log("start time", e);
                                     let customizeDateTime = new Date(endDateTime);
                                     const extractTime = new Date(e["$d"]).toTimeString();
                                     const splitinngTime = extractTime.split(" ")[0].split(":");
                                     customizeDateTime.setHours(splitinngTime[0])
                                     customizeDateTime.setMinutes(splitinngTime[1])
                                     // customizeDateTime.setSeconds()
-                                    console.log(customizeDateTime);
-                                    
+                                    // console.log(customizeDateTime);
 
 
 
-                                    
-                                    
-                                    console.log("full date time customize", customizeDateTime);
-                                    console.log("extract time", extractTime.split(" ")[0]);
+
+
+
+                                    // console.log("full date time customize", customizeDateTime);
+                                    // console.log("extract time", extractTime.split(" ")[0]);
                                     setEndDateTime(customizeDateTime)
                                 }}
 
@@ -881,6 +902,7 @@ console.log(updateAttendence);
                         </DemoContainer>
                     </LocalizationProvider>
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
+                    {/* { handlePosition(e) } */}
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
@@ -890,31 +912,17 @@ console.log(updateAttendence);
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button 
-                    disabled={
-                        (position?.length>0 && 
-                            updateAttendence?.userId 
-                            && startDateTime
-                            &&
-                            (new Date(startDateTime).getTime() < new Date(endDateTime).getTime())
-                            ) ? false: true}
-                    variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
-                        // punchIn()
-                        // const data = {
-                            //     aId: updateAttendence?._id || "",
-                            //     userId : updateAttendence?.userId,
-                            //     checkInTime: updateAttendence?.checkInTime || "",
-                            //     checkOutTime: updateAttendence?.checkOutTime || "",
-                            //     status: position?.length && position,
-                        //     modifiedCheckInTime : new Date(startDateTime).toLocaleString(),
-                        //     modifiedCheckOutTime: new Date(endDateTime).toLocaleString()
-                        
-                        // }
-                        
-                        updateUserAttendence()
-                        // handleModalClose1()
-
-                    }}>
+                    <Button
+                        disabled={
+                            (position?.length > 0 &&
+                                updateAttendence?.userId
+                                && startDateTime
+                                &&
+                                (new Date(startDateTime).getTime() < new Date(endDateTime).getTime())
+                            ) ? false : true}
+                        variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                            updateUserAttendence()
+                        }}>
                         Update
                     </Button>
                 </DialogActions>

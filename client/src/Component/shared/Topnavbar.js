@@ -104,7 +104,7 @@ const Topnavbar = (props) => {
   const handleClick = () => {
     setOpenLeave(!openLeave);
   };
-  console.log("profile", profileInfo);
+  // console.log("profile", profileInfo);
 
   // For Profile Settings
   const handleOpenUserMenu = (event) => {
@@ -122,7 +122,7 @@ const Topnavbar = (props) => {
   const loginUser = () =>{
 
     getSingleUser(profileInfo?._id, jwtToken).then(d=> {
-      console.log("d",d);
+      // console.log("d",d);
       setProfileImagePath(d?.data[0]?.imagePath)
     }).catch(e=> {
       console.log(e);
@@ -232,7 +232,7 @@ const Topnavbar = (props) => {
                     >
                       <GridOnIcon />
                     </ListItemIcon>
-                    <ListItemText primary={'Attendance Sheet'} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={'Attendence Sheet'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
                 {/* Holidays */}

@@ -58,15 +58,15 @@ module.exports.updateHoliday = async (req, res) => {
         // console.log(errors);
         // if (isErrorFounds(errors)) return res.status(400).json({ "message": errors })
 
-        const holidayName = req.body.updatedName;
-        const holidayDate = req.body.updatedDate
+        const holidayName = req.body.holidayName;
+        const holidayDate = req.body.holidayDate
         if (holidayName === "" || holidayDate === "") {
             return res.status(400).json({ message: "Fill all the fields" })
         }
         const id = req.params.id;
-        console.log("ID",id);
+        console.log("ID",holidayDate,holidayName);
         const updateHoliday = await Holiday.findByIdAndUpdate({ _id: id }, { $set: { holidayName, date: holidayDate } }, { new: true })
-        console.log(updateHoliday);
+        // console.log(updateHoliday);
         return res.status(200).send(updateHoliday)
 
 
@@ -74,4 +74,13 @@ module.exports.updateHoliday = async (req, res) => {
         console.log(e);
         return res.status(500).json({message:"something went wrong on all user get function"})
     }
+}
+
+module.exports.deleteHoliday = async (req, res) => {
+    const  id  = req.params.id;
+    const holiday = await Holiday.findOne({_id:id});
+    if (!holiday) return res.status(400).json({message:"Day not found"});
+    const deletedHoliday = await Holiday.findOneAndDelete({_id:holiday._id});
+    return res.status(200).json({message:"successfully deleted"});
+
 }
