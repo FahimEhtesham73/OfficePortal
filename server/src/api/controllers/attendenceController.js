@@ -292,3 +292,56 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
   
  
 }
+
+
+module.exports.todaysPunchInUsers = async (req, res)=> {
+
+  try{
+    const startDay = new Date().setHours(0, 0, 0, 0);
+    const endDay = new Date().setHours(23, 59, 59, 59);
+    console.log(startDay, endDay);
+    const attendance = await Attendence.aggregate([
+      {$match: {
+        "checkInTime": {$gte: new Date(startDay), $lte: new Date(endDay)}
+      }},
+      // {$lookup: {
+      //   from: "users",
+      //   localField: "userId",
+      //   foreignField: "_id",
+      //   as: "userInfo"
+      // }},
+      // {$unwind: "$userInfo"},
+      // {
+      //   $addFields: {
+      //     isPunchedToday: {
+      //       $cond: [{$}]
+      //     }
+      //   }
+
+      // },
+      // {$project: {
+        
+      //   userId: 1,
+      //   checkInTime: 1,
+      //   checkOutTime: 1,
+      //   status: 1,
+        
+      // }}
+
+      
+    ])
+
+    let obj = {}
+    for(let att of attendance){
+      obj[att.userId] = {...att}
+    }
+    console.log(obj);
+    return res.status(200).json({"data": obj})
+
+  }catch(err){
+
+    console.log(err);
+    return res.status(500).json({ "message": "Something went wrong" });
+
+  }
+}

@@ -255,9 +255,9 @@ module.exports.getAllPoroject = async (req, res) => {
                 projectEndTime: 1,
                 isCurrentlyActive: 1,
                 projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1 }
+                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
+                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
+                projectMembersList: { _id: 1, firstName: 1, lastName: 1, imagePath: 1  }
             }
         }
         // const projects = await Project.find({$or: [{projectLead: {$eq: req.user._id}}, {projectSuperVisor: {$eq: req.user._id}}, {projectMembers: req.user._id} ]}).populate("firstName users").lean();

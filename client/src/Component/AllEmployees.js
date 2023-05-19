@@ -30,9 +30,11 @@ import Grid from '@mui/material/Grid';
 import { toast } from 'react-toastify';
 import Skeleton from '@mui/material/Skeleton';
 import Cookies from 'js-cookie';
-
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import userRole from './Hook/userHook';
 import { Link, useNavigate } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
+import { profileImg } from './functions/commonFunc';
 
 
 // Modal Styling
@@ -84,7 +86,8 @@ const AllEmployees = () => {
   const [designation, setDesignation] = useState([])
   const [role, setRole] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
-  const [allUser, setAllUser] = useState([])
+  const [allUser, setAllUser] = useState([]);
+  const [punchedInToday, setPunchedInToday] = useState({})
   const [user, setUser] = useState({
     firstName: "", lastName: "", email: "", password: "", designation: "", role: "", department: "", empId: "", joiningDate: ""
   })
@@ -170,7 +173,6 @@ const AllEmployees = () => {
     }
 
   }
-
   const getAllRoles = async () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/roles/all`, {
       method: "GET",
@@ -283,12 +285,35 @@ const AllEmployees = () => {
     }
   }
 
+  const todaysPunchInUsers = async()=> {
+    const res = await fetch(`${process.env.REACT_APP_URL}/attendence/todayspunch`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
+      },
+    })
+    const data = await res.json()
+    console.log("today", data);
+    if (res.status === 200) {
+      setPunchedInToday(data?.data)
+      setLoading(false)
+    } else {
+      setLoading(false)
+      toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+    }
+  }
+
+  for(let p in punchedInToday){
+    console.log(typeof p);
+  }
 
   useEffect(() => {
     getAllUser()
     getAllDepartment()
     getAllDesignations()
     getAllRoles()
+    todaysPunchInUsers()
   }, [])
 
   return (
@@ -371,14 +396,24 @@ const AllEmployees = () => {
 
             :
             <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", marginTop: "40px", maxWidth: "2618px" }}>
-
+              {/* {console.log("punch",JSON.parse(JSON.stringify(punchedInToday)))} */}
               <Grid container spacing={3}>
                 {
                   allUser.map((val, ind) => {
+                    let id = val?._id.toString();
+                    // console.log("val", id);
+
+                    // console.log(`hello: ${JSON.parse(JSON.stringify(punchedInToday))[id]}`);
                     return (
                       <Grid item xs={12} sm={6} md={3}>
-                        <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }}>
+                        <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }} >
                           <CardHeader
+                          avatar = {
+                            // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
+                              <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime? "#B2BEB5": "green" : "black"}`}} />
+
+                            // </Tooltip>
+                          }
                             action={
                               <IconButton aria-label="settings" onClick={(e) => {
                                 handleClick(e)
@@ -414,7 +449,7 @@ const AllEmployees = () => {
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                             <CardContent>
-                              <Avatar alt='Employee' src={val.imagePath} sx={{ width: 120, height: 120 }} />
+                              <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
                             </CardContent>
                             <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.firstName} {val.lastName}</Typography>
                             <Typography sx={{ fontSize: '13px' }}>{val?.designation?.name}</Typography>

@@ -102,7 +102,18 @@ const Attendancesheet = () => {
             return false
         }
     }
-
+    // Convert Date
+    function formatAMPM(date) {
+        console.log("Date",date);
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 
     useLayoutEffect(() => {
         getAttendanceSheet()
@@ -189,7 +200,7 @@ const Attendancesheet = () => {
 
 
                                                                         }
-                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon /> : ""}
+                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.checkIn))} /> : ""}
                                                                     </>
                                                                 )
                                                                     : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>

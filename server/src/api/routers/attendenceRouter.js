@@ -1,4 +1,4 @@
-const { createAttendence, getAttendences, updateAttendece, getTodayAttendence,getAllUserAttendenceSheet } = require("../controllers/attendenceController");
+const { createAttendence, getAttendences, updateAttendece, getTodayAttendence,getAllUserAttendenceSheet, todaysPunchInUsers } = require("../controllers/attendenceController");
 const {Authorize} = require("../middleware/commonMilddleware");
 const { updateAttendenceValidation, getAttendenceValidation } = require("../util/validator/attendenceValidation");
 
@@ -9,6 +9,7 @@ router.route("/getall").post(Authorize,  getAttendences) //get all attendeces
 router.route("/update").put(Authorize, updateAttendenceValidation, updateAttendece) //update a attendece
 router.route("/today").post(Authorize, getTodayAttendence)
 router.route("/alluseratendance").post(getAllUserAttendenceSheet)
+router.route("/todayspunch").get(todaysPunchInUsers)
 
 module.exports = router;
 // getAttendenceValidation,
