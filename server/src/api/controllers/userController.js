@@ -14,6 +14,7 @@ const jwt = require("jsonwebtoken");
 const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession } = require("../services/userServices");
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
+const { default: mongoose } = require("mongoose");
 
 
 module.exports.createUser = async (req, res) => {
@@ -88,17 +89,44 @@ module.exports.deleteSingleUser = async (req, res) => {
 
 module.exports.allUser = async (req, res) => {
     try {
+        const role = req.query.role;
+        console.log("role", req.query);
         const users = await User.aggregate([
 
+        //     {$match: {$or: [ {
+        //         role: new mongoose.Types.ObjectId(role) 
+        //     }, {role: {$exists: true}}
+        // ]
+        // }
+        
+        // },
+
+        {
+            $lookup: {
+                from: "roles",
+                localField: "role",
+                foreignField: "_id",
+                as: "roleDetails"  
+            }
+        }
+        ,
+        {
+            $unwind: "$roleDetails"
+        },
+        
             {
                 $project: {
                   "password": 0,
+                //   "roleDetails.alias": 0,
+                  "roleDetails.createdBy": 0,
+                  "roleDetails.updatedBy": 0,
 
                 }
             },
 
         
         ])
+        console.log("users",users);
         return res.status(200).json(users)
     } catch (e) {
         console.log(e);
@@ -162,6 +190,7 @@ module.exports.searchUser = async (req, res) => {
         const desgntn = req.body.desgId
         const userId = req.body.userId
         const empName = req.body.empName
+        const roles = req.body.roles
 
 
         const matchQuery = {};
@@ -174,6 +203,8 @@ module.exports.searchUser = async (req, res) => {
         if (empName) {
           matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } } ];
         }
+        
+        
 
         const result = await User.aggregate([
             {
@@ -281,5 +312,14 @@ module.exports.viewImage =  async(req, res) => {
     } else {
       res.status(404).json({ message: 'Image not found' });
     }
-  };
+};
+
+module.exports.findUsers = async (req, res) => {
+    try{
+
+        const user = await User.aggregate()
+    }catch(err){
+
+    }
+}
   

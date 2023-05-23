@@ -25,6 +25,7 @@ import Teamlead from "./Component/TeamLead/Teamlead";
 import AdminCombinedProtected from "./Component/Protected Router/AdminCombinedProtected";
 import AuthenticateUser from "./Component/Protected Router/AuthenticateUser";
 import Project from "./Component/Project/Project";
+import ProjectDetail from "./Component/Project/ProjectDetail";
 
 const App = () => {
   return (
@@ -41,6 +42,8 @@ const App = () => {
         <Route path='/leaveadmin' element={<AdminCombinedProtected><LeaveStatusLead/></AdminCombinedProtected> }/>
         <Route path='/teamlead' element={<Teamlead/>}/>
         <Route path='/projects' element={<AuthenticateUser><Project /></AuthenticateUser>}/>
+        <Route path='/projects/:id' element={ <AuthenticateUser> <ProjectDetail /> </AuthenticateUser> }/>
+
 
         {/* All Employees */}
       </Routes>

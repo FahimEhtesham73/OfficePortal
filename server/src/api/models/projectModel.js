@@ -1,8 +1,8 @@
 const {Schema, model} = require("mongoose")
 const projectSchema = new Schema({
     projectName: String,
-    projectSuperVisor: {type: Schema.Types.ObjectId, ref: "User"},
-    projectLead: {type: Schema.Types.ObjectId, ref: "User"},
+    projectSuperVisor: [Schema.Types.ObjectId],
+    projectLead: [Schema.Types.ObjectId],
     projectMembers: [Schema.Types.ObjectId],
     projectStartTime: Date,
     projectEndTime: Date,

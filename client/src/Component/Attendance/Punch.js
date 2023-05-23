@@ -279,8 +279,8 @@ const Punch = () => {
         let a = row
         console.log("Row Information", a);
         setUpdateAttendence({ ...a });
-        setStartDateTime(a?.modifiedCheckInTime ? a?.modifiedCheckInTime : a?.key)
-        setEndDateTime(a?.modifiedCheckOutTime? a?.modifiedCheckOutTime:  a?.key)
+        setStartDateTime(a?.modifiedCheckInTime ? a?.modifiedCheckInTime : a.checkInTime || a?.key)
+        setEndDateTime(a?.modifiedCheckOutTime? a?.modifiedCheckOutTime: a.checkOutTime ||  a?.key)
 
         setPosition(a?.status || [])
 
@@ -407,9 +407,13 @@ const Punch = () => {
 
     const totalHour = (sDate, eDate) => {
         const diffInMilliseconds = Math.abs(eDate - sDate);
-        const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+        const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+
+        const hour = Math.floor(diffInMinutes / 60);
+        const minutes = diffInMinutes % 60;
+        const minuteValuInStr = minutes < 10 ? `0${minutes}` : minutes
         // console.log(diffInHours);
-        return diffInHours.toFixed(2)
+        return `${hour}:${minuteValuInStr}`
     }
 
     const searchedDate = (dateStr) => {
@@ -845,7 +849,7 @@ const Punch = () => {
                                 label="Start Time"
 
                                 onChange={(e) => {
-                                    // console.log("start time", e);
+                                    console.log("start time", startDateTime);
                                     let customizeDateTime = new Date(startDateTime);
                                     const extractTime = new Date(e["$d"]).toTimeString();
                                     const splitinngTime = extractTime.split(" ")[0].split(":");
