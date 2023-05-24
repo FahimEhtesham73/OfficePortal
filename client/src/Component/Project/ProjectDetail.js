@@ -222,7 +222,7 @@ useEffect(()=> {
                                         {/* {projectInfo} */}
                                         <ListItem alignItems="flex-start">
                                             <ListItemAvatar>
-                                                <Avatar alt="Remy Sharp" src={`${projectInfo?.projectSuperVisorDetails?.imagePath}`} />
+                                                <Avatar imgProps={{crossOrigin: "false"}} alt="Remy Sharp" src={`${projectInfo?.projectSuperVisorDetails?.imagePath}`} />
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={`${projectInfo?.projectSuperVisorDetails?.firstName}`}
@@ -232,7 +232,7 @@ useEffect(()=> {
                                         {/* <Divider variant="inset" component="li" /> */}
                                         <ListItem alignItems="flex-start">
                                             <ListItemAvatar>
-                                                <Avatar alt="Remy Sharp" src={`${projectInfo?.projectLeadDetails?.imagePath}`} />
+                                                <Avatar imgProps={{crossOrigin: "false"}} alt="Remy Sharp" src={`${projectInfo?.projectLeadDetails?.imagePath}`} />
                                             </ListItemAvatar>
                                             <ListItemText
                                             primary={`${projectInfo?.projectLeadDetails?.firstName}`}
@@ -268,7 +268,7 @@ useEffect(()=> {
                                                 
                                         <ListItem alignItems="flex-start">
                                             <ListItemAvatar>
-                                                <Avatar alt="Remy Sharp" src={v?.imagePath}/>
+                                                <Avatar imgProps={{crossOrigin: "false"}} alt="img" src={v?.imagePath}/>
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={v?.firstName}

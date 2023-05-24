@@ -19,6 +19,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, Divider, Stack, Paper, AvatarGroup, Tooltip } from '@mui/material';
 import { getAllProject } from '../../api/projectApi';
 import { useNavigate } from 'react-router-dom';
+import { profileImg } from '../functions/commonFunc';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -104,7 +105,7 @@ const SingleProject = ({project}) => {
           {project?.projectSuperVisorDetails.map((m)=> {
             return (
         <Tooltip title={m.firstName}>
-            <Avatar alt={m?.firstName} src={m?.imagePath} />
+            <Avatar imgProps={{crossOrigin: "false"}} alt={m?.firstName} src={profileImg(m?.imagePath)} />
         </Tooltip>
             )
           })}
@@ -116,7 +117,7 @@ const SingleProject = ({project}) => {
           {project?.projectLeadDetails.map((m)=> {
             return (
         <Tooltip title={m.firstName}>
-            <Avatar alt={m?.firstName} src={m?.imagePath} />
+            <Avatar imgProps={{crossOrigin: "false"}} alt={m?.firstName} src={profileImg(m?.imagePath)} />
         </Tooltip>
             )
           })}
@@ -130,7 +131,7 @@ const SingleProject = ({project}) => {
           {project.projectMembersList.map((m)=> {
             return (
               <Tooltip title={`${m.firstName}`}>
-                <Avatar alt="profile-img" src={m.imagePath} />
+                <Avatar imgProps={{crossOrigin: "false"}} alt="profile-img" src={profileImg(m.imagePath)} />
 
               </Tooltip>
 
