@@ -3,21 +3,22 @@ const Project = require("../models/projectModel");
 const { updateAProject } = require("../services/projectServices");
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
+const { projectSuperVisorLookupSatge, projectLeadLookupSatge, projectMembersLookupSatge, projectStage } = require("../util/projectCommonTemplate");
 
 /********** Project query stages ***********/
 
 // Check if req.body object has all value
 function checkObjectValues(obj) {
     for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        var value = obj[key];
-        if (value === '' || value === null) {
-          return false;
+        if (obj.hasOwnProperty(key)) {
+            var value = obj[key];
+            if (value === '' || value === null) {
+                return false;
+            }
         }
-      }
     }
     return true;
-  }
+}
 
 
 module.exports.createProject = async (req, res) => {
@@ -25,11 +26,11 @@ module.exports.createProject = async (req, res) => {
         const erros = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
 
-        const { projectName, projectSuperVisor, projectLead,projectMembers, projectStartTime, projectEndTime,projectOwner,superVisorTime,leadTime,memberTime,projectDescription } = req.body;
+        const { projectName, projectSuperVisor, projectLead, projectMembers, projectStartTime, projectEndTime, projectOwner, superVisorTime, leadTime, memberTime, projectDescription } = req.body;
 
         // console.log(" create project req body",req.body);
 
-        if(!checkObjectValues(req.body)) return res.status(400).json({message:"Fill all the mandatory fields"})
+        if (!checkObjectValues(req.body)) return res.status(400).json({ message: "Fill all the mandatory fields" })
 
         const isProjectAvailable = await Project.findOne({ projectName }).lean()
         if (isProjectAvailable) return res.status(400).json({ "message": `${projectName} project is already created` })
@@ -46,53 +47,12 @@ module.exports.createProject = async (req, res) => {
             memberTime,
             projectStartTime,
             projectEndTime,
-            createdBy:req.user._id
+            createdBy: req.user._id
         }
-   
+
         const project = await Project.create({ ...data });
 
-        let projectSuperVisorLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectSuperVisor",
-                foreignField: "_id",
-                as: "projectSuperVisorDetails",
-            }
-        };
-        let projectLeadLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectLead",
-                foreignField: "_id",
-                as: "projectLeadDetails",
-            }
-        };
-
-        let projectMembersLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectMembers",
-                foreignField: "_id",
-                as: "projectMembersList",
-            }
-        };
-
-
-        const projectStage = {
-            $project: {
-                _id: 1,
-                projectName: 1,
-                projectSuperVisor: 1,
-                projectLead: 1,
-                projectStartTime: 1,
-                projectEndTime: 1,
-                isCurrentlyActive: 1,
-                projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 }
-            }
-        }
+       
 
         const newProject = await Project.aggregate([
             {
@@ -110,16 +70,16 @@ module.exports.createProject = async (req, res) => {
 
             projectStage,
         ])
-        
+
         return res.status(200).json({ "message": "Project created successfully", "data": newProject })
 
-    } 
+    }
     catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Something Went Wrong" })
 
     }
-    
+
 }
 
 module.exports.updateProject = async (req, res) => {
@@ -230,10 +190,10 @@ module.exports.updateProject = async (req, res) => {
 
 module.exports.getAPoroject = async (req, res) => {
     try {
-        
+
         const projectId = req.params.id;
 
-        if(!mongoose.isObjectIdOrHexString(projectId)) return res.status(400).json({"error": "invalid project id"})
+        if (!mongoose.isObjectIdOrHexString(projectId)) return res.status(400).json({ "error": "invalid project id" })
         const matchStage = {
             $match: {
                 _id: new mongoose.Types.ObjectId(projectId),
@@ -244,71 +204,35 @@ module.exports.getAPoroject = async (req, res) => {
                 ]
             }
         }
-        let projectSuperVisorLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectSuperVisor",
-                foreignField: "_id",
-                as: "projectSuperVisorDetails",
-            }
-        };
-        let projectLeadLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectLead",
-                foreignField: "_id",
-                as: "projectLeadDetails",
-            }
-        };
-        let projectMembersLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectMembers",
-                foreignField: "_id",
-                as: "projectMembersList",
-            }
-        };
-        const projectStage = {
-            $project: {
-                _id: 1,
-                projectName: 1,
-                projectSuperVisor: 1,
-                projectLead: 1,
-                projectStartTime: 1,
-                projectEndTime: 1,
-                isCurrentlyActive: 1,
-                projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1, imagePath: 1  }
-            }
-        }
+       
         // const projects = await Project.find({$or: [{projectLead: {$eq: req.user._id}}, {projectSuperVisor: {$eq: req.user._id}}, {projectMembers: req.user._id} ]}).populate("firstName users").lean();
-        if(req.user.role.alias === "Admin"){
-         const projects = await Project.aggregate([
-            {$match: {
-                _id: new mongoose.Types.ObjectId(projectId)
-            }},
-            projectSuperVisorLookupSatge,
-            { $unwind: "$projectSuperVisorDetails" },
+        if (req.user.role.alias === "Admin") {
+            const projects = await Project.aggregate([
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(projectId)
+                    }
+                },
+                projectSuperVisorLookupSatge,
+                // { $unwind: "$projectSuperVisorDetails" },
 
-            projectLeadLookupSatge,
-            { $unwind: "$projectLeadDetails" },
-            projectMembersLookupSatge,
+                projectLeadLookupSatge,
+                // { $unwind: "$projectLeadDetails" },
+                projectMembersLookupSatge,
 
-            projectStage,
-         ]);
-         if(!projects.length) return res.status(400).json({"message": "Project not found"})
+                projectStage,
+            ]);
+            if (!projects.length) return res.status(400).json({ "message": "Project not found" })
 
-         return res.status(200).json({"message": "successfull", data: projects});
+            return res.status(200).json({ "message": "successfull", data: projects });
         }
         const projects = await Project.aggregate([
             matchStage,
             projectSuperVisorLookupSatge,
-            { $unwind: "$projectSuperVisorDetails" },
+            // { $unwind: "$projectSuperVisorDetails" },
 
             projectLeadLookupSatge,
-            { $unwind: "$projectLeadDetails" },
+            // { $unwind: "$projectLeadDetails" },
             projectMembersLookupSatge,
 
             projectStage,
@@ -328,9 +252,6 @@ module.exports.getAllPoroject = async (req, res) => {
 
 
         const args = {};
-
-
-
         const matchStage = {
             $match: {
                 $or: [
@@ -340,68 +261,30 @@ module.exports.getAllPoroject = async (req, res) => {
                 ]
             }
         }
-        let projectSuperVisorLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectSuperVisor",
-                foreignField: "_id",
-                as: "projectSuperVisorDetails",
-            }
-        };
-        let projectLeadLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectLead",
-                foreignField: "_id",
-                as: "projectLeadDetails",
-            }
-        };
-        let projectMembersLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectMembers",
-                foreignField: "_id",
-                as: "projectMembersList",
-            }
-        };
-        const projectStage = {
-            $project: {
-                _id: 1,
-                projectName: 1,
-                projectSuperVisor: 1,
-                projectLead: 1,
-                projectStartTime: 1,
-                projectEndTime: 1,
-                isCurrentlyActive: 1,
-                projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1, imagePath: 1  }
-            }
-        }
+  
         // const projects = await Project.find({$or: [{projectLead: {$eq: req.user._id}}, {projectSuperVisor: {$eq: req.user._id}}, {projectMembers: req.user._id} ]}).populate("firstName users").lean();
-        if(req.user.role.alias === "Admin"){
-         const projects = await Project.aggregate([
-            projectSuperVisorLookupSatge,
-            // { $unwind: "$projectSuperVisorDetails" },
+        if (req.user.role.alias === "Admin") {
+            const projects = await Project.aggregate([
+                projectSuperVisorLookupSatge,
+                // { $unwind: "$projectSuperVisorDetails" },
 
-            projectLeadLookupSatge,
-            // { $unwind: "$projectLeadDetails" },
-            projectMembersLookupSatge,
+                projectLeadLookupSatge,
+                // { $unwind: "$projectLeadDetails" },
+                projectMembersLookupSatge,
 
-            projectStage,
-         ]);
+                projectStage,
+            ]);
 
-         return res.status(200).json({"message": "successfull", data: projects});
+            return res.status(200).json({ "message": "successfull", data: projects });
         }
 
         const projects = await Project.aggregate([
             matchStage,
             projectSuperVisorLookupSatge,
-            { $unwind: "$projectSuperVisorDetails" },
+            // { $unwind: "$projectSuperVisorDetails" },
 
             projectLeadLookupSatge,
-            { $unwind: "$projectLeadDetails" },
+            // { $unwind: "$projectLeadDetails" },
             projectMembersLookupSatge,
 
             projectStage,

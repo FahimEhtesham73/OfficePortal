@@ -107,7 +107,7 @@ const Project = () => {
     projectLead: [],
     projectLeadName: [],
     leadTime: "",
-    projectMember: [],
+    projectMembers: [],
     projectMemberName: [],
     memberTime:"",
     projectStartTime: "",
@@ -396,7 +396,7 @@ console.log(projectAdd);
 
                     <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
                       <ListItemIcon>
-                        <Checkbox checked={ projectAdd.projectMember.indexOf(option._id) > -1} />
+                        <Checkbox checked={ projectAdd.projectMembers.indexOf(option._id) > -1} />
                       </ListItemIcon>
                       <ListItemText primary={option.firstName} />
                     </MenuItem>
