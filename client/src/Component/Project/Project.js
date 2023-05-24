@@ -76,7 +76,7 @@ function BootstrapDialogTitle(props) {
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          {/* <CloseIcon /> */}
+          <CloseIcon />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -124,7 +124,7 @@ const Project = () => {
       // console.log(data);
       setAllProject(data.data);
     } catch (e) {
-      console.log("somenthin went wrong", e);
+      console.log("somenthing went wrong", e);
     }
   }
 
