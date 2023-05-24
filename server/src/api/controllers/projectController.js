@@ -46,6 +46,7 @@ module.exports.createProject = async (req, res) => {
             memberTime,
             projectStartTime,
             projectEndTime,
+            createdBy:req.user._id
         }
    
         const project = await Project.create({ ...data });

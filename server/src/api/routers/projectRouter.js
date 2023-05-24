@@ -5,7 +5,7 @@ const router = require("express").Router();
 
 router.route("/all").get(Authorize,getAllPoroject);
 router.route("/")
-router.route("/create").post(createProjectValidation,createProject);
+router.route("/create").post(Authorize,createProjectValidation,createProject);
 router.route("/update").put(Authorize, updateProject);
 router.route("/:id").get(Authorize, getAPoroject);
 
