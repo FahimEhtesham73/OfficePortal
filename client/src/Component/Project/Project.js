@@ -271,15 +271,6 @@ console.log(projectAdd);
           })}
       </Grid>
 
-
-
-
-
-
-
-
-
-
       {/* modal */}
 
       <BootstrapDialog
@@ -353,6 +344,8 @@ console.log(projectAdd);
           <Box sx={{  width: "100%", m: ".5rem 0" , display: {sm:"flex"}, justifyContent:"center", alignItems: "center" }}>
             <FormControl sx={{width: {xs: "100%", sm: "80%"} }}>
               <InputLabel id="demo-multiple-checkbox-label">Select Team Lead*</InputLabel>
+
+              {/* Test */}
               <Select
                 labelId="demo-simple-select-label"
                 label="Select Teamlead *"
@@ -376,6 +369,7 @@ console.log(projectAdd);
                   )
                 })}
               </Select>
+
             </FormControl>
             <TextField id="outlined-search" label="Total Hour " name='leadTime' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
             value={projectAdd.leadTime}
