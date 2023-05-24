@@ -7,7 +7,15 @@ import userRole from "../Hook/userHook";
 import { getAllUserApi, searchUser } from "../../api/userApi"
 
 /**************** mui component ************/
-import { Box, Button, DialogActions, DialogContent, FormControl, Grid, TextField, Typography, DialogTitle, IconButton, Dialog, InputLabel, Select, MenuItem, OutlinedInput, ListItemIcon, Checkbox, ListItemText } from "@mui/material";
+// InputLabel, Select, MenuItem, OutlinedInput, ListItemIcon, Checkbox, ListItemText
+import { Box, Button, DialogActions, DialogContent, FormControl, Grid, TextField, Typography, DialogTitle, IconButton, Dialog, } from "@mui/material";
+
+import Checkbox from "@material-ui/core/Checkbox";
+import InputLabel from "@material-ui/core/InputLabel";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 
@@ -165,13 +173,12 @@ const Project = () => {
     }
   }
 
-  console.log("projec add", projectAdd);
+  // console.log("projec add", projectAdd);
 
- const  handelChange = (e)=> {
-  console.log(e);
-
-  // setProjectAdd({...projectAdd, projectLead: [...projectAdd.projectLead, e.target.value]})
- }
+  const handelChange = (event) => {
+    // console.log(event.currentTarget.getAttribute('data-name'));
+    setProjectAdd({ ...projectAdd, projectLead: [...event.target.value] })
+  }
   useEffect(() => {
     getProjects();
     getRoles()
@@ -202,15 +209,6 @@ const Project = () => {
             );
           })}
       </Grid>
-
-
-
-
-
-
-
-
-
 
       {/* modal */}
 
@@ -260,29 +258,31 @@ const Project = () => {
           <Box sx={{ minWidth: 120 }}>
             <FormControl sx={{ width: "100%", m: ".5rem 0" }}>
               <InputLabel id="demo-multiple-checkbox-label">Select Team Lead*</InputLabel>
+
+              {/* Test */}
               <Select
-                labelId="demo-multiple-checkbox-label"
-                id="demo-multiple-checkbox"
+                labelId="mutiple-select-label"
                 multiple
                 value={projectAdd.projectLead}
-                input={<OutlinedInput  />}
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
-                
                 onChange={handelChange}
+                // selected.map(val=>{return val.name.join(", ")})
+                renderValue={(selected) => selected.join(", ")}
+                MenuProps={MenuProps}
               >
-                {
-                  teamLead && teamLead.map((val, ind) => {
-                   
-                    return (
-                      <MenuItem key={ind} value={val.firstName} data-name = {val._id}  >
-                          <Checkbox checked={projectAdd.projectLead.indexOf(val._id) > -1 }  />
-                          <ListItemText primary={val.firstName} />
-                      </MenuItem>
-                    )
-                  })
-                }
+                {teamLead && teamLead.map((option) => {
+                  return (
+                    // value={{id:option._id,name:option.userName}}
+
+                    <MenuItem key={option._id} value={option.firstName} data-name={option._id} >
+                      <ListItemIcon>
+                        <Checkbox checked={projectAdd.projectLead.indexOf(option.userName) > -1} />
+                      </ListItemIcon>
+                      <ListItemText primary={option.firstName} />
+                    </MenuItem>
+                  )
+                })}
               </Select>
+
             </FormControl>
           </Box>
           {/* Employee ID */}

@@ -1,27 +1,55 @@
 const { default: mongoose } = require("mongoose");
 const Project = require("../models/projectModel");
 const { updateAProject } = require("../services/projectServices");
+const { validationResult } = require("express-validator");
+const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 
 /********** Project query stages ***********/
 
+// Check if req.body object has all value
+function checkObjectValues(obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        var value = obj[key];
+        if (value === '' || value === null) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+
 module.exports.createProject = async (req, res) => {
     try {
+        const erros = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
 
-        const { projectName, projectSuperVisor, projectLead, projectStartTime, projectEndTime } = req.body;
+        const { projectName, projectSuperVisor, projectLead,projectMembers, projectStartTime, projectEndTime,projectOwner,superVisorTime,leadTime,memberTime,projectDescription } = req.body;
+
+        // console.log(" create project req body",req.body);
+
+        if(!checkObjectValues(req.body)) return res.status(400).json({message:"Fill all the mandatory fields"})
+
         const isProjectAvailable = await Project.findOne({ projectName }).lean()
         if (isProjectAvailable) return res.status(400).json({ "message": `${projectName} project is already created` })
+
         const data = {
+            projectDescription,
             projectName,
             projectSuperVisor,
             projectLead,
+            projectMembers,
+            projectOwner,
+            superVisorTime,
+            leadTime,
+            memberTime,
             projectStartTime,
             projectEndTime,
-            createdBy: req.user._id,
         }
-        // if (.includes(projectLead) || projectMembers.includes(projectLead)) {
-        //     return res.status(400).json({ "message": "Team members already present in project supervisor or lead" })
-        // }
+   
         const project = await Project.create({ ...data });
+
         let projectSuperVisorLookupSatge = {
             $lookup: {
                 from: "users",
@@ -38,6 +66,7 @@ module.exports.createProject = async (req, res) => {
                 as: "projectLeadDetails",
             }
         };
+
         let projectMembersLookupSatge = {
             $lookup: {
                 from: "users",
@@ -58,9 +87,9 @@ module.exports.createProject = async (req, res) => {
                 projectEndTime: 1,
                 isCurrentlyActive: 1,
                 projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1 }
+                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 },
+                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 },
+                projectMembersList: { _id: 1, firstName: 1, lastName: 1,imagePath: 1 }
             }
         }
 
@@ -70,11 +99,12 @@ module.exports.createProject = async (req, res) => {
                     _id: new mongoose.Types.ObjectId(project._id)
                 }
             },
+
             projectSuperVisorLookupSatge,
-            { $unwind: "$projectSuperVisorDetails" },
+            // { $unwind: "$projectSuperVisorDetails" },
 
             projectLeadLookupSatge,
-            { $unwind: "$projectLeadDetails" },
+            // { $unwind: "$projectLeadDetails" },
             projectMembersLookupSatge,
 
             projectStage,
@@ -82,11 +112,13 @@ module.exports.createProject = async (req, res) => {
         
         return res.status(200).json({ "message": "Project created successfully", "data": newProject })
 
-    } catch (err) {
+    } 
+    catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Something Went Wrong" })
 
     }
+    
 }
 
 module.exports.updateProject = async (req, res) => {
@@ -351,10 +383,10 @@ module.exports.getAllPoroject = async (req, res) => {
         if(req.user.role.alias === "Admin"){
          const projects = await Project.aggregate([
             projectSuperVisorLookupSatge,
-            { $unwind: "$projectSuperVisorDetails" },
+            // { $unwind: "$projectSuperVisorDetails" },
 
             projectLeadLookupSatge,
-            { $unwind: "$projectLeadDetails" },
+            // { $unwind: "$projectLeadDetails" },
             projectMembersLookupSatge,
 
             projectStage,
@@ -362,6 +394,7 @@ module.exports.getAllPoroject = async (req, res) => {
 
          return res.status(200).json({"message": "successfull", data: projects});
         }
+
         const projects = await Project.aggregate([
             matchStage,
             projectSuperVisorLookupSatge,

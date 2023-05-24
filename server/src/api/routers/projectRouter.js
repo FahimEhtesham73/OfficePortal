@@ -1,10 +1,11 @@
 const { createProject, updateProject, getAllPoroject, getAPoroject } = require("../controllers/projectController");
 const {Authorize} = require("../middleware/commonMilddleware")
+const { createProjectValidation } = require("../util/validator/projectValidation");
 const router = require("express").Router();
 
 router.route("/all").get(Authorize,getAllPoroject);
 router.route("/")
-router.route("/create").post(Authorize, createProject);
+router.route("/create").post(createProjectValidation,createProject);
 router.route("/update").put(Authorize, updateProject);
 router.route("/:id").get(Authorize, getAPoroject);
 
