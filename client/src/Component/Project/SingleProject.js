@@ -49,6 +49,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 const SingleProject = ({project}) => {
+  // console.log(project);
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);

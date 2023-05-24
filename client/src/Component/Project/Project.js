@@ -7,15 +7,8 @@ import userRole from "../Hook/userHook";
 import { getAllUserApi, searchUser } from "../../api/userApi"
 
 /**************** mui component ************/
-// InputLabel, Select, MenuItem, OutlinedInput, ListItemIcon, Checkbox, ListItemText
-import { Box, Button, DialogActions, DialogContent, FormControl, Grid, TextField, Typography, DialogTitle, IconButton, Dialog, } from "@mui/material";
-
-import Checkbox from "@material-ui/core/Checkbox";
-import InputLabel from "@material-ui/core/InputLabel";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import { Box, Button, DialogActions, DialogContent, Grid, TextField, Typography, DialogTitle, ListItemIcon,
+  IconButton, FormControl, Dialog, OutlinedInput, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextareaAutosize} from "@mui/material";
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 
@@ -35,12 +28,22 @@ import dayjs from "dayjs";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 200
+        }
     },
-  },
+    getContentAnchorEl: null,
+    anchorOrigin: {
+        vertical: "bottom",
+        horizontal: "center"
+    },
+    transformOrigin: {
+        vertical: "top",
+        horizontal: "center"
+    },
+    variant: "menu"
 };
 
 // Modal Styling
@@ -52,6 +55,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
 
   },
+  
 }));
 
 
@@ -72,7 +76,7 @@ function BootstrapDialogTitle(props) {
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          <CloseIcon />
+          {/* <CloseIcon /> */}
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -90,12 +94,22 @@ const Project = () => {
   const [roles, setRoles] = useState([])
   const [teamLead, setTeamLead] = useState([])
   const [supervisor, setSuperVisor] = useState([])
+  const [members, setMembers] = useState([])
+
 
   const [projectAdd, setProjectAdd] = useState({
     projectName: "",
-    projectSuperVisor: "",
+    projectDescription: "",
+    projectOwner: "",
+    projectSuperVisor: [],
+    projectSuperVisorName: [],
+    superVisorTime: "",
     projectLead: [],
-    projectLeadName: "",
+    projectLeadName: [],
+    leadTime: "",
+    projectMember: [],
+    projectMemberName: [],
+    memberTime:"",
     projectStartTime: "",
     projectEndTime: ""
   })
@@ -125,9 +139,11 @@ const Project = () => {
         if (resData.length) {
           let teamLead = resData.filter((v, i) => v.roleDetails.name === "teamlead");
           let superVisor = resData.filter((v, i) => v.roleDetails.name === "projectlead")
+          let member = resData.filter((v,i)=> (v.roleDetails.name !== "teamlead" &&  v.roleDetails.name !== "projectlead" ) )
 
           setTeamLead(teamLead);
-          setSuperVisor(superVisor)
+          setSuperVisor(superVisor);
+          setMembers(member);
 
         }
       }
@@ -137,13 +153,24 @@ const Project = () => {
   }
   const createProject = async () => {
     try {
-      const data = await createAProjectApi(projectAdd, jwt);
+      const {projectSuperVisorName, projectLeadName, projectMemberName, ...rest} = projectAdd;
+
+      const data = await createAProjectApi(rest, jwt);
       if (data.status === 200) {
         toast.success("Project created successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         setProjectAdd({
           projectName: "",
-          projectSuperVisor: "",
-          projectLead: "",
+          projectDescription: "",
+          projectOwner: "",
+          projectSuperVisor: [],
+          projectSuperVisorName: [],
+          superVisorTime: "",
+          projectLead: [],
+          projectLeadName: [],
+          leadTime: "",
+          projectMember: [],
+          projectMemberName: [],
+          memberTime:"",
           projectStartTime: "",
           projectEndTime: ""
         })
@@ -153,8 +180,17 @@ const Project = () => {
       if (data.status !== 200) {
         setProjectAdd({
           projectName: "",
-          projectSuperVisor: "",
-          projectLead: "",
+          projectDescription: "",
+          projectOwner: "",
+          projectSuperVisor: [],
+          projectSuperVisorName: [],
+          superVisorTime: "",
+          projectLead: [],
+          projectLeadName: [],
+          leadTime: "",
+          projectMember: [],
+          projectMemberName: [],
+          memberTime:"",
           projectStartTime: "",
           projectEndTime: ""
         })
@@ -174,18 +210,43 @@ const Project = () => {
   }
 
   // console.log("projec add", projectAdd);
+  
 
-  const handelChange = (event) => {
-    // console.log(event.currentTarget.getAttribute('data-name'));
-    setProjectAdd({ ...projectAdd, projectLead: [...event.target.value] })
+ const  handelChange = (e, filed)=> {
+  // let mappedName = e.target.value.map((val)=> val.split("_")[0]);
+  if(filed === "teamlead"){
+    let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
+  
+    // console.log(mappedName, mappedValue);
+    setProjectAdd({...projectAdd, projectLead: mappedValue, projectLeadName: e.target.value})
+
   }
+
+  if(filed === "supervisor"){
+    let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
+  
+    // console.log(mappedName, mappedValue);
+    setProjectAdd({...projectAdd, projectSuperVisor: mappedValue, projectSuperVisorName: e.target.value})
+
+  }
+
+  if(filed === "members"){
+    let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
+  
+    // console.log(mappedName, mappedValue);
+    setProjectAdd({...projectAdd, projectMember: mappedValue, projectMemberName: e.target.value})
+
+  }
+
+
+ }
   useEffect(() => {
     getProjects();
     getRoles()
   }, []);
 
 
-
+console.log(projectAdd);
 
   return (
     <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px" }}>
@@ -216,66 +277,92 @@ const Project = () => {
         onClose={handleModalOpen}
         aria-labelledby="customized-dialog-title"
         open={openModal}
+
+        sx={{".MuiPaper-root": {width: "800px", },}}
+        
       >
         <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalOpen}>
           Create Project
         </BootstrapDialogTitle>
         <DialogContent sx={{
           display: "flex", justifyContent: "center", flexDirection: "column",
-          overflowY: "auto"
+          overflowY: "auto",
+    
+          
         }}>
           {/* Project Name */}
-          <TextField id="outlined-search" label="Project Name " name='firstName' type="search" sx={{ width: "100%", margin: ".5rem 0" }}
+          <TextField id="projectName" label="Project Name " name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: {xs:"5rem", sm: "0"}}}
             onChange={(e) => setProjectAdd({ ...projectAdd, projectName: e.target.value })}
             required />
-          {/* Last name */}
-
-
-          {/* Department */}
-          <Box sx={{ minWidth: 120, m: ".5rem 0" }}>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel id="demo-simple-select-label">Select Supervisor*</InputLabel>
+            <TextField id="outlined-search" label="Project Owner " name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
+            onChange={(e) => setProjectAdd({ ...projectAdd, projectOwner: e.target.value })}
+            required />
+            <TextField  
+              multiline
+              rows={3} id="outlined-search" label="Project Details " name='projectDetails' type="search"  sx={{ width: "100%", margin: ".5rem 0",}}
+            onChange={(e) => setProjectAdd({ ...projectAdd, projectDescription: e.target.value })}
+            required />
+          {/* ".MuiSelect-nativeInput":  {height: "39px"} */}
+          <Box sx={{ width: "100%", m: ".5rem 0" , display: {sm:"flex"}, justifyContent:"center", alignItems: "center" }}>
+            <FormControl sx={{width: {xs: "100%", sm: "80%"} }}>
+              <InputLabel id="demo-simple-select-label" >Select Supervisor *</InputLabel>
               <Select
+                multiple
                 labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                // value={age}
-                label="Age"
-                onChange={(e) => {
-                  setProjectAdd({ ...projectAdd, projectSuperVisor: e.target.value })
-                  // setFilteredId(e.target.value)
-                }}
+                label="Select Supervisor *"
+                value={projectAdd.projectSuperVisorName}
+                onChange={(e)=> handelChange(e, "supervisor")}
+                // placeholder="Select super visor"
+                renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
+                MenuProps={MenuProps}
+                
+            
               >
                 {
-                  supervisor && supervisor.map((val, ind) => {
+                  supervisor && supervisor.map((option, ind) => {
                     return (
-                      <MenuItem value={val._id}>{val.firstName}</MenuItem>
+                      <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
+                      <ListItemIcon>
+                        <Checkbox checked={ projectAdd.projectSuperVisor.indexOf(option._id) > -1} />
+                      </ListItemIcon>
+                      <ListItemText primary={option.firstName} />
+                    </MenuItem>
                     )
                   })
                 }
               </Select>
             </FormControl>
+            <TextField  id="outlined-search" label="Total Hour " name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            value={projectAdd.superVisorTime}
+            onChange={(e) => {
+              let val = e.target.value.replace(/[^0-9]/g, '');
+              setProjectAdd({ ...projectAdd, superVisorTime: val}) 
+            
+}}
+            required />
           </Box>
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl sx={{ width: "100%", m: ".5rem 0" }}>
+          <Box sx={{  width: "100%", m: ".5rem 0" , display: {sm:"flex"}, justifyContent:"center", alignItems: "center" }}>
+            <FormControl sx={{width: {xs: "100%", sm: "80%"} }}>
               <InputLabel id="demo-multiple-checkbox-label">Select Team Lead*</InputLabel>
 
               {/* Test */}
               <Select
-                labelId="mutiple-select-label"
+                labelId="demo-simple-select-label"
+                label="Select Teamlead *"
                 multiple
-                value={projectAdd.projectLead}
-                onChange={handelChange}
-                // selected.map(val=>{return val.name.join(", ")})
-                renderValue={(selected) => selected.join(", ")}
+                value={projectAdd.projectLeadName}
+                onChange={(e)=> handelChange(e, "teamlead")}
+                placeholder="Select leam visor"
+                renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
                 MenuProps={MenuProps}
               >
-                {teamLead && teamLead.map((option) => {
+                { teamLead && teamLead.map((option) => {
                   return (
                     // value={{id:option._id,name:option.userName}}
 
-                    <MenuItem key={option._id} value={option.firstName} data-name={option._id} >
+                    <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
                       <ListItemIcon>
-                        <Checkbox checked={projectAdd.projectLead.indexOf(option.userName) > -1} />
+                        <Checkbox checked={ projectAdd.projectLead.indexOf(option._id) > -1} />
                       </ListItemIcon>
                       <ListItemText primary={option.firstName} />
                     </MenuItem>
@@ -284,13 +371,49 @@ const Project = () => {
               </Select>
 
             </FormControl>
+            <TextField id="outlined-search" label="Total Hour " name='leadTime' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            value={projectAdd.leadTime}
+            onChange={(e) => setProjectAdd({ ...projectAdd, leadTime: e.target.value.replace(/[^0-9]/g, '')  })}
+            required />
           </Box>
-          {/* Employee ID */}
+         
+          <Box sx={{  width: "100%", m: ".5rem 0" , display: {sm:"flex"}, justifyContent:"center", alignItems: "center" }}>
+            <FormControl sx={{width: {xs: "100%", sm: "80%"} }}>
+              <InputLabel id="demo-multiple-checkbox-label">Select Members*</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                label="Select Teamlead *"
+                multiple
+                value={projectAdd.projectMemberName}
+                onChange={(e)=> handelChange(e, "members")}
+                placeholder="Select Members"
+                renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
+                MenuProps={MenuProps}
+              >
+                { members &&  members.map((option) => {
+                  return (
+                    // value={{id:option._id,name:option.userName}}
 
-          <Box sx={{ minWidth: 120 }}>
+                    <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
+                      <ListItemIcon>
+                        <Checkbox checked={ projectAdd.projectMember.indexOf(option._id) > -1} />
+                      </ListItemIcon>
+                      <ListItemText primary={option.firstName} />
+                    </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+            <TextField id="outlined-search" label="Total Hour " name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            value={projectAdd.memberTime}
+            onChange={(e) => setProjectAdd({ ...projectAdd, memberTime: e.target.value.replace(/[^0-9]/g, '') })}
+            required />
+          </Box>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs} >
-              <DemoContainer components={['DatePicker']} >
+          {/* <Box sx={{ minWidth: 120 }}>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+              <DemoContainer components={['DatePicker']} sx={{".MuiInputBase-input": {height: "39px", p: ".5rem"}}} >
                 <DatePicker label="Start Time *" slotProps={{
                   textField: {
                     error: false,
@@ -305,16 +428,32 @@ const Project = () => {
                 }} />
               </DemoContainer>
             </LocalizationProvider>
-          </Box>
-          <Box sx={{ minWidth: 120, m: ".5rem 0" }}>
+          </Box> */}
+          <Box sx={{ minWidth: 120, m: ".5rem 0" , display:{xs: "inline-block",sm: "flex"}, justifyContent:"space-between" }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}  >
+              <DemoContainer components={['DatePicker']} sx={{".MuiInputBase-input": {height: "39px", p: ".5rem" ,}}} >
+                <DatePicker label="Start Time *" slotProps={{
+                  textField: {
+                    error: false,
+                  },
+                }} value={dayjs(projectAdd.projectStartTime)} sx={{width: {xs: "100%", sm: "100%"}}}  onChange={(e, x) => {
+                  // sx={{ width: 365, maxHeight: 345, }}
+                  // setUserInfo(e)
+                  // setUser({ ...user, joiningDate: e?.['$d'] ? e['$d'] : "" })
+                  // setSelectedDate(e)
+                  // console.log("date Change", e?.['$d'] ? e['$d'] : "");
+                  setProjectAdd({ ...projectAdd, projectStartTime: new Date(e?.['$d']) })
 
+                }} />
+              </DemoContainer>
+            </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDayjs} >
-              <DemoContainer components={['DatePicker']} >
+              <DemoContainer components={['DatePicker']} sx={{".MuiInputBase-input": {height: "39px", p: ".5rem"}}} >
                 <DatePicker label="End Time *" slotProps={{
                   textField: {
                     error: false,
                   },
-                }} value={dayjs(projectAdd.projectEndTime)} sx={{ width: 365, maxHeight: 345, }} onChange={(e, x) => {
+                }} value={dayjs(projectAdd.projectEndTime)} sx={{width: {xs: "100%", sm: "100%"}}}  onChange={(e, x) => {
                   // setUserInfo(e)
                   // setUser({ ...user, joiningDate: e?.['$d'] ? e['$d'] : "" })
                   // setSelectedDate(e)
@@ -329,10 +468,18 @@ const Project = () => {
         </DialogContent>
         <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
           <Button variant="contained"
-            disabled={(projectAdd.projectStartTime &&
+            disabled={(
+              projectAdd.projectStartTime &&
+              projectAdd.projectOwner&&
               projectAdd.projectEndTime &&
-              projectAdd.projectLead &&
-              projectAdd.projectSuperVisor &&
+              projectAdd.projectLead.length &&
+              projectAdd.superVisorTime &&
+              projectAdd.projectSuperVisor.length &&
+              projectAdd.leadTime &&
+
+              projectAdd.projectMember.length &&
+              projectAdd.memberTime &&
+
               projectAdd.projectName
             ) ? false : true}
             sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
