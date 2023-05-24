@@ -127,6 +127,8 @@ const getSingleProject = async () => {
     }
 }
 
+// console.log("project info", projectInfo);
+
 
 useEffect(()=> {
     getSingleProject()
@@ -165,14 +167,26 @@ useEffect(()=> {
                             <Typography>Project Detail</Typography>
                             <table class="table table-striped table-border">
                                 <tbody style={{ textAlign: "left" }}>
-                                    {/* <tr>
-                                        <td>Cost:</td>
-                                        <td class="text-end">$1200</td>
+                                <tr>
+                                        <td>Project Owner:</td>
+                                        <td class="text-end">{projectInfo?.projectOwner}</td>
+                                    </tr>
+                                <tr>
+                                        <td>Total Supervisors Hours:</td>
+                                        <td class="text-end">{projectInfo?.superVisorTime}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Teamleads Hours:</td>
+                                        <td class="text-end">{projectInfo?.leadTime}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Members Hours:</td>
+                                        <td class="text-end">{projectInfo?.memberTime}</td>
                                     </tr>
                                     <tr>
                                         <td>Total Hours:</td>
-                                        <td class="text-end">100 Hours</td>
-                                    </tr> */}
+                                        <td class="text-end">{[projectInfo?.leadTime, projectInfo?.superVisorTime, projectInfo?.memberTime].reduce((a,c)=> a +=c, 0) || 0}</td>
+                                    </tr>
                                     <tr>
                                         <td>Created:</td>
                                         <td class="text-end">{new Date(projectInfo?.projectStartTime).toDateString("en-Us")}</td>
@@ -204,24 +218,15 @@ useEffect(()=> {
                                     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper', ".MuiListItem-root": {
                                         display: "flex", justifyContent: "center", alignItems: "center"
                                     } }}>
+
+                                        {/* {projectInfo} */}
                                         <ListItem alignItems="flex-start">
                                             <ListItemAvatar>
                                                 <Avatar alt="Remy Sharp" src={`${projectInfo?.projectSuperVisorDetails?.imagePath}`} />
                                             </ListItemAvatar>
                                             <ListItemText
                                                 primary={`${projectInfo?.projectSuperVisorDetails?.firstName}`}
-                                                // secondary={
-                                                //     <React.Fragment>
-                                                //         <Typography
-                                                //             sx={{ display: 'inline' }}
-                                                //             component="span"
-                                                //             variant="body2"
-                                                //             color="text.primary"
-                                                //         >
-                                                //             Role
-                                                //         </Typography>
-                                                //     </React.Fragment>
-                                                // }
+                                                
                                             />
                                         </ListItem>
                                         {/* <Divider variant="inset" component="li" /> */}
@@ -232,18 +237,6 @@ useEffect(()=> {
                                             <ListItemText
                                             primary={`${projectInfo?.projectLeadDetails?.firstName}`}
 
-                                                // secondary={
-                                                //     <React.Fragment>
-                                                //         <Typography
-                                                //             sx={{ display: 'inline' }}
-                                                //             component="span"
-                                                //             variant="body2"
-                                                //             color="text.primary"
-                                                //         >
-                                                //             Role
-                                                //         </Typography>
-                                                //     </React.Fragment>
-                                                // }
                                             />
                                             {/* <DeleteIcon /> */}
                                         </ListItem>

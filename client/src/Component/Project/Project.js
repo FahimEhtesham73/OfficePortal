@@ -76,7 +76,7 @@ function BootstrapDialogTitle(props) {
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          {/* <CloseIcon /> */}
+          <CloseIcon />
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -124,7 +124,7 @@ const Project = () => {
       // console.log(data);
       setAllProject(data.data);
     } catch (e) {
-      console.log("somenthin went wrong", e);
+      console.log("somenthing went wrong", e);
     }
   }
 
@@ -168,7 +168,7 @@ const Project = () => {
           projectLead: [],
           projectLeadName: [],
           leadTime: "",
-          projectMember: [],
+          projectMembers: [],
           projectMemberName: [],
           memberTime:"",
           projectStartTime: "",
@@ -188,7 +188,7 @@ const Project = () => {
           projectLead: [],
           projectLeadName: [],
           leadTime: "",
-          projectMember: [],
+          projectMembers: [],
           projectMemberName: [],
           memberTime:"",
           projectStartTime: "",
@@ -234,7 +234,7 @@ const Project = () => {
     let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
   
     // console.log(mappedName, mappedValue);
-    setProjectAdd({...projectAdd, projectMember: mappedValue, projectMemberName: e.target.value})
+    setProjectAdd({...projectAdd, projectMembers: mappedValue, projectMemberName: e.target.value})
 
   }
 
@@ -291,7 +291,7 @@ console.log(projectAdd);
           
         }}>
           {/* Project Name */}
-          <TextField id="projectName" label="Project Name " name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: {xs:"5rem", sm: "0"}}}
+          <TextField id="projectName" label="Project Name " name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: {xs:"5rem", sm: "1rem"}}}
             onChange={(e) => setProjectAdd({ ...projectAdd, projectName: e.target.value })}
             required />
             <TextField id="outlined-search" label="Project Owner " name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
@@ -477,7 +477,7 @@ console.log(projectAdd);
               projectAdd.projectSuperVisor.length &&
               projectAdd.leadTime &&
 
-              projectAdd.projectMember.length &&
+              projectAdd.projectMembers.length &&
               projectAdd.memberTime &&
 
               projectAdd.projectName

@@ -49,7 +49,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 const SingleProject = ({project}) => {
-  // console.log(project);
+  console.log(project);
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
@@ -76,7 +76,6 @@ const SingleProject = ({project}) => {
       }}
         
         action={()=>{
-          console.log("hello");
         }}
         title={project.projectName}
         
@@ -86,44 +85,58 @@ const SingleProject = ({project}) => {
       
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the mussels,
-          if you like.
+          {project.projectDescription}
         </Typography>
       </CardContent>
       <Stack spacing={{ xs: 1, sm: 2 }} direction="row" justifyContent={"space-between"} useFlexGap flexWrap="wrap">
         <div className='p-2'>
           <Typography color={"CaptionText"}>Started</Typography>
-          <Typography color={"GrayText"}>{project.projectStartTime}</Typography>
+          <Typography color={"GrayText"}>{new Date(project.projectStartTime).toDateString()}</Typography>
         </div>
         <div className='p-2'>
         <Typography>Dead Line</Typography>
-          <Typography color={"GrayText"}>{project.projectEndTime}</Typography>
+          <Typography color={"GrayText"}>{new Date(project.projectEndTime).toDateString()}</Typography>
         </div>
       </Stack>
       <div className='p-2'>
         <Typography>Supervisor</Typography>
-        <Tooltip title={project.projectSuperVisorDetails.firstName}>
-        <Avatar alt={project.projectSuperVisorDetails.firstName} src={project?.projectSuperVisorDetails?.imagePath} />
-
+        <Stack direction="row" spacing={2}>
+          {project?.projectSuperVisorDetails.map((m)=> {
+            return (
+        <Tooltip title={m.firstName}>
+            <Avatar alt={m?.firstName} src={m?.imagePath} />
         </Tooltip>
+            )
+          })}
+          </Stack>
       </div>
       <div className='p-2'>
         <Typography>Leader</Typography>
-        <Tooltip title={project.projectLeadDetails.firstName}>
-        <Avatar alt={project.projectLeadDetails.firstName} src={project?.projectLeadDetails?.imagePath} />
-
+        <Stack direction="row" spacing={2}>
+          {project?.projectLeadDetails.map((m)=> {
+            return (
+        <Tooltip title={m.firstName}>
+            <Avatar alt={m?.firstName} src={m?.imagePath} />
         </Tooltip>
+            )
+          })}
+          </Stack>
+
       </div>
       <div className='p-2'>
         <Typography>Members</Typography>
 
-        <AvatarGroup total={project.projectMembersList.length} sx={{textAlign: "left"}}>
-          {/* {project.projectMembersList.map((m)=> {
-            
-            <Avatar alt="Remy Sharp" src={m.imagePath} />
+        <AvatarGroup total={project.projectMembersList.length} sx={{display: "flex", justifyContent: "left"}}>
+          {project.projectMembersList.map((m)=> {
+            return (
+              <Tooltip title={`${m.firstName}`}>
+                <Avatar alt="profile-img" src={m.imagePath} />
 
-          })} */}
+              </Tooltip>
+
+            )
+
+          })}
           
         </AvatarGroup>
 
