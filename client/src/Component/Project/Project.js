@@ -246,7 +246,6 @@ const Project = () => {
   }, []);
 
 
-console.log(projectAdd);
 
   return (
     <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px" }}>

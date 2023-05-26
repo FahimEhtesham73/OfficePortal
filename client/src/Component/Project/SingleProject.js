@@ -16,10 +16,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Box, Divider, Stack, Paper, AvatarGroup, Tooltip } from '@mui/material';
+import { Box, Divider, Stack, Paper, AvatarGroup, Tooltip, DialogActions, Button, DialogTitle, Dialog, Menu, MenuItem } from '@mui/material';
 import { getAllProject } from '../../api/projectApi';
 import { useNavigate } from 'react-router-dom';
 import { profileImg } from '../functions/commonFunc';
+import PropTypes from 'prop-types';
+
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -47,21 +49,104 @@ const Item = styled(Paper)(({ theme }) => ({
   flexGrow: 1,
 }));
 
+// Modal Styling
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+      padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+  },
+}));
 
+function BootstrapDialogTitle(props) {
+  const { children, onClose, ...other } = props;
+
+  return (
+      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+          {children}
+          {onClose ? (
+              <IconButton
+                  aria-label="close"
+                  onClick={onClose}
+                  sx={{
+                      position: 'absolute',
+                      right: 8,
+                      top: 8,
+                      color: (theme) => theme.palette.grey[500],
+                  }}
+              >
+                  {/* <CloseIcon /> */}
+              </IconButton>
+          ) : null}
+      </DialogTitle>
+  );
+}
+
+BootstrapDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
 
 const SingleProject = ({project}) => {
-  console.log(project);
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState(false)
+
   const [modals, setModals] = useState({
     editProjectModal: false,
     addMemberMoal: false
   })
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const [anchorEl, setAnchorEl] = useState(null);
+  // const [modalOpen, setModalOpen] = useState(false)
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    console.log(event);
+    setAnchorEl(event.currentTarget);
+};
+const handleClose = () => {
+    setAnchorEl(null);
+};
+
+// For Modal open
+const handleClickOpen = () => {
+    setModalOpen(true);
+};
+// For Modal Close
+const handleClickClose = () => {
+    setModalOpen(false);
+};
+
+const settings = ['Delete Project'];
+
+
+const menu = (
+  <Menu
+      sx={{ mt: '45px' }}
+      id="menu-appbar"
+      anchorEl={anchorEl}
+      anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+      }}
+      keepMounted
+      transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+      }}
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
+  >
+      {settings.map((setting) => (
+          <MenuItem key={setting} onClick={handleClose}>
+              <Typography textAlign="center" onClick={handleClickOpen}>{setting}</Typography>
+          </MenuItem>
+      ))}
+  </Menu>
+)
 
   // useEffect(()=> {
   //   getAllProject("", )
@@ -72,19 +157,30 @@ const SingleProject = ({project}) => {
     <Card  elevation={'4'} sx={{  width: '100%', padding: "1rem"}}>
       <StyledCardHeader
       sx={{cursor: "pointer"}}
-      onClick={()=> {
-        navigate(`${project._id}`)
-      }}
+      // onClick={()=> {
+      //   navigate(`${project._id}`)
+      // }}
         
-        action={()=>{
-        }}
-        title={project.projectName}
+      action={
+        <IconButton aria-label="settings" onClick={handleClick}>
+            <MoreVertIcon />
+        </IconButton>
+    }
+        title={ <p onClick={()=> {
+        navigate(`${project._id}`)
+
+        }}> {project.projectName} </p> }
         
         
       />
+       {menu}
+
       <Divider />
       
       <CardContent>
+      <Typography variant="body2" color="text.secondary">
+          {/* Owner: {project?.projectOwner} */}
+        </Typography>
         <Typography variant="body2" color="text.secondary">
           {project.projectDescription}
         </Typography>
@@ -145,6 +241,39 @@ const SingleProject = ({project}) => {
       <Divider />
       
     </Card>
+
+
+
+    <BootstrapDialog
+                onClose={handleClickClose}
+                aria-labelledby="customized-dialog-title"
+                open={modalOpen}
+                PaperProps={{
+                    sx: {
+                      width: "40%",
+                      height: 150,
+                      display:"flex",
+                      alignItems:"center"
+                    }
+                  }}
+            >
+                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
+                    Are you sure want to Delete {project.projectName} project
+                </BootstrapDialogTitle>
+                {/* <Box>
+                    
+                </Box> */}
+                <DialogActions sx={{display:"flex",justifyContent:"center",marginTop:"10px"}}>
+
+                    <Button variant="contained" color='error' sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={handleClickClose}>
+                        Yes
+                    </Button>
+                    <Button variant="contained" sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={handleClickClose}>
+                        No
+                    </Button>
+                </DialogActions>
+
+            </BootstrapDialog>
 
     </div>
 

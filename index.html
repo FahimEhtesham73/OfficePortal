@@ -7,6 +7,134 @@
     <title>Document</title>
 </head>
 <body>
-    <img src="http://localhost:3001/api/v1/users/images?id=642d4a3d362e3543b1bddc93" />
+    <div class="hand-group">
+        <label>
+          <input  type="checkbox" name="hand" value="1" /> Hand 1
+        </label>
+        <label>
+          <input type="checkbox" name="hand" value="2" /> Hand 2
+        </label>
+        <label>
+          <input type="checkbox" name="hand" value="3" /> Hand 3
+        </label>
+        <label>
+          <input type="checkbox" name="hand" value="4" /> Hand 4
+        </label>
+      </div>
+      
+      <div class="controller-group">
+        <button disabled  id="left">Left</button>
+        <button  disabled id="right">Right</button>
+        <button disabled  id="up">Up</button>
+        <button  disabled id="down">Down</button>
+      </div>
+
+
+      <script>
+        const handCheckboxes = document.querySelectorAll("input[name='hand']");
+const controllerButtons = document.querySelectorAll(".controller-group button");
+
+// Add event listener to each checkbox for change event
+handCheckboxes.forEach(handCheckbox => {
+  handCheckbox.addEventListener('change', handleHandSelection);
+});
+
+// Add event listener to each controller button for mousedown and mouseup events
+controllerButtons.forEach(controllerButton => {
+  controllerButton.addEventListener('mousedown', handleControllerButtonPress);
+  controllerButton.addEventListener('mouseup', handleControllerButtonRelease);
+});
+
+// Handler function for hand selection
+function handleHandSelection(event) {
+  const selectedCheckbox = event.target;
+
+  handCheckboxes.forEach(handCheckbox => {
+    if (handCheckbox !== selectedCheckbox) {
+      handCheckbox.checked = false;
+    }
+  });
+
+  controllerButtons.forEach(controllerButton => {
+    if (selectedCheckbox.checked) {
+      controllerButton.disabled = false;
+    } else {
+      controllerButton.disabled = true;
+    }
+  });
+
+  if (selectedCheckbox.checked) {
+    console.log(`Selected hand: ${selectedCheckbox.value}`);
+  }
+
+  updateControllerVisibility(selectedCheckbox.value);
+}
+
+// Handler function for controller button press
+function handleControllerButtonPress(event) {
+  const selectedHand = document.querySelector("input[name='hand']:checked");
+
+  if (selectedHand) {
+    // console.log(`Selected hand: ${selectedHand.value}`);
+    // console.log(`Pressed controller: ${event.target.id}`);
+    this.interval = setInterval(() => {
+      console.log(`Pressed controller: ${selectedHand.value}_${event.target.id}`);
+    }, 500)
+    // Start logging the continuous action
+    // startLogging(selectedHand.value, event.target.id);
+  }
+}
+
+// Handler function for controller button release
+function handleControllerButtonRelease(event) {
+  const selectedHand = document.querySelector("input[name='hand']:checked");
+
+  if (selectedHand) {
+    console.log(`Selected hand: ${selectedHand.value}`);
+    console.log(`Released controller: ${event.target.id}`);
+
+    // Stop logging the continuous action
+    clearInterval(this.interval);
+
+    stopLogging(selectedHand.value, event.target.id);
+  }
+}
+
+// Function to start logging the continuous action
+function startLogging(handValue, controllerId) {
+  console.log(`Start logging continuous action: ${handValue} - ${controllerId}`);
+
+  // Add your custom code to handle the continuous action here
+}
+
+// Function to stop logging the continuous action
+function stopLogging(handValue, controllerId) {
+  console.log(`Stop logging continuous action: ${handValue} - ${controllerId}`);
+
+  // Add your custom code to stop handling the continuous action here
+}
+
+// Function to update controller visibility based on selected hand
+function updateControllerVisibility(selectedHandValue) {
+  const leftButton = document.getElementById('left');
+  const rightButton = document.getElementById('right');
+  const upButton = document.getElementById('up');
+  const downButton = document.getElementById('down');
+
+  if (selectedHandValue === '4') {
+    leftButton.style.display = 'block';
+    rightButton.style.display = 'block';
+    upButton.style.display = 'none';
+    downButton.style.display = 'none';
+  } else {
+    leftButton.style.display = 'block';
+    rightButton.style.display = 'block';
+    upButton.style.display = 'block';
+    downButton.style.display = 'block';
+  }
+}
+
+      </script>
+      
 </body>
 </html>
