@@ -1,12 +1,7 @@
 const Project = require("../models/projectModel");
 
 module.exports.updateAProject = async (data, pid) => {
-
-    if(data?.newTeamMembers?.length){
-       return await Project.findByIdAndUpdate({_id: pid}, {$set: {
-            ...data,
-        }, $addToSet: {"projectMembers": {$each: data.newTeamMembers }}}).lean()
-    }
+    console.log("show updated data and project id",pid,data);
     return await Project.findByIdAndUpdate({_id: pid}, {$set: {
         ...data,
     }
