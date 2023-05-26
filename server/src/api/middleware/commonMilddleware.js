@@ -14,9 +14,7 @@ async function Authorize (req, res, next){
             next();
         }catch(err){
             return res.status(401).json({"message": "Authorization Failed"})
-        }
-    
-    
+        }   
 }
 
 async function hasPermission(req, res, next){
@@ -36,6 +34,53 @@ async function hasPermission(req, res, next){
     // if(userInformation.role)
 }
 
+async function isAdminAndManager (req, res, next){
+    try{
+        let headerToken = req.header("Authorization").split(" ")[1].trim();
+        const isTokenValid = verifyToken(headerToken);
+        req.role = isTokenValid.role.alias;
+        if(req.role === 'Admin' || req.role === 'Project Lead'){
+            next();
+        }else{
+            return res.status(400).json({message:"This Role has no access"})
+        }
+    }catch(err){
+        return res.status(401).json({"message": "Authorization Failed"})
+    }   
+}
+
+async function isAdmin (req, res, next){
+    try{
+        let headerToken = req.header("Authorization").split(" ")[1].trim();
+        const isTokenValid = verifyToken(headerToken);
+
+        req.role = isTokenValid.role.alias;
+        if(req.role === 'Admin'){
+            next();
+        }else{
+            return res.status(400).json({message:"This Role has no access"})
+        }
+    }catch(err){
+        return res.status(401).json({"message": "Authorization Failed"})
+    }   
+}
+
+async function isAdminAndLead (req, res, next){
+    try{
+        let headerToken = req.header("Authorization").split(" ")[1].trim();
+        const isTokenValid = verifyToken(headerToken);
+
+        req.role = isTokenValid.role.alias;
+        if(req.role === 'Admin' || req.role === 'Team Lead'){
+            next();
+        }else{
+            return res.status(400).json({message:"This Role has no access"})
+        }
+    }catch(err){
+        return res.status(401).json({"message": "Authorization Failed"})
+    }   
+}
+
 
 // sign in token generation
 
@@ -43,4 +88,4 @@ function generateJwtToken(data){
     const privateKey = file.readFileSync(`${__dirname}/keys/`)
 }
 
-module.exports = {hasPermission, Authorize}
+module.exports = {hasPermission, Authorize, isAdminAndManager,isAdmin,isAdminAndLead}

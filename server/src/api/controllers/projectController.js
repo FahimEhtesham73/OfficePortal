@@ -87,9 +87,16 @@ module.exports.updateProject = async (req, res) => {
         const projectId = req.body.pId;
         const project = await Project.findOne({ _id: projectId }).lean();
         if (!project) return res.status(404).json({ "message": "No project found" });
-        const updatedData = req.body.updatedData;
+        const updatedData = req.body;
         let args = { updatedBy: req.user._id };
+
         for (let arg in updatedData) {
+            if (arg === "projectDescription") {
+                args['projectDescription'] = updatedData['projectDescription']
+            }
+            if (arg === "projectOwner") {
+                args['projectOwner'] = updatedData['projectOwner']
+            }
             if (arg === "projectName") {
                 args['projectName'] = updatedData['projectName']
             }
@@ -101,9 +108,17 @@ module.exports.updateProject = async (req, res) => {
                 args['projectSuperVisor'] = updatedData['projectSuperVisor']
 
             }
-            if (arg === "newTeamMembers") {
-                args['newTeamMembers'] = updatedData['newTeamMembers']
-
+            if (arg === "projectMembers") {
+                args['projectMembers'] = updatedData['projectMembers']
+            }
+            if (arg === "superVisorTime") {
+                args['superVisorTime'] = updatedData['superVisorTime']
+            }
+            if (arg === "leadTime") {
+                args['leadTime'] = updatedData['leadTime']
+            }
+            if (arg === "memberTime") {
+                args['memberTime'] = updatedData['memberTime']
             }
 
             if (arg === "projectStartTime") {
@@ -120,50 +135,9 @@ module.exports.updateProject = async (req, res) => {
             }
         }
 
-
         const updatedResult = await updateAProject(args, projectId);
 
-        let projectSuperVisorLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectSuperVisor",
-                foreignField: "_id",
-                as: "projectSuperVisorDetails",
-            }
-        };
-        let projectLeadLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectLead",
-                foreignField: "_id",
-                as: "projectLeadDetails",
-            }
-        };
-        let projectMembersLookupSatge = {
-            $lookup: {
-                from: "users",
-                localField: "projectMembers",
-                foreignField: "_id",
-                as: "projectMembersList",
-            }
-        };
-
-
-        const projectStage = {
-            $project: {
-                _id: 1,
-                projectName: 1,
-                projectSuperVisor: 1,
-                projectLead: 1,
-                projectStartTime: 1,
-                projectEndTime: 1,
-                isCurrentlyActive: 1,
-                projectMembers: 1,
-                projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectLeadDetails: { _id: 1, firstName: 1, lastName: 1 },
-                projectMembersList: { _id: 1, firstName: 1, lastName: 1 }
-            }
-        }
+       
         let newUpadatedData = await Project.aggregate([
             {
                 $match: {
