@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+      input[type="checkbox"] {
+  display: none;
+}
+
+label {
+  cursor: pointer;
+  color: black;
+}
+
+input[type="checkbox"]:checked + label {
+  color: red;
+}
+    </style>
     <title>Document</title>
 </head>
 <body>
@@ -48,7 +63,6 @@ controllerButtons.forEach(controllerButton => {
 // Handler function for hand selection
 function handleHandSelection(event) {
   const selectedCheckbox = event.target;
-
   handCheckboxes.forEach(handCheckbox => {
     if (handCheckbox !== selectedCheckbox) {
       handCheckbox.checked = false;
@@ -133,6 +147,8 @@ function updateControllerVisibility(selectedHandValue) {
     downButton.style.display = 'block';
   }
 }
+
+
 
       </script>
       

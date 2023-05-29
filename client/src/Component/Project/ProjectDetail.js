@@ -11,13 +11,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { useParams } from "react-router-dom";
-import { getAprojectApi } from "../../api/projectApi";
+import { getAprojectApi, updateProjectApi } from "../../api/projectApi";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { profileImg } from "../functions/commonFunc";
 import Loading from "../Hook/Loading/Loading";
 import { getAllUserApi } from "../../api/userApi";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 
 
@@ -114,7 +115,6 @@ const ProjectDetail = () => {
         // Add more modals as needed
     });
 
-
     const openModal = (modalName) => {
         setModals((prevModals) => ({
             ...prevModals,
@@ -162,7 +162,7 @@ const ProjectDetail = () => {
                 setLoading(false)
 
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 let temp = data?.data[0];
                 setProjectInfo(temp)
                 setprojectDetails({
@@ -196,7 +196,7 @@ const ProjectDetail = () => {
         }
     }
 
-    console.log("project info", members);
+    // console.log("project info", members);
 
 
     const  handelChange = (e, filed)=> {
@@ -225,6 +225,76 @@ const ProjectDetail = () => {
       
       
        }
+
+    
+    const updateSingleProject = async (from) => {
+        try{
+            let updatedData = {
+                pId: projectInfo?._id,
+
+            }
+            if(from === "eidtProject"){
+                updatedData = { 
+                    ...updatedData,
+                projectName: projectDetails?.projectName,
+                projectDescription: projectDetails?.projectDescription,
+                projectOwner: projectDetails?.projectOwner,
+                superVisorTime: projectDetails?.superVisorTime,
+                leadTime: projectDetails?.leadTime,
+                memberTime: projectDetails?.memberTime,
+                projectStartTime: projectDetails?.projectStartTime,
+                projectEndTime: projectDetails?.projectEndTime
+            }
+
+            // console.log("eidt project modal", updatedData);
+            }
+            if(from === "modifyleader"){
+                updatedData = { 
+                    ...updatedData,
+                    projectLead : projectTeamLead.teamLeadId,
+                    projectSuperVisor: projectSuperVisor.supervisorId,
+
+            }
+        }
+            if(from === "modifymembers"){
+                updatedData = { 
+                    ...updatedData,
+                    projectMembers : projectMembers?.membersId,
+
+            }
+        
+        }
+            const response = await updateProjectApi(updatedData, jwt);
+            if(response.status === 200) {
+                const data = await response.json();
+                // setProjectInfo(data.data);
+                toast.success("Updated successfully", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 1000,
+                    pauseOnHover: false,
+                });
+                getSingleProject()
+                closeModal("modal1")
+                closeModal("modal2")
+                closeModal("modal3")
+
+            }else{
+                toast.warning("No Update", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 1000,
+                    pauseOnHover: false,
+                });
+            }
+
+
+        }catch(err){
+            toast.warning("Something went wrong", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            });
+        }
+    }
 
 
     useEffect(() => {
@@ -534,6 +604,7 @@ const ProjectDetail = () => {
                         ) ? false : true}
                         sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
                             //   createProject()
+                            updateSingleProject("eidtProject")
                         }}>
                         Update
                     </Button>
@@ -593,7 +664,7 @@ const ProjectDetail = () => {
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
                     <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
-
+                        updateSingleProject("modifymembers")
                     }}>
                         Update
                     </Button>
@@ -688,8 +759,10 @@ const ProjectDetail = () => {
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
-
+                    <Button variant="contained" 
+                    dis
+                    sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                        updateSingleProject("modifyleader")
                     }}>
                         Update
                     </Button>
