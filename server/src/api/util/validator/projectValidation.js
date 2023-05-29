@@ -33,6 +33,7 @@ const validateProjectSupervisors = (val) => {
     return true
 };
 
+
 module.exports.createProjectValidation = [
     body('projectName').isString().withMessage("Invalid Project Name"),
     body('projectOwner').isString().withMessage("Invalid Project Owner Name"),
@@ -57,6 +58,114 @@ module.exports.createProjectValidation = [
     }),
     body("projectMembers").custom((val) => {
         return validateProjectSupervisors(val)
+    })
+
+]
+
+module.exports.upateProjectValidation = [
+
+    body('projectName').custom(val=>{
+        if(!val) return true
+        else{
+            if(typeof(val)=== 'string'){
+                return true
+            }else{
+                console.log("ELSE");
+                throw new Error("Invalid Project Name")
+            }
+        }
+    }),
+    body('projectOwner').custom(val=>{
+        if(!val) return true
+        else{
+            if(typeof(val)=== 'string'){
+                return true
+            }else{
+                console.log("ELSE");
+                throw new Error("Invalid Project Owner Name")
+            }
+        }
+    }),
+    body('projectDescription').custom(val=>{
+        if(!val) return true
+        else{
+            if(typeof(val)=== 'string'){
+                return true
+            }else{
+                console.log("ELSE");
+                throw new Error("Invalid Project Description Name")
+            }
+        }
+    }),
+    body('superVisorTime').custom(val=>{
+        
+        if(!val) return true
+        else{
+            const changeValueToNumber = Number(val) || ''
+            if(typeof(changeValueToNumber)=== 'number'){
+                return true
+            }else{
+                throw new Error("Invalid hour time Name")
+            }
+        }
+    }),
+    body('leadTime').custom(val=>{
+        
+        if(!val) return true
+        else{
+            const changeValueToNumber = Number(val) || ''
+            if(typeof(changeValueToNumber)=== 'number'){
+                return true
+            }else{
+                throw new Error("Invalid hour time Name")
+            }
+        }
+    }),
+    body('memberTime').custom(val=>{
+        
+        if(!val) return true
+        else{
+            const changeValueToNumber = Number(val) || ''
+            if(typeof(changeValueToNumber)=== 'number'){
+                return true
+            }else{
+                throw new Error("Invalid hour time Name")
+            }
+        }
+    }),
+
+    body("projectStartTime").custom((val) => {
+        if(!val) return true
+        else{
+            if (!is_date(val)) return false
+            return true;
+        }
+    }),
+    body("projectEndTime").custom((val) => {
+        if(!val) return true
+        else{
+            if (!is_date(val)) return false
+            return true;
+        }
+    }),
+    body("projectSuperVisor").custom((val) => {
+        if(!val) return true
+        else{
+            return validateProjectSupervisors(val)
+        }
+        
+    }),
+    body("projectLead").custom((val) => {
+        if(!val) return true
+        else{
+            return validateProjectSupervisors(val)
+        }
+    }),
+    body("projectMembers").custom((val) => {
+        if(!val) return true
+        else{
+            return validateProjectSupervisors(val)
+        }
     })
 
 ]
