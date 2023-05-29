@@ -385,6 +385,8 @@ const ProjectDetail = () => {
                                 <div class="card-body">
                                     <h6 class="card-title m-b-20 d-flex justify-content-around align-items-baseline">
                                         <p> Assigned Leader </p>
+                                        {(userRole()=== "Admin" || userRole() === "Project Lead" ) && (
+
                                         <Button variant="contained"
                                             onClick={() =>{ 
                                                 openModal("modal3")
@@ -401,6 +403,7 @@ const ProjectDetail = () => {
                                             startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
                                             Modify Leader
                                         </Button>
+                                        )}
                                     </h6>
                                     <List sx={{
                                         width: '100%', maxWidth: 360, bgcolor: 'background.paper', ".MuiListItem-root": {
@@ -447,6 +450,8 @@ const ProjectDetail = () => {
                                 <div class="card-body">
                                     <h6 class="card-title m-b-20 d-flex justify-content-around align-items-baseline">
                                         <p> Assigned Members </p>
+                                       {
+                                        (userRole()=== "Admin" || userRole() === "Project Lead" ) && (
                                         <Button variant="contained"
                                             onClick={() =>{ 
                                                 openModal("modal2")
@@ -458,6 +463,9 @@ const ProjectDetail = () => {
                                             startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
                                             Modify Members
                                         </Button>
+
+                                        )
+                                       } 
                                     </h6>
                                     <List sx={{
                                         width: '100%', maxWidth: 360, bgcolor: 'background.paper', ".MuiListItem-root": {
@@ -628,7 +636,7 @@ const ProjectDetail = () => {
                    
           <Box sx={{  m: ".5rem 0" , ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100% !important"}}}>
             <FormControl fullWidth >
-              <InputLabel id="demo-multiple-chip-label">Select Team Lead*</InputLabel>
+              <InputLabel id="demo-multiple-chip-label">Select member*</InputLabel>
               <Select
               sx={{minWidth: "100%", width: "100%"}}
                 labelId="demo-multiple-chip-label"
@@ -733,7 +741,7 @@ const ProjectDetail = () => {
                 multiple
                 value={projectTeamLead.teamLeadName}
                 onChange={(e)=> handelChange(e, "teamlead")}
-                placeholder="Select Members"
+                placeholder="Select Team lead"
                 renderValue={(selected) => <Box sx={{  display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                 {selected.map((value) => (
                   <Chip key={value} label={value.split("_")[0]} />

@@ -21,6 +21,7 @@ import { getAllProject } from '../../api/projectApi';
 import { useNavigate } from 'react-router-dom';
 import { profileImg } from '../functions/commonFunc';
 import PropTypes from 'prop-types';
+import userRole from '../Hook/userHook';
 
 
 const ExpandMore = styled((props) => {
@@ -162,9 +163,12 @@ const menu = (
       // }}
         
       action={
+        userRole() === "Admin" && (
+
         <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />
         </IconButton>
+        )
     }
         title={ <p onClick={()=> {
         navigate(`${project._id}`)
@@ -173,7 +177,7 @@ const menu = (
         
         
       />
-       {menu}
+       { menu}
 
       <Divider />
       

@@ -252,7 +252,7 @@ const Project = () => {
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Project</Typography>
-        {userRole() === 'Admin' && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
+        {(userRole() === 'Admin' || userRole() === "Project Lead") && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
           Add Project
         </Button>}
       </Box>
