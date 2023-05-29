@@ -104,7 +104,7 @@ const Attendancesheet = () => {
     }
     // Convert Date
     function formatAMPM(date) {
-        console.log("Date",date);
+        // console.log("Date",date);
         var hours = date.getHours();
         var minutes = date.getMinutes();
         var ampm = hours >= 12 ? 'pm' : 'am';
@@ -200,7 +200,7 @@ const Attendancesheet = () => {
 
 
                                                                         }
-                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.checkIn))} /> : ""}
+                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
                                                                     </>
                                                                 )
                                                                     : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>

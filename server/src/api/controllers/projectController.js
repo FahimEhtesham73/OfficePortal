@@ -84,6 +84,9 @@ module.exports.createProject = async (req, res) => {
 
 module.exports.updateProject = async (req, res) => {
     try {
+        const erros = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
+
         const projectId = req.body.pId;
         const project = await Project.findOne({ _id: projectId }).lean();
         if (!project) return res.status(404).json({ "message": "No project found" });
@@ -102,11 +105,9 @@ module.exports.updateProject = async (req, res) => {
             }
             if (arg === "projectLead") {
                 args['projectLead'] = updatedData['projectLead']
-
             }
             if (arg === "projectSuperVisor") {
                 args['projectSuperVisor'] = updatedData['projectSuperVisor']
-
             }
             if (arg === "projectMembers") {
                 args['projectMembers'] = updatedData['projectMembers']
@@ -123,15 +124,12 @@ module.exports.updateProject = async (req, res) => {
 
             if (arg === "projectStartTime") {
                 args['projectStartTime'] = updatedData['projectStartTime']
-
             }
             if (arg === "projectEndTime") {
                 args['projectEndTime'] = updatedData['projectEndTime']
-
             }
             if (arg === "isCurrentlyActive") {
                 args['isCurrentlyActive'] = updatedData['isCurrentlyActive']
-
             }
         }
 
@@ -158,7 +156,6 @@ module.exports.updateProject = async (req, res) => {
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Something Went Wrong" })
-
     }
 }
 
@@ -271,4 +268,13 @@ module.exports.getAllPoroject = async (req, res) => {
         return res.status(500).json({ message: "Something Went Wrong" })
 
     }
+}
+
+module.exports.deleteSingleProject = async (req, res) => {
+    const { projectId } = req.body;
+    const project = await User.findOne(projectId);
+    if (!project) return res.status(400).json("project not found");
+    await Project.findOneAndDelete(projectId);
+    return res.status(200).json("successfully deleted");
+
 }

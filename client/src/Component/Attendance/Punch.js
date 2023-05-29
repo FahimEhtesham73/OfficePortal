@@ -730,7 +730,7 @@ const Punch = () => {
                                             {row?.checkInTime ? formatAMPM(new Date(row?.checkInTime)) : ""}
 
                                         </> : <>
-                                            {row?.modifiedCheckInTime &&  <>  {formatAMPM(new Date(row?.modifiedCheckOutTime))} <span style={{color: "grey"}}>(Edited)</span> </>
+                                            {row?.modifiedCheckInTime &&  <>  {formatAMPM(new Date(row?.modifiedCheckInTime))} <span style={{color: "grey"}}>(Edited)</span> </>
                                             }
                                             {/* <br /> */}
                                             {row?.checkInTime ? (<> <br /> {formatAMPM(new Date(row?.checkInTime))} </>) : ""}
