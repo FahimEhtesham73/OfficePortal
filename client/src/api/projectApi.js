@@ -25,3 +25,11 @@ export const getAprojectApi = async(data, token)=>{
     credentials: 'include',})
 }
 
+export const updateProjectApi = async(data, token)=>{
+  return await fetch(`${process.env.REACT_APP_URL}/projects/update`,{method: "PUT",  headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',})
+}
