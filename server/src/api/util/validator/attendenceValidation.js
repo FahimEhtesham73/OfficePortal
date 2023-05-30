@@ -65,8 +65,12 @@ module.exports.modifyAttendenceValidation = [
 
     // body("checkInTime").custom().withMessage("required"),
     body("modifiedCheckOutTime").custom((v, {req})=> {
-        if(new Date(v).getTime() > new Date(req.body.modifiedCheckOutTime).getTime()){
-            return true
+        if(v &&  (new Date(v).getTime() < new Date(req.body.modifiedCheckOutTime).getTime())){
+            // if(new Date(v).getTime() > new Date(req.body.modifiedCheckOutTime).getTime()){
+            //     return true
+            // }
+            return false
+
         }
         return true
     }).withMessage("invalid date time")

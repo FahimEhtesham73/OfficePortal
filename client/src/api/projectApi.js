@@ -33,3 +33,12 @@ export const updateProjectApi = async(data, token)=>{
     body: JSON.stringify(data),
     credentials: 'include',})
 }
+
+export const deleteProjectApi = async(data, token)=>{
+  return await fetch(`${process.env.REACT_APP_URL}/projects/delete`,{method: "DELETE",  headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',})
+}

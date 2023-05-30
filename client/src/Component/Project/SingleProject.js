@@ -17,11 +17,13 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, Divider, Stack, Paper, AvatarGroup, Tooltip, DialogActions, Button, DialogTitle, Dialog, Menu, MenuItem } from '@mui/material';
-import { getAllProject } from '../../api/projectApi';
+import { deleteProjectApi, getAllProject } from '../../api/projectApi';
 import { useNavigate } from 'react-router-dom';
 import { profileImg } from '../functions/commonFunc';
 import PropTypes from 'prop-types';
 import userRole from '../Hook/userHook';
+import Cookies from 'js-cookie';
+import { toast } from "react-toastify";
 
 
 const ExpandMore = styled((props) => {
@@ -89,7 +91,10 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-const SingleProject = ({project}) => {
+const SingleProject = ({project, deleteHandler}) => {
+
+  const jwt = Cookies.get("_token");
+  
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
@@ -152,6 +157,35 @@ const menu = (
   // useEffect(()=> {
   //   getAllProject("", )
   // },[])
+
+  // const deleteAProject = async()=> {
+  //   try{
+  //     const data = {projectId : project._id}
+  //     const response = await deleteProjectApi(data, jwt);
+  //     if(response.status === 200){
+  //       console.log("delete", await response.json());
+  //       navigate("/projects")
+  //       toast.success("Project deleted successfully", {
+  //         position: toast.POSITION.TOP_CENTER,
+  //         autoClose: 1000,
+  //         pauseOnHover: false,
+  //     });
+  //     }
+  //     else{
+  //       toast.warning("Something went wrong", {
+  //         position: toast.POSITION.TOP_CENTER,
+  //         autoClose: 2000,
+  //         pauseOnHover: false,
+  //     });
+  //     }
+  //   }catch(err){
+  //     toast.warning("Something went wrong", {
+  //       position: toast.POSITION.TOP_CENTER,
+  //       autoClose: 2000,
+  //       pauseOnHover: false,
+  //   });
+  //   }
+  // } 
   return (
     // <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
     <div className='p-2'>
@@ -269,7 +303,10 @@ const menu = (
                 </Box> */}
                 <DialogActions sx={{display:"flex",justifyContent:"center",marginTop:"10px"}}>
 
-                    <Button variant="contained" color='error' sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={handleClickClose}>
+                    <Button variant="contained" color='error' sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={()=> {
+                      deleteHandler(project._id)
+                      setModalOpen(false);
+                    }}>
                         Yes
                     </Button>
                     <Button variant="contained" sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={handleClickClose}>

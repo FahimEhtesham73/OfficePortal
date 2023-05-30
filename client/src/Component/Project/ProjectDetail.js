@@ -84,16 +84,17 @@ const ProjectDetail = () => {
         projectOwner: "",
         superVisorTime: "",
         leadTime: "",
-        memberTime:"",
+        memberTime: "",
         projectStartTime: "",
-        projectEndTime: ""
+        projectEndTime: "",
+        isCurrentlyActive: "",
     });
 
     const [users, setUsers] = useState([]);
     const [teamLead, setTeamLead] = useState([])
     const [supervisor, setSuperVisor] = useState([])
     const [members, setMembers] = useState([])
-    
+
     const [projectMembers, setProjectMembers] = useState({
         membersId: [],
         membersName: [],
@@ -153,7 +154,7 @@ const ProjectDetail = () => {
         }
     }
 
-
+    console.log(projectDetails);
     const getSingleProject = async () => {
         try {
             const response = await getAprojectApi(id, jwt);
@@ -171,9 +172,10 @@ const ProjectDetail = () => {
                     projectOwner: temp.projectOwner,
                     superVisorTime: temp.superVisorTime,
                     leadTime: temp.leadTime,
-                    memberTime:temp.memberTime,
+                    memberTime: temp.memberTime,
                     projectStartTime: temp.projectStartTime,
-                    projectEndTime: temp.projectEndTime
+                    projectEndTime: temp.projectEndTime,
+                    isCurrentlyActive: temp.isCurrentlyActive
                 })
                 // setProjectMembers({
                 //     membersId: temp.projectMembers,
@@ -199,73 +201,74 @@ const ProjectDetail = () => {
     // console.log("project info", members);
 
 
-    const  handelChange = (e, filed)=> {
+    const handelChange = (e, filed) => {
         // let mappedName = e.target.value.map((val)=> val.split("_")[0]);
-        if(filed === "teamlead"){
-          let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
-        
-          setProjectTeamLead({ teamLeadId: mappedValue, teamLeadName: e.target.value})
-      
-        }
-      
-        if(filed === "supervisor"){
-          let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
-        
-          setProjectSuperVisor({ supervisorId: mappedValue, supervisorName: e.target.value})
-      
-        }
-      
-        if(filed === "members"){
-          let mappedValue = e.target.value.map((val)=> val.split("_")[1]);
-        
-          // console.log(mappedName, mappedValue);
-          setProjectMembers({membersId: mappedValue, membersName: e.target.value})
-      
-        }
-      
-      
-       }
+        if (filed === "teamlead") {
+            let mappedValue = e.target.value.map((val) => val.split("_")[1]);
 
-    
+            setProjectTeamLead({ teamLeadId: mappedValue, teamLeadName: e.target.value })
+
+        }
+
+        if (filed === "supervisor") {
+            let mappedValue = e.target.value.map((val) => val.split("_")[1]);
+
+            setProjectSuperVisor({ supervisorId: mappedValue, supervisorName: e.target.value })
+
+        }
+
+        if (filed === "members") {
+            let mappedValue = e.target.value.map((val) => val.split("_")[1]);
+
+            // console.log(mappedName, mappedValue);
+            setProjectMembers({ membersId: mappedValue, membersName: e.target.value })
+
+        }
+
+
+    }
+
+
     const updateSingleProject = async (from) => {
-        try{
+        try {
             let updatedData = {
                 pId: projectInfo?._id,
 
             }
-            if(from === "eidtProject"){
-                updatedData = { 
+            if (from === "eidtProject") {
+                updatedData = {
                     ...updatedData,
-                projectName: projectDetails?.projectName,
-                projectDescription: projectDetails?.projectDescription,
-                projectOwner: projectDetails?.projectOwner,
-                superVisorTime: projectDetails?.superVisorTime,
-                leadTime: projectDetails?.leadTime,
-                memberTime: projectDetails?.memberTime,
-                projectStartTime: projectDetails?.projectStartTime,
-                projectEndTime: projectDetails?.projectEndTime
-            }
+                    projectName: projectDetails?.projectName,
+                    projectDescription: projectDetails?.projectDescription,
+                    projectOwner: projectDetails?.projectOwner,
+                    superVisorTime: projectDetails?.superVisorTime,
+                    leadTime: projectDetails?.leadTime,
+                    memberTime: projectDetails?.memberTime,
+                    projectStartTime: projectDetails?.projectStartTime,
+                    projectEndTime: projectDetails?.projectEndTime,
+                    isCurrentlyActive: projectDetails?.isCurrentlyActive
+                }
 
-            // console.log("eidt project modal", updatedData);
+                // console.log("eidt project modal", updatedData);
             }
-            if(from === "modifyleader"){
-                updatedData = { 
+            if (from === "modifyleader") {
+                updatedData = {
                     ...updatedData,
-                    projectLead : projectTeamLead.teamLeadId,
+                    projectLead: projectTeamLead.teamLeadId,
                     projectSuperVisor: projectSuperVisor.supervisorId,
 
+                }
             }
-        }
-            if(from === "modifymembers"){
-                updatedData = { 
+            if (from === "modifymembers") {
+                updatedData = {
                     ...updatedData,
-                    projectMembers : projectMembers?.membersId,
+                    projectMembers: projectMembers?.membersId,
+
+                }
 
             }
-        
-        }
             const response = await updateProjectApi(updatedData, jwt);
-            if(response.status === 200) {
+            if (response.status === 200) {
                 const data = await response.json();
                 // setProjectInfo(data.data);
                 toast.success("Updated successfully", {
@@ -278,7 +281,7 @@ const ProjectDetail = () => {
                 closeModal("modal2")
                 closeModal("modal3")
 
-            }else{
+            } else {
                 toast.warning("No Update", {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 1000,
@@ -287,7 +290,7 @@ const ProjectDetail = () => {
             }
 
 
-        }catch(err){
+        } catch (err) {
             toast.warning("Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 1000,
@@ -385,24 +388,24 @@ const ProjectDetail = () => {
                                 <div class="card-body">
                                     <h6 class="card-title m-b-20 d-flex justify-content-around align-items-baseline">
                                         <p> Assigned Leader </p>
-                                        {(userRole()=== "Admin" || userRole() === "Project Lead" ) && (
+                                        {(userRole() === "Admin" || userRole() === "Project Lead") && (
 
-                                        <Button variant="contained"
-                                            onClick={() =>{ 
-                                                openModal("modal3")
-                                                setProjectSuperVisor({
-                                                    supervisorId: projectInfo?.projectSuperVisor,
-                                                    supervisorName: projectInfo?.projectSuperVisorDetails.map((m)=> m.firstName+"_"+m._id)
-                                                })
-                                                setProjectTeamLead({
-                                                    teamLeadId: projectInfo?.projectLead,
-                                                    teamLeadName: projectInfo?.projectLeadDetails.map((m)=> m.firstName+"_"+m._id)
-                                                })
-                                                
-                                            }}
-                                            startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
-                                            Modify Leader
-                                        </Button>
+                                            <Button variant="contained"
+                                                onClick={() => {
+                                                    openModal("modal3")
+                                                    setProjectSuperVisor({
+                                                        supervisorId: projectInfo?.projectSuperVisor,
+                                                        supervisorName: projectInfo?.projectSuperVisorDetails.map((m) => m.firstName + "_" + m._id)
+                                                    })
+                                                    setProjectTeamLead({
+                                                        teamLeadId: projectInfo?.projectLead,
+                                                        teamLeadName: projectInfo?.projectLeadDetails.map((m) => m.firstName + "_" + m._id)
+                                                    })
+
+                                                }}
+                                                startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
+                                                Modify Leader
+                                            </Button>
                                         )}
                                     </h6>
                                     <List sx={{
@@ -416,7 +419,7 @@ const ProjectDetail = () => {
 
                                             <ListItem alignItems="flex-start">
                                                 <ListItemAvatar title={`${m.firstName}`}>
-                                                    <Avatar imgProps={{ crossOrigin: "false" }} alt="img" src={`${profileImg(m.imagePath)}`} />
+                                                    <Avatar imgProps={{ crossOrigin: false }} alt="img" src={`${profileImg(m.imagePath)}`} />
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={`${m.firstName}`}
@@ -450,22 +453,22 @@ const ProjectDetail = () => {
                                 <div class="card-body">
                                     <h6 class="card-title m-b-20 d-flex justify-content-around align-items-baseline">
                                         <p> Assigned Members </p>
-                                       {
-                                        (userRole()=== "Admin" || userRole() === "Project Lead" ) && (
-                                        <Button variant="contained"
-                                            onClick={() =>{ 
-                                                openModal("modal2")
-                                                setProjectMembers({
-                                                    membersId: projectInfo?.projectMembers,
-                                                    membersName: projectInfo?.projectMembersList.map((m)=> m.firstName+"_"+m._id)
-                                                })
-                                            }}
-                                            startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
-                                            Modify Members
-                                        </Button>
+                                        {
+                                            (userRole() === "Admin" || userRole() === "Project Lead") && (
+                                                <Button variant="contained"
+                                                    onClick={() => {
+                                                        openModal("modal2")
+                                                        setProjectMembers({
+                                                            membersId: projectInfo?.projectMembers,
+                                                            membersName: projectInfo?.projectMembersList.map((m) => m.firstName + "_" + m._id)
+                                                        })
+                                                    }}
+                                                    startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} >
+                                                    Modify Members
+                                                </Button>
 
-                                        )
-                                       } 
+                                            )
+                                        }
                                     </h6>
                                     <List sx={{
                                         width: '100%', maxWidth: 360, bgcolor: 'background.paper', ".MuiListItem-root": {
@@ -525,9 +528,21 @@ const ProjectDetail = () => {
                     <TextField id="projectName" label="Project Name " value={projectDetails.projectName} name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: { xs: "5rem", sm: "1rem" } }}
                         onChange={(e) => setprojectDetails({ ...projectDetails, projectName: e.target.value })}
                         required />
-                    <TextField id="outlined-search" label="Project Owner " value={projectDetails.projectOwner} name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0", }}
-                        onChange={(e) => setprojectDetails({ ...projectDetails, projectOwner: e.target.value })}
-                        required />
+
+                    <Box sx={{ width: "100%", m: ".5rem 0", display: { sm: "flex" }, justifyContent: "space-between", alignItems: "center" }}>
+
+                        <TextField id="outlined-search" label="Project Owner " value={projectDetails.projectOwner} name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0", }}
+                            onChange={(e) =>{  setprojectDetails({ ...projectDetails, projectOwner: e.target.value })}}
+                            required />
+                        <Typography sx={{ width: { xs: "100%", sm: "30%", }, margin: ".5rem 0.5rem", }}>Is Active </Typography> <Checkbox checked={projectDetails.isCurrentlyActive} value={projectDetails.isCurrentlyActive} onChange={(e) =>
+                             {
+                                // console.log(e.target);
+                                setprojectDetails({ ...projectDetails, isCurrentlyActive: e.target.checked })
+                             }
+                             } />
+
+                    </Box>
+
                     <TextField
                         multiline
                         rows={3} id="outlined-search" label="Project Details " name='projectDetails' value={projectDetails.projectDescription} type="search" sx={{ width: "100%", margin: ".5rem 0", }}
@@ -549,7 +564,7 @@ const ProjectDetail = () => {
                             value={projectDetails.leadTime}
                             onChange={(e) => {
                                 let val = e.target.value.replace(/[^0-9]/g, '');
-                                  setprojectDetails({ ...projectDetails, leadTime: val}) 
+                                setprojectDetails({ ...projectDetails, leadTime: val })
 
                             }}
                             required />
@@ -557,7 +572,7 @@ const ProjectDetail = () => {
                             value={projectDetails.memberTime}
                             onChange={(e) => {
                                 let val = e.target.value.replace(/[^0-9]/g, '');
-                                  setprojectDetails({ ...projectDetails, memberTime: val}) 
+                                setprojectDetails({ ...projectDetails, memberTime: val })
 
                             }}
                             required />
@@ -572,10 +587,10 @@ const ProjectDetail = () => {
                                         error: false,
                                     },
                                 }}
-                                    value={dayjs(projectDetails.projectStartTime)} sx={{width: {xs: "100%", sm: "100%"}}} 
+                                    value={dayjs(projectDetails.projectStartTime)} sx={{ width: { xs: "100%", sm: "100%" } }}
                                     onChange={(e, x) => {
-                                        
-                                          setprojectDetails({ ...projectDetails, projectStartTime: new Date(e?.['$d']) })
+
+                                        setprojectDetails({ ...projectDetails, projectStartTime: new Date(e?.['$d']) })
 
                                     }} />
                             </DemoContainer>
@@ -587,10 +602,10 @@ const ProjectDetail = () => {
                                         error: false,
                                     },
                                 }}
-                                     value={dayjs(projectDetails.projectEndTime)} sx={{width: {xs: "100%", sm: "100%"}}}  
+                                    value={dayjs(projectDetails.projectEndTime)} sx={{ width: { xs: "100%", sm: "100%" } }}
                                     onChange={(e, x) => {
-                                        
-                                          setprojectDetails({ ...projectDetails, projectEndTime: new Date(e?.['$d']) })
+
+                                        setprojectDetails({ ...projectDetails, projectEndTime: new Date(e?.['$d']) })
 
                                     }} />
                             </DemoContainer>
@@ -601,14 +616,14 @@ const ProjectDetail = () => {
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
                     <Button variant="contained"
                         disabled={(
-                          projectDetails.projectStartTime &&
-                          projectDetails.projectOwner&&
-                          projectDetails.projectEndTime &&
-                          projectDetails.superVisorTime &&
-                          projectDetails.leadTime &&
-                          projectDetails.memberTime &&
+                            projectDetails.projectStartTime &&
+                            projectDetails.projectOwner &&
+                            projectDetails.projectEndTime &&
+                            projectDetails.superVisorTime &&
+                            projectDetails.leadTime &&
+                            projectDetails.memberTime &&
 
-                          projectDetails.projectName
+                            projectDetails.projectName
                         ) ? false : true}
                         sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
                             //   createProject()
@@ -619,12 +634,12 @@ const ProjectDetail = () => {
                 </DialogActions>
             </BootstrapDialog>
 
-{/* modal2  */}
+            {/* modal2  */}
             <BootstrapDialog
                 onClose={() => closeModal("modal2")}
                 aria-labelledby="customized-dialog-title"
                 open={modals.modal2}
-                sx={{".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100%"}}}
+                sx={{ ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100%" } }}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" className="text-center"  >
                     Modify Members
@@ -633,41 +648,41 @@ const ProjectDetail = () => {
                     display: "flex", justifyContent: "center", flexDirection: "column",
                     overflowY: "auto"
                 }}>
-                   
-          <Box sx={{  m: ".5rem 0" , ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100% !important"}}}>
-            <FormControl fullWidth >
-              <InputLabel id="demo-multiple-chip-label">Select member*</InputLabel>
-              <Select
-              sx={{minWidth: "100%", width: "100%"}}
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
-                label="Select Teamlead *"
-                multiple
-                value={projectMembers.membersName}
-                onChange={(e)=> handelChange(e, "members")}
-                placeholder="Select Members"
-                renderValue={(selected) => <Box sx={{  display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value.split("_")[0]} />
-                ))}
-              </Box>}
-                // MenuProps={MenuProps}
-              >
-                { members.length &&  members?.map((option) => {
-                  return (
 
-                    <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
-                      <ListItemIcon>
-                        <Checkbox checked={ projectMembers?.membersId?.indexOf(option._id) > -1} />
-                      </ListItemIcon>
-                      <ListItemText primary={option.firstName} />
-                    </MenuItem>
-                  )
-                })}
-              </Select>
-            </FormControl>
-            
-          </Box>
+                    <Box sx={{ m: ".5rem 0", ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100% !important" } }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="demo-multiple-chip-label">Select member*</InputLabel>
+                            <Select
+                                sx={{ minWidth: "100%", width: "100%" }}
+                                labelId="demo-multiple-chip-label"
+                                id="demo-multiple-chip"
+                                label="Select Teamlead *"
+                                multiple
+                                value={projectMembers.membersName}
+                                onChange={(e) => handelChange(e, "members")}
+                                placeholder="Select Members"
+                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value.split("_")[0]} />
+                                    ))}
+                                </Box>}
+                            // MenuProps={MenuProps}
+                            >
+                                {members.length && members?.map((option) => {
+                                    return (
+
+                                        <MenuItem key={option._id} value={option.firstName + "_" + option._id} data-name={option._id} >
+                                            <ListItemIcon>
+                                                <Checkbox checked={projectMembers?.membersId?.indexOf(option._id) > -1} />
+                                            </ListItemIcon>
+                                            <ListItemText primary={option.firstName} />
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+
+                    </Box>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
@@ -685,7 +700,7 @@ const ProjectDetail = () => {
                 onClose={() => closeModal("modal3")}
                 aria-labelledby="customized-dialog-title"
                 open={modals.modal3}
-                sx={{".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100%"}}}
+                sx={{ ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100%" } }}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" className="text-center"  >
                     Modify Members
@@ -694,84 +709,84 @@ const ProjectDetail = () => {
                     display: "flex", justifyContent: "center", flexDirection: "column",
                     overflowY: "auto"
                 }}>
-                   
-          <Box sx={{  m: ".5rem 0" , ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100% !important"}}}>
-            <FormControl fullWidth >
-              <InputLabel id="demo-multiple-chip-label">Select Supervisor*</InputLabel>
-              <Select
-              sx={{minWidth: "100%", width: "100%"}}
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
-                label="Select Teamlead *"
-                multiple
-                value={projectSuperVisor.supervisorName}
-                onChange={(e)=> handelChange(e, "supervisor")}
-                placeholder="Select Members"
-                renderValue={(selected) => <Box sx={{  display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value.split("_")[0]} />
-                ))}
-              </Box>}
-                // MenuProps={MenuProps}
-              >
-                { supervisor.length &&  supervisor?.map((option) => {
-                  return (
 
-                    <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
-                      <ListItemIcon>
-                        <Checkbox checked={ projectSuperVisor?.supervisorId?.indexOf(option._id) > -1} />
-                      </ListItemIcon>
-                      <ListItemText primary={option.firstName} />
-                    </MenuItem>
-                  )
-                })}
-              </Select>
-            </FormControl>
-            
-          </Box>
+                    <Box sx={{ m: ".5rem 0", ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100% !important" } }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="demo-multiple-chip-label">Select Supervisor*</InputLabel>
+                            <Select
+                                sx={{ minWidth: "100%", width: "100%" }}
+                                labelId="demo-multiple-chip-label"
+                                id="demo-multiple-chip"
+                                label="Select Teamlead *"
+                                multiple
+                                value={projectSuperVisor.supervisorName}
+                                onChange={(e) => handelChange(e, "supervisor")}
+                                placeholder="Select Members"
+                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value.split("_")[0]} />
+                                    ))}
+                                </Box>}
+                            // MenuProps={MenuProps}
+                            >
+                                {supervisor.length && supervisor?.map((option) => {
+                                    return (
 
-          <Box sx={{  m: ".5rem 0" , ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": {width: "100% !important"}}}>
-            <FormControl fullWidth >
-              <InputLabel id="demo-multiple-chip-label">Select Members*</InputLabel>
-              <Select
-              sx={{minWidth: "100%", width: "100%"}}
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
-                label="Select Teamlead *"
-                multiple
-                value={projectTeamLead.teamLeadName}
-                onChange={(e)=> handelChange(e, "teamlead")}
-                placeholder="Select Team lead"
-                renderValue={(selected) => <Box sx={{  display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value.split("_")[0]} />
-                ))}
-              </Box>}
-                // MenuProps={MenuProps}
-              >
-                { teamLead.length &&  teamLead?.map((option) => {
-                  return (
+                                        <MenuItem key={option._id} value={option.firstName + "_" + option._id} data-name={option._id} >
+                                            <ListItemIcon>
+                                                <Checkbox checked={projectSuperVisor?.supervisorId?.indexOf(option._id) > -1} />
+                                            </ListItemIcon>
+                                            <ListItemText primary={option.firstName} />
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
 
-                    <MenuItem key={option._id} value={option.firstName +"_"+ option._id} data-name={option._id} >
-                      <ListItemIcon>
-                        <Checkbox checked={ projectTeamLead?.teamLeadId?.indexOf(option._id) > -1} />
-                      </ListItemIcon>
-                      <ListItemText primary={option.firstName} />
-                    </MenuItem>
-                  )
-                })}
-              </Select>
-            </FormControl>
-            
-          </Box>
+                    </Box>
+
+                    <Box sx={{ m: ".5rem 0", ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100% !important" } }}>
+                        <FormControl fullWidth >
+                            <InputLabel id="demo-multiple-chip-label">Select Members*</InputLabel>
+                            <Select
+                                sx={{ minWidth: "100%", width: "100%" }}
+                                labelId="demo-multiple-chip-label"
+                                id="demo-multiple-chip"
+                                label="Select Teamlead *"
+                                multiple
+                                value={projectTeamLead.teamLeadName}
+                                onChange={(e) => handelChange(e, "teamlead")}
+                                placeholder="Select Team lead"
+                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value.split("_")[0]} />
+                                    ))}
+                                </Box>}
+                            // MenuProps={MenuProps}
+                            >
+                                {teamLead.length && teamLead?.map((option) => {
+                                    return (
+
+                                        <MenuItem key={option._id} value={option.firstName + "_" + option._id} data-name={option._id} >
+                                            <ListItemIcon>
+                                                <Checkbox checked={projectTeamLead?.teamLeadId?.indexOf(option._id) > -1} />
+                                            </ListItemIcon>
+                                            <ListItemText primary={option.firstName} />
+                                        </MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+
+                    </Box>
 
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" 
-                    dis
-                    sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
-                        updateSingleProject("modifyleader")
-                    }}>
+                    <Button variant="contained"
+                        dis
+                        sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                            updateSingleProject("modifyleader")
+                        }}>
                         Update
                     </Button>
                 </DialogActions>

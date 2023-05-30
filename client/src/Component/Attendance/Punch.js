@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Paper, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Paper, ToggleButton, Typography } from '@mui/material'
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -29,13 +29,17 @@ import jwtDecode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import EditIcon from '@mui/icons-material/Edit';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import userRole from '../Hook/userHook';
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { DateTimePicker, TimePicker } from '@mui/x-date-pickers';
+import CheckIcon from '@mui/icons-material/Check';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DateTimePicker, TimePicker } from '@mui/x-date-pickers';
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import { modifySingleAttendene } from '../../api/attendenceApi';
 
@@ -175,13 +179,15 @@ const Punch = () => {
     const [startDateTime, setStartDateTime] = useState("");
     const [endDateTime, setEndDateTime] = useState("");
     const [updateAttendence, setUpdateAttendence] = useState({});
-
     const [checkBoxHD, setCheckBoxHD] = useState(false)
     const [checkBoxWOH, setCheckBoxWOH] = useState(false)
+    
+    const [punchoutUpdate, setPunchutUpdate] = useState(false);
+    const [endtimeChange, setEndDateTimeChanged] = useState(false);
 
     
     // For Modal open
-    // console.log("position", position);
+    console.log("position", updateAttendence);
 
     const [open1, setOpen1] = useState(false)
     const handleClickOpen = () => {
@@ -205,7 +211,9 @@ const Punch = () => {
         setUpdateAttendence({});
         setPosition([])
         setCheckBoxDisableHome(false);
-        setCheckBoxDisableOffice(false)
+        setCheckBoxDisableOffice(false);
+        setEndDateTimeChanged(false);
+        setPunchutUpdate(false)
     };
 
     // Convert Date
@@ -271,20 +279,20 @@ const Punch = () => {
 
         }
     }
-    console.log("work position", position);
-
+console.log("position",position);
 
     const handleUpateSingleAttendece = (row) => {
         handleModalOpen1()
         let a = row
-        console.log("Row Information", a);
+        // console.log("Row Information", a);
         setUpdateAttendence({ ...a });
         setStartDateTime(a?.modifiedCheckInTime ? a?.modifiedCheckInTime : a.checkInTime || a?.key)
         setEndDateTime(a?.modifiedCheckOutTime? a?.modifiedCheckOutTime: a.checkOutTime ||  a?.key)
-
+        if(a?.checkOutTime || a?.modifiedCheckOutTime) {setPunchutUpdate(true); setEndDateTimeChanged(true)}
         setPosition(a?.status || [])
 
         console.log("postion", position);
+        setPosition(a?.status);
          if(a?.status?.includes('WAO')){
              setCheckBoxDisableOffice(true);
              setCheckBoxDisableHome(false)
@@ -384,10 +392,16 @@ const Punch = () => {
                 checkOutTime: updateAttendence?.checkOutTime || "",
                 status: position?.length && position,
                 modifiedCheckInTime: startDateTime,
-                modifiedCheckOutTime: endDateTime
+                modifiedCheckOutTime: endtimeChange?  endDateTime : ""
 
             }
             // console.log("data", data);
+            // return;
+            if(data.modifiedCheckOutTime && (new Date(data.modifiedCheckOutTime) < new Date(data.modifiedCheckInTime))){
+                
+            toast.warning("Invalid punch out time", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+                return
+            }
 
             const att = await modifySingleAttendene(data, jwt);
             if (att.status === 200) {
@@ -732,7 +746,6 @@ const Punch = () => {
                                         </> : <>
                                             {row?.modifiedCheckInTime &&  <>  {formatAMPM(new Date(row?.modifiedCheckInTime))} <span style={{color: "grey"}}>(Edited)</span> </>
                                             }
-                                            {/* <br /> */}
                                             {row?.checkInTime ? (<> <br /> {formatAMPM(new Date(row?.checkInTime))} </>) : ""}
 
                                         </>}
@@ -766,7 +779,7 @@ const Punch = () => {
                                     <StyledTableCell component="th" scope="row">
                                         <Tooltip title="Edit">
                                             <EditIcon onClick={(e) => {
-
+                                                
                                                 handleUpateSingleAttendece(row)
 
                                             }} />
@@ -825,8 +838,8 @@ const Punch = () => {
                 aria-labelledby="customized-dialog-title"
                 open={open1}
             >
-                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose1}>
-                    Attendence Update
+                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose1} >
+                    Attendence Update {new Date(updateAttendence?.key).toDateString()}
                 </BootstrapDialogTitle>
                 <DialogContent >
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -834,16 +847,13 @@ const Punch = () => {
                             <TimePicker
                                 sx={{
                                     width: .9,
+                                    // transition: "height 0.3s ease"
                                 }}
                                 slotProps={{
                                     textField: {
                                         error: false,
                                     },
                                 }}
-                                // selectedSections={"all"}
-                                // views={['hours', 'minutes', 'seconds']}
-                                // inputFormat="HH:mm:ss"
-                                // renderInput={(props) => <TextField {...props} />}
 
                                 value={dayjs(startDateTime && startDateTime)}
                                 label="Start Time"
@@ -851,15 +861,11 @@ const Punch = () => {
                                 onChange={(e) => {
                                     console.log("start time", startDateTime);
                                     let customizeDateTime = new Date(startDateTime);
-                                    const extractTime = new Date(e["$d"]).toTimeString();
+                                    const extractTime = new Date(e["$d"])?.toTimeString();
                                     const splitinngTime = extractTime.split(" ")[0].split(":");
                                     customizeDateTime.setHours(splitinngTime[0])
                                     customizeDateTime.setMinutes(splitinngTime[1])
-                                    // customizeDateTime.setSeconds()
-                                    // console.log(customizeDateTime)
 
-                                    // console.log("full date time customize", customizeDateTime);
-                                    // console.log("extract time", extractTime.split(" ")[0]);
                                     setStartDateTime(customizeDateTime)
                                     // handleTimeChange("05/01/2023")
                                 }}
@@ -869,49 +875,77 @@ const Punch = () => {
                             />
                         </DemoContainer>
                     </LocalizationProvider>
+                    {/* <Box sx={{display: "flex", justifyContent: "space-between", alignItems:"center"}}> */}
+                    {(punchoutUpdate || updateAttendence?.checkOutTime) ? (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={["TimePicker"]}>
-                            <TimePicker
+                        <DemoContainer components={["TimePicker"]} >
+                            <TimePicker 
                                 sx={{
                                     width: .9,
+                                    // flex: "4",
+                                    // flexFlow: 1
                                 }}
-                                slotProps={{
-                                    textField: {
-                                        error: false,
-                                    },
-                                }}
+                                // slotProps={{
+                                //     textField: {
+                                //         error: false,
+                                //     },
+                                // }}
                                 value={dayjs(endDateTime && endDateTime)}
                                 label="End Time"
                                 onChange={(e) => {
-                                    // console.log("start time", e);
-                                    let customizeDateTime = new Date(endDateTime);
-                                    const extractTime = new Date(e["$d"]).toTimeString();
+                                    setEndDateTimeChanged(true);
+                                    
+                                    let customizeDateTime = new Date(typeof endDateTime !== 'string' ? updateAttendence.key : endDateTime );
+                                    console.log("end time", typeof endDateTime);
+
+                                    const extractTime = new Date(e["$d"])?.toTimeString();
                                     const splitinngTime = extractTime.split(" ")[0].split(":");
                                     customizeDateTime.setHours(splitinngTime[0])
                                     customizeDateTime.setMinutes(splitinngTime[1])
-                                    // customizeDateTime.setSeconds()
-                                    // console.log(customizeDateTime);
 
-
-
-
-
-
-                                    // console.log("full date time customize", customizeDateTime);
-                                    // console.log("extract time", extractTime.split(" ")[0]);
                                     setEndDateTime(customizeDateTime)
+
+                                    
                                 }}
 
                             />
                         </DemoContainer>
                     </LocalizationProvider>
+
+                    ):""}
+                    {(!updateAttendence?.checkOutTime) && (
+
+                    !punchoutUpdate ? (
+                    <span onClick={(e)=> setPunchutUpdate(!punchoutUpdate) } style={{textDecoration: "underline", cursor: "pointer", color: "black"}} >Want to update punch out time?</span>
+
+                    ) : (
+                    <span onClick={(e)=> {
+                        setPunchutUpdate(!punchoutUpdate)
+                        setEndDateTimeChanged(false)
+                
+                    }} style={{textDecoration: "underline", cursor: "pointer", color: "rebeccapurple"}} >Not want to update punch out time?</span>
+
+                    )
+                    )}
+                    {/* <ToggleButton
+                        value="check"
+                        // selected={selected}
+                        onChange={() => {
+                            // setSelected(!selected);
+                        }}
+                        >
+                        <CheckIcon />
+                    </ToggleButton> */}
+                    {/* </Box> */}
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
                     {/* { handlePosition(e) } */}
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
-                        <FormControlLabel control={<Checkbox />} value='WOH' checked= {checkBoxWOH} label="Work On Holiday" />
-                        <FormControlLabel control={<Checkbox />} value='HD' checked={checkBoxHD} label="Half day" />
+                        <FormControlLabel control={<Checkbox />} value='WOH'  checked= {checkBoxWOH} onChange={(e)=> setCheckBoxWOH(e.target.cheked)} label="Work On Holiday" />
+                        
+                        <FormControlLabel control={<Checkbox />} checked={checkBoxHD} onChange={(e)=> setCheckBoxHD(e.target.cheked)}  value='HD' label="Half day" />
+                        
                     </FormGroup>
 
                 </DialogContent>
@@ -921,8 +955,8 @@ const Punch = () => {
                             (position?.length > 0 &&
                                 updateAttendence?.userId
                                 && startDateTime
-                                &&
-                                (new Date(startDateTime).getTime() < new Date(endDateTime).getTime())
+                                // &&
+                                // (new Date(startDateTime).getTime() < new Date(endDateTime).getTime())
                             ) ? false : true}
                         variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
                             updateUserAttendence()
