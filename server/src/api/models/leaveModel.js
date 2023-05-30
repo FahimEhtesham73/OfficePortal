@@ -7,5 +7,4 @@ const leaveSchema = new Schema({
     updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"}
 },{timestamps: true});
 
-
 module.exports = model("Leave", leaveSchema);

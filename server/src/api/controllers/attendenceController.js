@@ -287,7 +287,7 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
               },
               aId:"$_id.aID",
               checkIn:"$_id.checkIn",
-              modifiedCheckIn:"$_id.modifiedCheckIn"
+              modifiedCheckIn:{ $ifNull: [ "$_id.modifiedCheckIn", "Unspecified" ] }
             }
           }
         }

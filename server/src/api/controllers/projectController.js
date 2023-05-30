@@ -52,8 +52,7 @@ module.exports.createProject = async (req, res) => {
 
         const project = await Project.create({ ...data });
 
-       
-
+    
         const newProject = await Project.aggregate([
             {
                 $match: {
@@ -272,7 +271,7 @@ module.exports.getAllPoroject = async (req, res) => {
 
 module.exports.deleteSingleProject = async (req, res) => {
     const { projectId } = req.body;
-    const project = await User.findOne(projectId);
+    const project = await Project.findOne(projectId);
     if (!project) return res.status(400).json("project not found");
     await Project.findOneAndDelete(projectId);
     return res.status(200).json("successfully deleted");

@@ -47,8 +47,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Attendancesheet = () => {
     const jwt = Cookies.get('_token')
     const date = new Date()
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1
+    // const year = date.getFullYear()
+    // const month = date.getMonth() + 1
+    const [month,setMonth] = useState(date.getMonth() + 1)
+    const [year,setYear] = useState(date.getFullYear())
     const [searchingDate, setSearchinDate] = useState('')
     const [attendanceData, setAttendanceData] = useState('')
     const [loading, setLoading] = useState(false)
@@ -138,6 +140,8 @@ const Attendancesheet = () => {
                                             setSearchinDate('')
                                         } else {
                                             setSearchinDate(e.$d)
+                                            setMonth(e.$M + 1)
+                                            setYear(e.$y)
                                         }
                                     }} />
                                 </DemoContainer>
@@ -179,7 +183,7 @@ const Attendancesheet = () => {
                                                                                 var color = {}
                                                                                 switch (aStatus) {
                                                                                     case 'HD':
-                                                                                        color['color'] = '#b1b148'
+                                                                                        color['color'] = 'orange'
                                                                                         break;
                                                                                     case 'WAO':
                                                                                         color['color'] = 'black'
@@ -200,7 +204,7 @@ const Attendancesheet = () => {
 
 
                                                                         }
-                                                                        {val?.checkIn && isCheckLateTime(val.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
+                                                                        {val?.checkIn && isCheckLateTime(val?.modifiedCheckIn?val?.modifiedCheckIn : val?.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
                                                                     </>
                                                                 )
                                                                     : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>
