@@ -86,8 +86,8 @@ module.exports.getAttendences = async (req, res) => {
     // let lastDay = new Date(arg['monthDateYear'].getFullYear(), todaysDate.getMonth() + 1, 0).setHours(23, 59, 59, 999);
     let lastDay = new Date(arg['monthDateYear'].setHours(23,59,59,999));
 
-    console.log("first date", new Date(firstDate));
-    console.log("last date", new Date(lastDay));
+    // console.log("first date", new Date(firstDate));
+    // console.log("last date", new Date(lastDay));
     
 
     const allAttendence = await Attendence.find({
@@ -100,7 +100,7 @@ module.exports.getAttendences = async (req, res) => {
 
     let totalMinutes = 0;
     let totalWorkingHour = 0;
-    console.log("all", allAttendence);
+    // console.log("all", allAttendence);
     allAttendence.forEach(item => {
       if(item?.checkInTime  && item?.checkOutTime){
 
@@ -138,7 +138,6 @@ module.exports.getAttendences = async (req, res) => {
     for (let d in dateObj) {
       arr.push({ key: d, ...dateObj[d], name: userName?.firstName, userId: userName?._id })
     }
-    console.log();
 
     return res.status(200).json({ "attendenceList": arr , "totalHours": totalWorkingHour})
 
@@ -423,14 +422,14 @@ module.exports.modifiedORCreateAttendence = async (req, res) => {
         truncateData.userId = data.userId;
         truncateData.isModified = true;
         truncateData.status = data.status;
-        truncateData.modifiedCheckInTime = new Date(data.modifiedCheckInTime);
-        truncateData.modifiedCheckOutTime = new Date(data.modifiedCheckOutTime);
+        // truncateData.modifiedCheckInTime = new Date(data.modifiedCheckInTime) || "";
+        // truncateData.modifiedCheckOutTime = new Date(data.modifiedCheckOutTime) || "";
   
         for(d in data){
           if(d === "checkInTime" && !data["checkInTime"]){
             truncateData["checkInTime"] = new Date(data["modifiedCheckInTime"])
           }
-          if(d === "checkOutTime" && !data["checkOutTime"]){
+          if(d === "checkOutTime" && !data["checkOutTime"] && data.modifiedCheckOutTime){
             truncateData["checkOutTime"] = new Date(data["modifiedCheckOutTime"])
           }
         }
@@ -456,11 +455,10 @@ module.exports.modifiedORCreateAttendence = async (req, res) => {
       }else{
 
         console.log("else",data);
-        // return
+        if(!data.checkOutTime) data.checkOutTime = data.modifiedCheckOutTime;
+
 
         const att = await Attendence.findOne({_id: data.aId}).lean();
-        console.log(att);
-
         const updatedAttendence = await Attendence.findOneAndUpdate({_id: data?.aId}, {$set: {...data, isModified: true}}, {new: true}).lean();
         return res.status(200).json({"message": "Successfull", data: updatedAttendence})
   

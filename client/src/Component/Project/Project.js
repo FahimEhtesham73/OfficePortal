@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SingleProject from "./SingleProject";
 import Cookies from "js-cookie";
-import { createAProjectApi, getAllProject } from "../../api/projectApi";
+import { createAProjectApi, deleteProjectApi, getAllProject } from "../../api/projectApi";
 import userInfo from "../Hook/useUseInfo";
 import userRole from "../Hook/userHook";
 import { getAllUserApi, searchUser } from "../../api/userApi"
@@ -22,6 +22,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getAllDesignations } from "../../api/designationApi";
 import { getAllRoles } from "../../api/roleApi";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -95,6 +96,7 @@ const Project = () => {
   const [teamLead, setTeamLead] = useState([])
   const [supervisor, setSuperVisor] = useState([])
   const [members, setMembers] = useState([])
+  const navigate = useNavigate();
 
 
   const [projectAdd, setProjectAdd] = useState({
@@ -210,6 +212,36 @@ const Project = () => {
   }
 
   // console.log("projec add", projectAdd);
+
+  const deleteAProject = async(pid)=> {
+    try{
+      const data = {projectId : pid}
+      const response = await deleteProjectApi(data, jwt);
+      if(response.status === 200){
+        console.log("delete", await response.json());
+        // navigate("/projects")
+        getProjects()
+        toast.success("Project deleted successfully", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1000,
+          pauseOnHover: false,
+      });
+      }
+      else{
+        toast.warning("Something went wrong", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+          pauseOnHover: false,
+      });
+      }
+    }catch(err){
+      toast.warning("Something went wrong", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+        pauseOnHover: false,
+    });
+    }
+  } 
   
 
  const  handelChange = (e, filed)=> {
@@ -252,7 +284,7 @@ const Project = () => {
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Project</Typography>
-        {userRole() === 'Admin' && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
+        {(userRole() === 'Admin' || userRole() === "Project Lead") && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
           Add Project
         </Button>}
       </Box>
@@ -263,7 +295,7 @@ const Project = () => {
             return (
               <Grid item xs={12} sm={6} md={3} >
 
-                <SingleProject project={p} />
+                <SingleProject project={p} deleteHandler = {deleteAProject} />
 
               </Grid>
             );
