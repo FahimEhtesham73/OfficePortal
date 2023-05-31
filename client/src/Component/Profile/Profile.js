@@ -212,6 +212,15 @@ const Profile = () => {
         joiningDate: userData?.joiningDate,
         role: userData?.role?.alias
 
+        // firstName: "",
+        // lastName: "",
+        // email: "",
+        // designation: "",
+        // empId: "",
+        // birthDate: "",
+        // joiningDate: "",
+        // role: ""
+
 
     })
 
@@ -452,7 +461,7 @@ const Profile = () => {
   
     useEffect(() => {
         getSingleUser();
-    }, []);
+    }, [id]);
     // console.log(userData.imageBase64);
 
     useEffect(() => {

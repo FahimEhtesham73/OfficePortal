@@ -417,7 +417,7 @@ const Topnavbar = (props) => {
                 >
                   <MenuItem onClick={() => {
                     handleCloseUserMenu()
-                    navigate(`/profile/${id}`)
+                    navigate(`/profile/${decode._id}`)
                   }}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>

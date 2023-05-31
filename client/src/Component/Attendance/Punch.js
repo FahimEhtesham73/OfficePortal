@@ -187,7 +187,7 @@ const Punch = () => {
 
     
     // For Modal open
-    console.log("position", updateAttendence);
+    // console.log("position", updateAttendence);
 
     const [open1, setOpen1] = useState(false)
     const handleClickOpen = () => {
@@ -244,7 +244,7 @@ const Punch = () => {
         if (e.target.value === 'WFH') {
             if (position?.includes('WFH')) {
                 setCheckBoxDisableHome(false)
-                const temp = position?.filter((val) => { return val !== 'WFH' })
+                const temp = position?.filter((val) => { return val !== 'WFH' }) 
                 setPosition(temp)
             } else {
                 setCheckBoxDisableHome(true)
@@ -291,8 +291,8 @@ console.log("position",position);
         if(a?.checkOutTime || a?.modifiedCheckOutTime) {setPunchutUpdate(true); setEndDateTimeChanged(true)}
         setPosition(a?.status || [])
 
-        console.log("postion", position);
-        setPosition(a?.status);
+        // console.log("postion", position);
+        // setPosition(a?.status);
          if(a?.status?.includes('WAO')){
              setCheckBoxDisableOffice(true);
              setCheckBoxDisableHome(false)
@@ -942,9 +942,9 @@ console.log("position",position);
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
-                        <FormControlLabel control={<Checkbox />} value='WOH'  checked= {checkBoxWOH} onChange={(e)=> setCheckBoxWOH(e.target.cheked)} label="Work On Holiday" />
+                        <FormControlLabel control={<Checkbox />} value='WOH'  checked= {checkBoxWOH} onChange={(e)=> setCheckBoxWOH(e.target.checked)} label="Work On Holiday" />
                         
-                        <FormControlLabel control={<Checkbox />} checked={checkBoxHD} onChange={(e)=> setCheckBoxHD(e.target.cheked)}  value='HD' label="Half day" />
+                        <FormControlLabel control={<Checkbox />} checked={checkBoxHD} onChange={(e)=> setCheckBoxHD(e.target.checked)}  value='HD' label="Half day" />
                         
                     </FormGroup>
 
