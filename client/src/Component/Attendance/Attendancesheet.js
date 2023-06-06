@@ -204,7 +204,7 @@ const Attendancesheet = () => {
 
 
                                                                         }
-                                                                        {val?.checkIn && isCheckLateTime(val?.modifiedCheckIn !=='Unspecified'?val?.modifiedCheckIn : val?.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
+                                                                        {val?.checkIn && isCheckLateTime(val?.modifiedCheckIn !=='Unspecified'?val?.modifiedCheckIn : val?.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn!=='Unspecified'?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
                                                                     </>
                                                                 )
                                                                     : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>

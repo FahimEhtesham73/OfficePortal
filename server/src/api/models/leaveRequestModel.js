@@ -21,16 +21,16 @@ const leaveRequestSchema = new Schema({
             enum: ['Pending', 'Approved', 'Declined'],
             default: 'Pending'
         },
-        isAllLeaderApproved: {
-            type: Boolean,
-            default: false
-        }
     }],
+    isAllLeaderApproved: {
+        type: Boolean,
+        default: false
+    },
     isAdminApproved: {
         type: Boolean,
         default: false
     },
-    isApprovedFinal:{
+    isAllSuperVisorApproved:{
         type: Boolean,
         default: false
     },
