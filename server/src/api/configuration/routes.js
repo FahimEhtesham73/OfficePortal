@@ -5,7 +5,7 @@ const designationRouters = require("../routers/designationRouter");
 const attendenceRouters = require("../routers/attendenceRouter");
 const holidayRouters = require("../routers/holidayRouter")
 const projectRouters = require("../routers/projectRouter");
-
+const leaveRouters = require("../routers/leaveRouter");
 
 
 const v1 = "/api/v1"
@@ -17,6 +17,7 @@ module.exports = (app) => {
     app.use(`${v1}/attendence`, attendenceRouters)
     app.use(`${v1}/holiday`, holidayRouters)
     app.use(`${v1}/projects`, projectRouters);
+    app.use(`${v1}/leave`, leaveRouters)
 
 
 }

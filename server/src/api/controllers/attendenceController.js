@@ -228,21 +228,29 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
     console.log(searchingDate);
     if (searchingDate === '') {
       const todayYear = new Date().getFullYear()
-      const todayMonth = new Date().getMonth() + 1
-      const todayDate = new Date().getDate() 
-      firstDate = `${todayYear}-${todayMonth}-01`
-      lastDate = `${todayYear}-${todayMonth}-${todayDate + 1}`
+      const todayMonth = new Date().getMonth()
+      const todayDate =  new Date().getDate() 
+      
+      const firstDateYear = new Date().setFullYear(todayYear)
+      const firstDateMonth =  new Date(firstDateYear).setMonth(todayMonth)
+      const firstDateDate  = new Date(firstDateMonth).setDate(1)
+      const lastDateDate = new Date(firstDateMonth).setDate(todayDate)
+      firstDate = new Date(firstDateDate).setHours(0,0,0,0)
+      lastDate = new Date(lastDateDate).setHours(23,59,59,999)
+
       range = [1, todayDate + 1]
+
     } else {
       const month = new Date(searchingDate).getMonth() + 1
       const year = new Date(searchingDate).getFullYear()
       const daysInMonth = new Date(year, month, 0).getDate()
       firstDate = `${year}-${month}-01`
-      lastDate = `${year}-${month}-${daysInMonth + 1}`
+      lastDate = `${year}-${month}-${daysInMonth }`
       range = [1, daysInMonth + 1]
-  
     }
-  // console.log(firstDate,lastDate);
+
+   
+
     const result = await Attendence.aggregate([
       {
         $match: {
@@ -286,7 +294,7 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
               },
               aId:"$_id.aID",
               checkIn:"$_id.checkIn",
-              modifiedCheckIn:"$_id.modifiedCheckIn"
+              modifiedCheckIn:{ $ifNull: [ "$_id.modifiedCheckIn", "Unspecified" ] }
             }
           }
         }

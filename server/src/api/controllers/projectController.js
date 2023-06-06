@@ -54,8 +54,7 @@ module.exports.createProject = async (req, res) => {
 
         const project = await Project.create({ ...data });
 
-       
-
+    
         const newProject = await Project.aggregate([
             {
                 $match: {
