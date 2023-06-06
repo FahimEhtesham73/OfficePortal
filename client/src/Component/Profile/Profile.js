@@ -481,10 +481,14 @@ const Profile = () => {
                             </div>
                             {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && (
                             <div class="col-sm-4">
+                             <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button>
                             {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
           {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
             Add CV
           </Button>} 
+          
+
+          
                             </div>
 
                             )}

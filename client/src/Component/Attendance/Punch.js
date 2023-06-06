@@ -158,7 +158,6 @@ const Punch = () => {
     } else {
         decodedUser = ''
     }
-    // console.log(decodedUser);
 
     const classes = useStyles()
 
@@ -214,6 +213,9 @@ const Punch = () => {
         setCheckBoxDisableOffice(false);
         setEndDateTimeChanged(false);
         setPunchutUpdate(false)
+        setCheckBoxWOH(false)
+        setCheckBoxHD(false)
+        
     };
 
     // Convert Date
@@ -279,7 +281,7 @@ const Punch = () => {
 
         }
     }
-console.log("position",position);
+// console.log("position",position);
 
     const handleUpateSingleAttendece = (row) => {
         handleModalOpen1()
@@ -547,7 +549,7 @@ console.log("position",position);
 
     const getAllUser = async () => {
         setLoading(true)
-        const res = await fetch(`${process.env.REACT_APP_URL}/users/getalluser`, {
+        const res = await fetch(`${process.env.REACT_APP_URL}/users/userlist`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -555,14 +557,15 @@ console.log("position",position);
             },
         })
         const data = await res.json()
+        
         // console.log("All User", data);
         if (res.status === 200) {
-            setAllUser(data)
+            setAllUser(data.data[0].result)
             setLoading(false)
         } else {
             setLoading(false)
-            toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-        }
+            // toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        }   
 
     }
 
@@ -612,7 +615,10 @@ console.log("position",position);
     useEffect(() => {
         getInfo()
         getPunchedInfo()
-        getAllUser()
+        if(userRole() === "Admin" || userRole() === "Project Lead" || userRole() === "Team Lead" ){
+            getAllUser()
+
+        }
     }, [])
 
 
@@ -671,7 +677,7 @@ console.log("position",position);
                 
                 <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px', width: "100%" }}>
                     <Grid container spacing={3}>
-                        {userRole() === 'Admin' &&  <Grid item xs={12} sm={6} md={4} >
+                        {(userRole() === 'Admin' || userRole() === "Project Lead" || userRole() === "Team Lead") &&  <Grid item xs={12} sm={6} md={4} >
                             <FormControl sx={{ width: "100%" }}>
                                 <InputLabel id="demo-simple-select-label">Select Employee</InputLabel>
                                 <Select
@@ -683,13 +689,14 @@ console.log("position",position);
                                         setFilteredId(e.target.value)
                                     }}
                                 >
+                                    <MenuItem value={decodedUser?._id}>{decodedUser?.firstName}</MenuItem>
                                     {
                                         allUser && allUser.map((val, ind) => {
                                             return (
                                                 <MenuItem value={val._id}>{val.firstName}</MenuItem>
-                                            )
-                                        })
-                                    }
+                                                )
+                                            })
+                                        }
                                 </Select>
                             </FormControl>
                         </Grid>}

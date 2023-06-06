@@ -8,6 +8,7 @@ const Module = require("../models/moduleModel");
 const Permission = require("../models/rolePermissionModel");
 const Department = require("../models/departmentModel")
 const Designation = require("../models/designationModel")
+const Project = require("../models/projectModel")
 const monngoose = require('mongoose')
 // const SubModule = require("../models/subModule");
 const jwt = require("jsonwebtoken");
@@ -41,7 +42,7 @@ module.exports.signinUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email: email })
-            .populate("role", "alias")
+            .populate("role", "alias name")
             .populate("designation", "name")
             .populate("department", "name").lean();
         if (!user) return res.status(400).json("wrong credential");
@@ -126,7 +127,6 @@ module.exports.allUser = async (req, res) => {
 
         
         ])
-        console.log("users",users);
         return res.status(200).json(users)
     } catch (e) {
         console.log(e);
@@ -165,7 +165,7 @@ module.exports.updateSingleUser = async (req, res) => {
         console.log(req.user._id === id.toString() );
         if(req.user._id == id.toString() || req.user.role.alias === "Admin" ) {
 
-            const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data}}, { new: true }).populate("role", "alias")
+            const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data,isProfileUpdate:true}}, { new: true }).populate("role", "alias")
                 .populate("designation", "name")
                 .populate("department", "name")
             console.log(updateUser);
@@ -263,10 +263,12 @@ module.exports.fileUpload = async (req, res) => {
         console.log(req.body);
         if(type == "img"){
             data.imagePath = req.userPath;
+            data.isProfileUpdate = true;
+            
         }else if(type === "cv"){
             data.cvPath = req.userPath;
         }
-        console.log("data", data);
+        // console.log("data", data);
 
         const result = await User.findByIdAndUpdate({_id: req.body.userId}, {$set: {
             ...data
@@ -323,3 +325,218 @@ module.exports.findUsers = async (req, res) => {
     }
 }
   
+module.exports.getUserUnderSuperVisorOrTemlead = async (req, res) => {
+    try{
+        const role = req.user.role.name;
+    
+        let matchStage
+        let projectStage
+        let lookupStage
+        let unwindStage
+        let groupStage
+        let lastProjectStage
+        
+        if(role === "teamlead"){
+            matchStage = {$match:{
+                    $or: [
+                        {
+                            projectLead: new mongoose.Types.ObjectId(req.user._id)
+                        }
+                    ]
+                
+            }}
+
+            //project stage
+            projectStage = {
+                $project: {
+                    projectMembers: 1
+                }
+            }
+
+            //unwind stage
+            unwindStage = [{
+                $unwind: { path: "$projectMembers"}
+            }]
+
+            //group stage
+            groupStage = {
+                $group: {
+                    _id: null,
+                    projectMembers: {$addToSet: "$projectMembers"}
+                }
+            }
+
+            //lookup stage
+            lookupStage = {
+                $lookup: {
+                    from: "users",
+                    localField: "projectMembers",
+                    foreignField: "_id",
+                    as: "memberDetails"
+                }
+            }
+
+
+            const userUnder = await Project.aggregate([
+                matchStage,
+                projectStage,
+                ...unwindStage,
+                groupStage,
+                lookupStage,
+                {$project: {
+                    _id: 0,
+                    result : {
+                        $map: {
+                            input: "$memberDetails",
+                            as: "item",
+                            in: {
+                              _id: "$$item._id",
+                              email: "$$item.email",
+                              firstName: "$$item.firstName",
+                              lastName: "$$item.lastName",
+        
+        
+                            }
+                             
+                    }
+                }
+            }
+        }
+                
+            ])
+            return res.status(200).json({"message": "success", data: userUnder})
+        }
+
+
+        if(role === "projectlead"){
+            //matchstage
+            matchStage = {$match:{
+                $or: [
+                    {
+                        projectSuperVisor: new mongoose.Types.ObjectId(req.user._id)
+                    }
+                ]
+            
+        }}
+
+         //project stage
+         projectStage = {
+            $project: {
+                projectMembers: 1,
+                projectLead: 1
+            }
+        }
+
+        //unwind stage
+        unwindStage =[{ $unwind: { path: "$projectMembers"}}, { $unwind: { path: "$projectLead"}}]
+
+         //group stage
+         groupStage = {
+            $group: {
+                _id: null,
+                data: {
+                    $addToSet: {
+                      $concatArrays: [
+                        { $cond: { if: "$projectLead", then: ["$projectLead"], else: [] } },
+                        { $cond: { if: "$projectMembers", then: ["$projectMembers"], else: [] } }
+                      ]
+                    }
+                  }
+                }
+            }
+
+ //lookup stage
+ lookupStage = {
+    $lookup: {
+        from: "users",
+        localField: "result",
+        foreignField: "_id",
+        as: "memberDetails"
+    }
+}
+
+//lastp projectStage 
+lastProjectStage = {
+    $project: {
+        "memberDetails._id": 1
+    }
+}
+
+
+    const userUnder = await Project.aggregate([
+        matchStage,
+        projectStage,
+        ...unwindStage,
+        groupStage,
+        {
+            $unwind: "$data"
+          },
+          {
+            $unwind: "$data"
+          },
+          {
+            $group: {
+              _id: null,
+              result: {
+                $addToSet: "$data"
+              }
+            }
+          },
+        lookupStage,
+        {$project: {
+            _id: 0,
+            result : {
+                $map: {
+                    input: "$memberDetails",
+                    as: "item",
+                    in: {
+                      _id: "$$item._id",
+                      email: "$$item.email",
+                      firstName: "$$item.firstName",
+                      lastName: "$$item.lastName",
+
+
+                    }
+                     
+            }
+        }
+    }
+},
+// {$unwind: "$newData"}
+
+        
+    ])
+
+    return res.status(200).json({message: "success",data:userUnder});
+
+
+            
+        }
+
+        if(role === "admin"){
+            const userUnder = await User.aggregate([
+                {
+                    $match: {
+                        _id: {$ne: new mongoose.Types.ObjectId(req.user._id)}
+                    }
+                },
+                {$project: {
+                _id:1,
+                email: 1,
+                firstName:1,
+                lastName: 1
+            }}])
+            return res.status(200).json({"message": "success", data:[ {result:userUnder}]})
+
+        }
+
+        return res.status(400).json({"message": "unsuccessfull"})
+
+        
+
+
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({"message": "Something went wrong"});
+    }
+}

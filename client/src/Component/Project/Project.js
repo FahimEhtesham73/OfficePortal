@@ -8,7 +8,7 @@ import { getAllUserApi, searchUser } from "../../api/userApi"
 
 /**************** mui component ************/
 import { Box, Button, DialogActions, DialogContent, Grid, TextField, Typography, DialogTitle, ListItemIcon,
-  IconButton, FormControl, Dialog, OutlinedInput, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextareaAutosize} from "@mui/material";
+  IconButton, FormControl, Dialog, OutlinedInput, Checkbox, InputLabel, ListItemText, MenuItem, Select, TextareaAutosize, Card, Skeleton} from "@mui/material";
 import { styled } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 
@@ -100,6 +100,7 @@ const Project = () => {
 
 
   const [projectAdd, setProjectAdd] = useState({
+    projectCode: "",
     projectName: "",
     projectDescription: "",
     projectOwner: "",
@@ -117,15 +118,38 @@ const Project = () => {
   })
 
   const handleModalOpen = () => {
-    setOpenModal(!openModal);
+    setOpenModal(true);
   };
+  const handleModalClose = () => {
+    setOpenModal(false)
+    setProjectAdd({
+      projectName: "",
+      projectDescription: "",
+      projectOwner: "",
+      projectSuperVisor: [],
+      projectSuperVisorName: [],
+      superVisorTime: "",
+      projectLead: [],
+      projectLeadName: [],
+      leadTime: "",
+      projectMembers: [],
+      projectMemberName: [],
+      memberTime:"",
+      projectStartTime: "",
+      projectEndTime: ""
+    })
+  }
   async function getProjects() {
     try {
+      setLoading(true)
       let response = await getAllProject("", jwt);
       let data = await response.json();
+      setLoading(false)
       // console.log(data);
       setAllProject(data.data);
     } catch (e) {
+      setLoading(false)
+
       console.log("somenthing went wrong", e);
     }
   }
@@ -179,7 +203,7 @@ const Project = () => {
         getProjects()
         setOpenModal(!openModal)
       }
-      if (data.status !== 200) {
+      else  {
         setProjectAdd({
           projectName: "",
           projectDescription: "",
@@ -207,7 +231,22 @@ const Project = () => {
     } catch (err) {
       console.log("err", err);
       // toast.warning("Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
-
+      setProjectAdd({
+        projectName: "",
+        projectDescription: "",
+        projectOwner: "",
+        projectSuperVisor: [],
+        projectSuperVisorName: [],
+        superVisorTime: "",
+        projectLead: [],
+        projectLeadName: [],
+        leadTime: "",
+        projectMembers: [],
+        projectMemberName: [],
+        memberTime:"",
+        projectStartTime: "",
+        projectEndTime: ""
+      })
     }
   }
 
@@ -216,6 +255,9 @@ const Project = () => {
   const deleteAProject = async(pid)=> {
     try{
       const data = {projectId : pid}
+
+      console.log("project id",data);
+      // return
       const response = await deleteProjectApi(data, jwt);
       if(response.status === 200){
         console.log("delete", await response.json());
@@ -281,6 +323,27 @@ const Project = () => {
 
   return (
     <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px" }}>
+      {loading ? (
+        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", marginTop: "40px", maxWidth: "2618px" }}>
+              <Grid container spacing={3}>
+                {
+                  [0, 1, 2, 4].map((val, ind) => {
+                    return (
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }}>
+                          <Skeleton variant="rectangular" width={'100%'} height={345} style={{ marginTop: "40px" }} />
+                        </Card>
+                      </Grid>
+                    )
+                  })
+                }
+
+              </Grid>
+
+            </Box>
+
+      ): (
+<>
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Project</Typography>
@@ -301,18 +364,22 @@ const Project = () => {
             );
           })}
       </Grid>
+</>
+
+      )}
+
 
       {/* modal */}
 
       <BootstrapDialog
-        onClose={handleModalOpen}
+        onClose={handleModalClose}
         aria-labelledby="customized-dialog-title"
         open={openModal}
 
         sx={{".MuiPaper-root": {width: "800px", },}}
         
       >
-        <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalOpen}>
+        <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
           Create Project
         </BootstrapDialogTitle>
         <DialogContent sx={{
@@ -327,6 +394,9 @@ const Project = () => {
             required />
             <TextField id="outlined-search" label="Project Owner " name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
             onChange={(e) => setProjectAdd({ ...projectAdd, projectOwner: e.target.value })}
+            required />
+            <TextField id="outlined-search" label="Project Code " name='projectCode' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
+            onChange={(e) => setProjectAdd({ ...projectAdd, projectCode: e.target.value })}
             required />
             <TextField  
               multiline
@@ -363,7 +433,9 @@ const Project = () => {
                 }
               </Select>
             </FormControl>
-            <TextField  id="outlined-search" label="Total Hour " name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            <TextField  id="outlined-search" label="Total Hour " 
+            placeholder="Numeric value"
+            name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
             value={projectAdd.superVisorTime}
             onChange={(e) => {
               let val = e.target.value.replace(/[^0-9]/g, '');
@@ -402,7 +474,10 @@ const Project = () => {
               </Select>
 
             </FormControl>
-            <TextField id="outlined-search" label="Total Hour " name='leadTime' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            <TextField id="outlined-search" label="Total Hour "
+                        placeholder="Numeric value"
+
+            name='leadTime' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
             value={projectAdd.leadTime}
             onChange={(e) => setProjectAdd({ ...projectAdd, leadTime: e.target.value.replace(/[^0-9]/g, '')  })}
             required />
@@ -435,7 +510,10 @@ const Project = () => {
                 })}
               </Select>
             </FormControl>
-            <TextField id="outlined-search" label="Total Hour " name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
+            <TextField id="outlined-search" label="Total Hour "
+                        placeholder="Numeric value"
+
+            name='firstName' type="search" sx={{ width: {xs: "100%",sm:"30%", }, margin: ".5rem 0",}}
             value={projectAdd.memberTime}
             onChange={(e) => setProjectAdd({ ...projectAdd, memberTime: e.target.value.replace(/[^0-9]/g, '') })}
             required />
@@ -511,7 +589,9 @@ const Project = () => {
               projectAdd.projectMembers.length &&
               projectAdd.memberTime &&
 
-              projectAdd.projectName
+              projectAdd.projectName &&
+              projectAdd.projectCode &&
+              (projectAdd.projectStartTime < projectAdd.projectEndTime)
             ) ? false : true}
             sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
               createProject()

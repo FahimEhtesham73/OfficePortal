@@ -3,19 +3,20 @@ const path = require("path");
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage } = require("../controllers/userController");
-const { hasPermission,Authorize } = require("../middleware/commonMilddleware");
+const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage, getUserUnderSuperVisorOrTemlead } = require("../controllers/userController");
+const { hasPermission,Authorize, isAdminTeamLeadProjectLead, isAdmin } = require("../middleware/commonMilddleware");
 const { createEmployeeValidation, signinValidation, signinDataValidation,searchEmployeeValidation, updateSingleUserValidation } = require("../util/validator/userValidation");
 
 router.route("/getalluser").get(Authorize,allUser); // get all user
-router.route("/create").post(Authorize,hasPermission, createEmployeeValidation, createUser); // create a user
+router.route("/create").post(Authorize,isAdmin, createEmployeeValidation, createUser); // create a user
 router.route("/signin").post(signinDataValidation ,signinUser);
 router.route("/getsingleuser/:id").get(Authorize,getSingleUser)
 router.route("/updateUser/:id").put(Authorize,updateSingleUserValidation,updateSingleUser)
 router.route("/searchuser").post(Authorize,searchEmployeeValidation,searchUser)
 // router.route("/delete").delete(deleteSingleUser);
-router.route("/imgupload").post(profileImgUpload)
-router.route("/viewcv").post(viewCv)
+router.route("/imgupload").post(Authorize,profileImgUpload)
+router.route("/viewcv").post(Authorize, viewCv)
+router.route("/userlist").get(Authorize, isAdminTeamLeadProjectLead,  getUserUnderSuperVisorOrTemlead);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{

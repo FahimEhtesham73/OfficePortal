@@ -88,6 +88,7 @@ const ProjectDetail = () => {
         projectStartTime: "",
         projectEndTime: "",
         isCurrentlyActive: "",
+        projectCode: ""
     });
 
     const [users, setUsers] = useState([]);
@@ -154,11 +155,11 @@ const ProjectDetail = () => {
         }
     }
 
-    console.log(projectDetails);
+    // console.log(projectDetails);
     const getSingleProject = async () => {
         try {
-            const response = await getAprojectApi(id, jwt);
             setLoading(true)
+            const response = await getAprojectApi(id, jwt);
             if (response.status === 200) {
                 setLoading(false)
 
@@ -175,7 +176,9 @@ const ProjectDetail = () => {
                     memberTime: temp.memberTime,
                     projectStartTime: temp.projectStartTime,
                     projectEndTime: temp.projectEndTime,
-                    isCurrentlyActive: temp.isCurrentlyActive
+                    isCurrentlyActive: temp.isCurrentlyActive,
+                    projectCode: temp.projectCode
+                    
                 })
                 // setProjectMembers({
                 //     membersId: temp.projectMembers,
@@ -246,7 +249,8 @@ const ProjectDetail = () => {
                     memberTime: projectDetails?.memberTime,
                     projectStartTime: projectDetails?.projectStartTime,
                     projectEndTime: projectDetails?.projectEndTime,
-                    isCurrentlyActive: projectDetails?.isCurrentlyActive
+                    isCurrentlyActive: projectDetails?.isCurrentlyActive,
+                    projectCode: projectDetails?.projectCode
                 }
 
                 // console.log("eidt project modal", updatedData);
@@ -268,8 +272,8 @@ const ProjectDetail = () => {
 
             }
             const response = await updateProjectApi(updatedData, jwt);
+            const data = await response.json();
             if (response.status === 200) {
-                const data = await response.json();
                 // setProjectInfo(data.data);
                 toast.success("Updated successfully", {
                     position: toast.POSITION.TOP_CENTER,
@@ -282,7 +286,7 @@ const ProjectDetail = () => {
                 closeModal("modal3")
 
             } else {
-                toast.warning("No Update", {
+                toast.warning( data?.message || "No Update", {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 1000,
                     pauseOnHover: false,
@@ -308,6 +312,8 @@ const ProjectDetail = () => {
 
     return (
 
+        <>
+        {loading? (<Loading />): (
         <Box
 
             sx={{
@@ -315,6 +321,8 @@ const ProjectDetail = () => {
                 marginRight: "30px",
             }}
         >
+
+            
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Project</Typography>
                 {userRole() === 'Admin' && <Button variant="contained"
@@ -344,6 +352,10 @@ const ProjectDetail = () => {
                                 width: "100%"
                             }}>
                                 <tbody style={{ textAlign: "left" }}>
+                                <tr>
+                                        <td>Project Code:</td>
+                                        <td class="text-end">{projectInfo?.projectCode}</td>
+                                    </tr>
                                     <tr>
                                         <td>Owner:</td>
                                         <td class="text-end">{projectInfo?.projectOwner}</td>
@@ -527,6 +539,9 @@ const ProjectDetail = () => {
                     {/* Project Name */}
                     <TextField id="projectName" label="Project Name " value={projectDetails.projectName} name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: { xs: "5rem", sm: "1rem" } }}
                         onChange={(e) => setprojectDetails({ ...projectDetails, projectName: e.target.value })}
+                        required />
+                        <TextField id="projectCode" label="Project Code " value={projectDetails.projectCode} name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: { xs: "5rem", sm: "1rem" } }}
+                        onChange={(e) => setprojectDetails({ ...projectDetails, projectCode: e.target.value })}
                         required />
 
                     <Box sx={{ width: "100%", m: ".5rem 0", display: { sm: "flex" }, justifyContent: "space-between", alignItems: "center" }}>
@@ -793,6 +808,10 @@ const ProjectDetail = () => {
             </BootstrapDialog>
 
         </Box>
+
+
+        )}
+        </>
     )
 
 }
