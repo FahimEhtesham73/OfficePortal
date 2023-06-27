@@ -27,16 +27,17 @@ const leaveRequestSchema = new Schema({
         default: false
     },
     isAdminApproved: {
-        type: Boolean,
-        default: false
+        type: String,
+        default: "Pending"
     },
+    apporovedAdminId: Schema.Types.ObjectId,
     isAllSuperVisorApproved:{
         type: Boolean,
         default: false
     },
     startDate: Date,
     endDate: Date,
-    isFullyApproved: Boolean,
+    isFullyApproved: {type: Boolean, default: false},
     leaveReason: String,
     totalDay:Number,
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000" },

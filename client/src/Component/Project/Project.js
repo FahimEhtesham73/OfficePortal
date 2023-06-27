@@ -347,12 +347,12 @@ const Project = () => {
 
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Project</Typography>
-        {(userRole() === 'Admin' || userRole() === "Project Lead") && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
+        {(userRole() === 'Admin') && <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen}>
           Add Project
         </Button>}
       </Box>
       <Grid container spacing={3}>
-        {allProject?.length &&
+        {allProject?.length > 0?
           allProject.map((p) => {
             // console.log(p);
             return (
@@ -362,7 +362,7 @@ const Project = () => {
 
               </Grid>
             );
-          })}
+          }) : null}
       </Grid>
 </>
 
@@ -395,8 +395,15 @@ const Project = () => {
             <TextField id="outlined-search" label="Project Owner " name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
             onChange={(e) => setProjectAdd({ ...projectAdd, projectOwner: e.target.value })}
             required />
-            <TextField id="outlined-search" label="Project Code " name='projectCode' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
-            onChange={(e) => setProjectAdd({ ...projectAdd, projectCode: e.target.value })}
+            <TextField id="outlined-search" label="Project Code " value={projectAdd.projectCode} name='projectCode' type="search" sx={{ width: "100%", margin: ".5rem 0",}}
+            onChange={(e) => 
+              {
+                let upperCaseValue = e.target.value.toUpperCase()
+                setProjectAdd({ ...projectAdd, projectCode: upperCaseValue })
+
+              }
+            
+            }
             required />
             <TextField  
               multiline
@@ -551,7 +558,10 @@ const Project = () => {
                   // setUser({ ...user, joiningDate: e?.['$d'] ? e['$d'] : "" })
                   // setSelectedDate(e)
                   // console.log("date Change", e?.['$d'] ? e['$d'] : "");
+                  if(e?.['$d']){
+
                   setProjectAdd({ ...projectAdd, projectStartTime: new Date(e?.['$d']) })
+                  }
 
                 }} />
               </DemoContainer>
@@ -567,7 +577,10 @@ const Project = () => {
                   // setUser({ ...user, joiningDate: e?.['$d'] ? e['$d'] : "" })
                   // setSelectedDate(e)
                   // console.log("date Change", e?.['$d'] ? e['$d'] : "");
+                  if(e?.['$d']){
+
                   setProjectAdd({ ...projectAdd, projectEndTime: new Date(e?.['$d']) })
+                  }
 
                 }} />
               </DemoContainer>

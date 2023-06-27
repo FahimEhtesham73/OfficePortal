@@ -14,18 +14,20 @@ async function Authorize (req, res, next){
             .populate("role", "alias name")
             .populate("designation", "name")
             .populate("department", "name").lean();
-
+            
             if(user.isProfileUpdate){
+                // console.log("user ", user);
                 const token = tokenGeneration({
                     "_id": user._id,
                     "role": user.role,})
 
                     const { password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation } = user;
 
-                    const cookie = `_token=${token};samesite=strict; secure;path=/;`
+                    console.log("token", token);
+        const cookie = `_token=${token};samesite=strict; secure;path=/;`
 
         res.setHeader("Set-Cookie", [cookie])
-        res.cookie("_info", jwt.sign(restUserInformation, "secret"),);
+        res.cookie("_info",  jwt.sign(restUserInformation, "secret"),);
         await User.findOneAndUpdate({_id: user._id}, {$set: {isProfileUpdate: false}})
 
             }

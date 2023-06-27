@@ -284,7 +284,7 @@ const Topnavbar = (props) => {
                 {/* Leave Status Admin */}
 
                 {
-                  (userRole() === 'Admin' || userRole() === 'Team Lead') &&
+                  (userRole() === 'Admin' || userRole() === 'Team Lead' || userRole() === "Project Lead") &&
                   <ListItem disablePadding sx={{ display: 'block' }}>
                     <ListItemButton
                       sx={{
@@ -387,7 +387,7 @@ const Topnavbar = (props) => {
             {width < 900 && <MenuIcon />}
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            NSL Leave Management
+            NSL Portal
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           {

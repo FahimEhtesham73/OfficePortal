@@ -16,6 +16,7 @@ const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession } = re
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
+const multer = require("multer");
 
 
 module.exports.createUser = async (req, res) => {
@@ -52,9 +53,7 @@ module.exports.signinUser = async (req, res) => {
             "_id": user._id,
             "role": user.role,
         };
-        const resourceInformation = {
-
-        }
+       
         const { password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation } = user;
         const token = tokenGeneration(userTokenData);
         const userSessionData = {
@@ -71,7 +70,7 @@ module.exports.signinUser = async (req, res) => {
 
 
 
-        return res.status(200).json({ "userInformation": restUserInformation, "resourceInformation": resourceInformation, "message": "successfully login" });
+        return res.status(200).json({ "userInformation": restUserInformation,  "message": "successfully login" });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ "message": "Something went wrong" })
@@ -184,7 +183,7 @@ module.exports.updateSingleUser = async (req, res) => {
 
 module.exports.searchUser = async (req, res) => {
     try {
-        console.log(req.body);
+        
         const erros = validationMessages(validationResult(req).mapped());
         if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
         const desgntn = req.body.desgId
@@ -276,7 +275,7 @@ module.exports.fileUpload = async (req, res) => {
         return res.status(200).json({"message": "file uploaded successfully"});
         
     }catch(err){
-        console.log("err",err);
+        
         return res.status(500).json({"message": "Something went wrong"});
     }
 }

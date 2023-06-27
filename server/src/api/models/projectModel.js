@@ -16,5 +16,5 @@ const projectSchema = new Schema({
     createdBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"},
     updatedBy: {type: Schema.Types.ObjectId, ref: "User", default: "000000000000000000000000"}
 },{timestamps: true})
-
+projectSchema.index({projectCode:1})
 module.exports = model("Project", projectSchema);

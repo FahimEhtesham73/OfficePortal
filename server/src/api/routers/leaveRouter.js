@@ -1,10 +1,21 @@
-const { createLeave,createLeaveSv,getLeaveStatus } = require("../controllers/leaveController");
-const {Authorize,isAdminAndManager} = require("../middleware/commonMilddleware")
+const { createLeave,createLeaveSv,getLeaveStatus, createUserLeaveAmount, getLeaveBoardAmount, getAllLeave, deleteALeave, updateALeave, leaveStatusChange } = require("../controllers/leaveController");
+const {Authorize,isAdminAndManager, isAdmin} = require("../middleware/commonMilddleware");
+const { createOrUpdateValidation, updateLeveDetailsValidation } = require("../util/validator/leaveValidation");
 const { createProjectValidation,upateProjectValidation } = require("../util/validator/projectValidation");
 const router = require("express").Router();
 
+//individual user wise leave amount
+router.route("/userleaves")
+            .get(Authorize, getLeaveBoardAmount)
+            .post(Authorize, isAdmin, createOrUpdateValidation,createUserLeaveAmount);
+router.route("/get-user-leave").post(Authorize,getAllLeave)
 router.route("/createleavereqemptl").post(Authorize,createLeave);
+router.route("/update").post(Authorize, updateLeveDetailsValidation,updateALeave);
+router.route("/leavestatusupdate").post(Authorize, leaveStatusChange)
+router.route("/deletealeave").delete(Authorize,deleteALeave);
+
 router.route("/createleavereqsvadmin").post(Authorize,createLeaveSv);
-router.route("/getleavestatus/:userId").get(Authorize,getLeaveStatus);
+router.route("/getleavestatus").get(Authorize,getLeaveStatus);
+
 
 module.exports = router;

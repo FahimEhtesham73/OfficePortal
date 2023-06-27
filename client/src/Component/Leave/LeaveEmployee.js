@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
@@ -31,8 +31,27 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
+import userInfo from "../Hook/useUseInfo"
+import { createLeaveApi, createLeaveApiForSup, getLeaveApi } from '../../api/leaveRequestApi';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+import userRole from '../Hook/userHook';
+import { totalHolidays } from '../functions/commonFunc';
+import {  leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
+import LeaveDataTable from './LeaveDataTable';
 
+const daysCount = (date_1, date_2) => {
+    if (date_1 && date_2) {
+        console.log("achi");
+        let difference = date_1.getTime() - date_2.getTime();
+        let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+        return TotalDays;
 
+    } else {
+        return 0
+    }
+}
 
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -119,8 +138,25 @@ const leaveStat = [
 ]
 
 const LeaveEmployee = () => {
+    const jwt = Cookies.get('_token');
+
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const userData = userInfo();
+
+    const [leaveRequest, setLeaveRequest] = useState({
+        userId: userData?._id,
+        duration: "",
+        leaveType: "",
+        startDate: "",
+        endDate: "",
+        totalDay: "",
+        leaveReason: "",
+        isHoliday: false
+
+    })
+
+    const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
 
     // For Action icon open
     const handleClick = (event) => {
@@ -128,7 +164,16 @@ const LeaveEmployee = () => {
     };
     // For Action icon close
     const handleClose = () => {
-        setAnchorEl(null);
+        setLeaveRequest({
+            userId: userData?._id,
+            leaveType: "",
+            startDate: "",
+            endDate: "",
+            totalDay: "",
+            leaveReason: ""
+
+        })
+
     };
     // For Modal open
     const handleClickOpen = () => {
@@ -137,11 +182,76 @@ const LeaveEmployee = () => {
     // For Modal Close
     const handleClickClose = () => {
         setOpen(false);
+        setLeaveRequest({
+            userId: userData?._id,
+            leaveType: "",
+            startDate: "",
+            endDate: "",
+            totalDay: "",
+            leaveReason: ""
+
+        })
     };
     function createData(type, from, to, day, reason, status, approvedby) {
         return { type, from, to, day, reason, status, approvedby };
     }
 
+
+    const createALeaveRequest = async () => {
+        try {
+            if (leaveRequest.startDate > leaveRequest.endDate) {
+                toast.warning("Invalid Date", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnHover: false,
+                })
+                return;
+            }
+
+            if (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.leaveReason && leaveRequest.leaveType && leaveRequest.totalDay) {
+                const data = {
+                    userId: leaveRequest.userId,
+                    leaveType: leaveRequest.leaveType,
+                    totalDay: leaveRequest.totalDay,
+                    leaveReason: leaveRequest.leaveReason,
+                    startDate: new Date(leaveRequest.startDate).toISOString(),
+                    endDate: new Date(leaveRequest.endDate).toISOString()
+
+
+                }
+
+                console.log(data);
+
+                let response;
+                if (userRole() === "Admin" || userRole() === "Project Lead") {
+                    response = await createLeaveApiForSup(data, jwt)
+                } else {
+                    response = await createLeaveApi(data, jwt)
+
+                }
+
+
+                if (response.status === 200) {
+                    setOpen(false)
+                    toast.success("Successfully requested", {
+                        position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
+                    })
+                    getLeaveData()
+                }
+
+            }
+
+            else {
+                toast.warning("Mandatory field missing", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnHover: false,
+                })
+            }
+        } catch (err) {
+
+        }
+    }
     const rows = [
         createData('Casual Leave', "1 Jan 2023", '2 Jan 2023', '2 days', 'Going To Hospital', 'Approved', 'Nahid'),
         createData('Casual Leave', "18 Mar 2023", '18 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
@@ -149,6 +259,23 @@ const LeaveEmployee = () => {
         createData('Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved', 'Nahid'),
         createData('Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
     ];
+
+
+    const getLeaveData = async () => {
+        const response = await getLeaveApi({usersId: []}, jwt);
+        if(response.status === 200){
+            let responseData = await response.json()
+            console.log(responseData);
+            dispatch({
+                type: leaveReducerState.GET_DATA,
+                payload: responseData?.data
+            })
+        }
+    }
+
+    useEffect(()=> {
+        getLeaveData()
+    },[])
     const settings = ['Edit', 'Delete'];
     const menu = (
         <Menu
@@ -178,7 +305,7 @@ const LeaveEmployee = () => {
         </Menu>
     )
     return (
-        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
+        <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
                 <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
@@ -186,13 +313,13 @@ const LeaveEmployee = () => {
                 </Button>
             </Box>
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px",maxWidth:'2618px' }}>
-            <Grid container spacing={3} >
-                {leaveStat.map((val, ind) => {
-                    // margin: "10px 20px 20px 0px",
-                    return (
-                        
-                            <Grid item xs={12} sm={6} md={4} sx={{width:'100%'}}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+                <Grid container spacing={3} >
+                    {leaveStat.map((val, ind) => {
+                        // margin: "10px 20px 20px 0px",
+                        return (
+
+                            <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
                                 <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                                         <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
@@ -200,63 +327,15 @@ const LeaveEmployee = () => {
                                     </Box>
                                 </Card>
                             </Grid>
-                    
-                    )
-                })}
-            </Grid>
+
+                        )
+                    })}
+                </Grid>
 
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: 435, maxWidth:'2618px' }}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Leave type</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>From</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>To</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>No of Days</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Reason</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Status</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Approved By</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Actions</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows.map((row, ind) => (
-                            <StyledTableRow
-                                key={ind}
-                            >
-                                <StyledTableCell component="th" scope="row">
-                                    {row.type}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.from}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.to}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.day}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.reason}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.status}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    {row.approvedby}
-                                </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    <IconButton aria-label="settings" >
-                                        <MoreVertIcon onClick={handleClick} />
-                                    </IconButton>
-                                    {menu}
-                                </StyledTableCell>
-                            </StyledTableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+        
+        <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
+                 
 
             {/* Modal */}
             <BootstrapDialog
@@ -276,31 +355,124 @@ const LeaveEmployee = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select leave type"
-                            // onChange={handleChange}
+                                onChange={(e) => {
+                                    setLeaveRequest({ ...leaveRequest, leaveType: e.target.value, })
+
+
+                                }
+
+                                }
                             >
-                                <MenuItem value={10}>Casual</MenuItem>
-                                <MenuItem value={20}>Half day</MenuItem>
-                                <MenuItem value={30}>Sick</MenuItem>
-                                <MenuItem value={30}>Special Leave</MenuItem>
+                                <MenuItem value={"Casual"}>Casual</MenuItem>
+                                {/* <MenuItem value={"unpaid"}>UnPaid</MenuItem> */}
+                                <MenuItem value={"Sick"}>Sick</MenuItem>
+                                <MenuItem value={"Special"}>Special</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
+                    <Box sx={{ minWidth: 120 }}>
+                        <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
+                            <InputLabel id="demo-simple-select-label">Select leave duration</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                label="Select leave duration"
+                                onChange={(e) => {
+                                    if (e.target.value === "halfday") {
+                                        setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: leaveRequest.startDate, totalDay: 0.5 })
+
+                                    } else {
+
+                                        setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: "", })
+
+                                    }
+
+                                }
+
+                                }
+                            >
+                                <MenuItem value={"halfday"}>Half Day</MenuItem>
+                                <MenuItem value={"range"}>Range</MenuItem>
+
                             </Select>
                         </FormControl>
                     </Box>
 
-                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                        <DemoContainer components={['DatePicker']} >
-                            <DatePicker label="From *" sx={{ width: 365, maxHeight: 345, }} />
-                        </DemoContainer>
-                    </LocalizationProvider>
-                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                        <DemoContainer components={['DatePicker']} >
-                            <DatePicker label="To *" sx={{ width: 365, maxHeight: 345, }} />
-                        </DemoContainer>
-                    </LocalizationProvider>
-                    <TextField id="outlined-search" label="Number of Days *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
-                    <TextField id="outlined-search" label="Reason *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
+                    {leaveRequest.duration === "halfday" ? (
+                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                            <DemoContainer components={['DatePicker']} >
+                                <DatePicker
+                                    slotProps={{
+                                        textField: {
+                                            error: false,
+                                        },
+                                    }}
+                                    label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
+                                        setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
+                                    }} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+
+
+                    ) : (
+                        <>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DemoContainer components={['DatePicker']} >
+                                    <DatePicker
+                                        slotProps={{
+                                            textField: {
+                                                error: false,
+                                            },
+                                        }}
+                                        label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
+                                        onChange={(e) => {
+
+                                            setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+                                        }}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DemoContainer components={['DateTimePicker']}  >
+                                    <DatePicker
+
+                                        slotProps={{
+                                            textField: {
+                                                error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
+                                            },
+                                        }}
+                                        label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
+                                        onChange={(e) => {
+                                            let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
+                                            let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
+                                            let holidaysCount = totalHolidays(startDate, endDate)
+                                            let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount;
+
+
+                                            setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === "NaN" ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+
+                                        }}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </>
+                    )
+                    }
+                    <TextField id="outlined-search" label="Number of Days *"
+                        error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
+                        value={leaveRequest.duration === "halfday" ? 0.5 : (leaveRequest.startDate && leaveRequest.endDate) && leaveRequest.totalDay}
+                        readOnly
+                        type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px" }} />
+                    {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with hoilday</span>}
+                    <TextField id="outlined-search" label="Reason *"
+                        onChange={(e) => {
+                            setLeaveRequest({ ...leaveRequest, leaveReason: e.target.value })
+                        }}
+                        type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={handleClickClose}>
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={createALeaveRequest}>
                         Apply
                     </Button>
                 </DialogActions>
