@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
@@ -32,6 +32,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
+import { deleteALeaveApi, getLeaveStatusApi, updateALeaveStatusAPI } from '../../api/leaveRequestApi';
+import userInfo from '../Hook/useUseInfo';
+import Cookies from 'js-cookie';
+import { leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
+import { Tooltip } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { toast } from 'react-toastify';
+import userRole from '../Hook/userHook';
 
 
 // table cell styling
@@ -109,11 +117,14 @@ const leaveStat = [
 ]
 
 const LeaveStatusLead = () => {
+    const jwt = Cookies.get("_token")
     const [open, setOpen] = useState(false);
     const [statusOpen, setStatusOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [statusachorEl, setStatusAnchorEl] = useState(null)
+    const [singleLeave, setSingleLeave] = useState({})
 
+    const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
     // For Action icon open
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -127,7 +138,11 @@ const LeaveStatusLead = () => {
         setStatusAnchorEl(event.currentTarget)
     }
     // For Leave Status Option Close
-    const statusHandleClose = () => {
+    const statusHandleClose = (e) => {
+        dispatch({
+            type: leaveReducerState.EMPTYDATA
+        })
+        console.log(e.currentTarget.value);
         setStatusAnchorEl(null);
     };
     // For Modal open
@@ -146,8 +161,26 @@ const LeaveStatusLead = () => {
     const statusHandleClickClose = () => {
         setStatusOpen(false);
     };
-    function createData(name, type, from, to, day, reason, status) {
-        return { name, type, from, to, day, reason, status, };
+    function createData(name, type, from, to, day, leaveReason, status) {
+        return { name, type, from, to, day, leaveReason, status, };
+    }
+
+    const deleteAleave =  async(id)=> {
+        const response = await deleteALeaveApi(id, jwt)
+        if(response.status === 200) {
+            dispatch({type: leaveReducerState.DELETE_DATA, payload: id})
+            toast.success("Deleted Successfully", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            })
+        }else{
+            toast.warning("Unsuccess", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            })
+        }
     }
 
     const rows = [
@@ -155,11 +188,63 @@ const LeaveStatusLead = () => {
         createData('Abir', 'Casual Leave', "18 Mar 2023", '18 Mar 2023', '1 day', 'Personal Leave', 'Approved'),
         createData('Jahid', 'Sick Leave', "2 Feb 2023", '2 Feb 2023', '1 day', 'Fever', 'Approved',),
         createData('Faysal', 'Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved'),
-        createData('Abir', 'Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved'),
+        createData('Abir', 'Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Pending'),
     ];
-    const settings = ['Edit', 'Delete'];
-    const leaveStatusSettings = ['New', 'Pending', 'Approved', 'Declined']
+    const settings = [ 'Delete'];
+    const leaveStatusSettings = ['Pending', 'Approved', 'Declined']
 
+
+    useEffect(() => {
+        getLeaveStatus()
+    }, [])
+
+
+    const getLeaveStatus = async () => {
+        const response = await getLeaveStatusApi(userInfo()._id, jwt);
+        if (response.status === 200) {
+            let responseData = await response.json();
+            console.log(responseData);
+            dispatch({
+                type: leaveReducerState.GET_DATA,
+                payload: responseData
+            })
+        }
+    }
+
+    const updateStatus = async(data, status) => {
+        const requestData = {
+            leaveId: data._id,
+            approverId: userInfo()._id,
+            status: status
+        }
+        console.log(requestData);
+        // return
+        const response = await updateALeaveStatusAPI(requestData,jwt);
+        if(response.status === 200){
+            toast.success("Success", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 2000,
+                pauseOnHover: false,
+            })
+            await getLeaveStatus()
+            dispatch({
+                type: leaveReducerState.EMPTYDATA
+            });
+            setSingleLeave({})
+            
+        }else{
+           dispatch({
+                type: leaveReducerState.EMPTYDATA
+            });
+            setSingleLeave({})
+
+            toast.warning("Not updated", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 2000,
+                pauseOnHover: false,
+            })
+        }
+    }
     // For Action icon menu open
     const menu = (
         <Menu
@@ -178,14 +263,13 @@ const LeaveStatusLead = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
         >
-            {settings.map((setting) => (
-                <MenuItem key={setting} onClick={() => {
+                <MenuItem key={'delete'} onClick={() => {
                     handleClickOpen()
                     handleClose()
                 }}>
-                    <Typography textAlign="center">{setting}</Typography>
+                    <Typography textAlign="center">Delete</Typography>
                 </MenuItem>
-            ))}
+            
         </Menu>
     )
 
@@ -208,8 +292,9 @@ const LeaveStatusLead = () => {
             onClose={statusHandleClose}
         >
             {leaveStatusSettings.map((setting) => (
-                <MenuItem key={setting} onClick={() => {
+                <MenuItem key={setting} onClick={(e) => {
                     statusHandleClose()
+                    console.log(e);
                 }}>
                     <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
@@ -217,7 +302,7 @@ const LeaveStatusLead = () => {
         </Menu>
     )
     return (
-        <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
+        <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
                 <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
@@ -226,7 +311,7 @@ const LeaveStatusLead = () => {
             </Box>
             {/* Card For leave Information */}
 
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth:'2618px' }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
                 <Grid container spacing={3}>
                     {leaveStat.map((val, ind) => {
                         return (
@@ -245,14 +330,14 @@ const LeaveStatusLead = () => {
             </Box>
 
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px",maxWidth:'2618px' }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={4} md={2} >
-                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200,width:'100%' }} />
+                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
                     </Grid>
                     {/* Leave type */}
                     <Grid item xs={12} sm={4} md={2} >
-                        <FormControl sx={{width:'100%'}}>
+                        <FormControl sx={{ width: '100%' }}>
                             <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -270,8 +355,8 @@ const LeaveStatusLead = () => {
                     </Grid>
                     {/* Leave Status */}
                     <Grid item xs={12} sm={4} md={2} >
-                        
-                        <FormControl sx={{ maxHeight: 345, width:'100%' }}>
+
+                        <FormControl sx={{ maxHeight: 345, width: '100%' }}>
                             <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -289,17 +374,17 @@ const LeaveStatusLead = () => {
                     </Grid>
                     {/* Date From */}
                     <Grid item xs={12} sm={4} md={2} >
-                        
+
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px"}}>
-                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345}} />
+                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
+                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345 }} />
                             </DemoContainer>
                         </LocalizationProvider>
                     </Grid>
-                     {/* date To */}
+                    {/* date To */}
                     <Grid item xs={12} sm={4} md={2} >
-                       
-                        <LocalizationProvider dateAdapter={AdapterDayjs} sx={{width:'100%'}}>
+
+                        <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
                                 <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }} />
                             </DemoContainer>
@@ -307,11 +392,11 @@ const LeaveStatusLead = () => {
 
                     </Grid>
                     <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width:'100%' }}>Search</Button>
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}>Search</Button>
                     </Grid>
                 </Grid>
             </Box>
-            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', maxWidth:'2618px' }}>
+            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', maxWidth: '2618px' }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -327,37 +412,120 @@ const LeaveStatusLead = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, ind) => (
+                        {state.leaves.map((row, ind) => (
                             <StyledTableRow
                                 key={ind}
                             >
                                 <StyledTableCell component="th" scope="row">
-                                    {row.name}
+                                    {row.user}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.type}
+                                    {row.leaveType}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.from}
+                                    {row.startDate ? new Date(row.startDate).toDateString() : ""}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.to}
+                                    {row.endDate ? new Date(row.endDate).toDateString() : ""}
+
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.day}
+                                    {row.totalDay}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row.reason}
+                                    <Tooltip title={row.leaveReason}>
+                                        <VisibilityIcon sx={{ cursor: "pointer" }} />
+                                    </Tooltip>
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={statusHandleClick}>{row.status} <ArrowDropDownIcon /></div>
-                                    {statusMenu}
+                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={(e)=>{ 
+                                        statusHandleClick(e)
+                                        setSingleLeave({...row})
+                                    
+                                    }}>{userRole() === "Admin"? row.isAdminApproved : row?.isApproved} <ArrowDropDownIcon onClick={(e)=> {
+                                        dispatch({
+                                            type: leaveReducerState.VIEW_DATA,
+                                            payload: row
+                                        })
+                                        setSingleLeave(row)
+                                    }} /></div>
+                                    <Menu
+                                        sx={{ mt: '45px' }}
+                                        id="menu-appbar"
+                                        anchorEl={statusachorEl}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        keepMounted
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        open={Boolean(statusachorEl)}
+                                        onClose={statusHandleClose}
+                                        
+                                      
+                                    >
+                                        {leaveStatusSettings.map((setting) =>
+                                        {
+                                            return(
+                                                <MenuItem key={setting} value={setting} onClick={(e) => {
+                                                    let status = e.currentTarget.childNodes[0].textContent;
+                                                    
+                                                    updateStatus(singleLeave, status)
+                                                    statusHandleClose(e)
+                                                    
+                                                }}>
+                                                    <Typography textAlign="center" value={setting} >{setting}</Typography>
+                                                </MenuItem>
+                                            )
+                                            
+                                        }
+                                        )}
+                                    </Menu>
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    <IconButton aria-label="settings" >
-                                        <MoreVertIcon onClick={handleClick} />
-                                    </IconButton>
-                                    {menu}
+                                    {userRole() === "Admin" ? (
+                                        <>
+
+                                        <IconButton aria-label="settings" >
+                                            <MoreVertIcon onClick={(e)=>
+                                                {
+                                                    dispatch({type: leaveReducerState.VIEW_DATA, payload: row})
+                                                     handleClick(e)
+                                                 }
+                                                 } />
+                                        </IconButton>
+                                        <Menu
+                                        sx={{ mt: '45px' }}
+                                        id="menu-appbar"
+                                        anchorEl={anchorEl}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        keepMounted
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'right',
+                                        }}
+                                        open={Boolean(anchorEl)}
+                                        onClose={handleClose}
+                                    >
+                                            <MenuItem key={'delete'} onClick={(e) => {
+                                                // handleClickOpen()
+                                                console.log("deleted");
+                                                handleClose(e)
+                                                deleteAleave(state.singleLeave._id)
+                                            }}>
+                                                <Typography textAlign="center">Delete</Typography>
+                                            </MenuItem>
+                                        
+                                    </Menu>
+                                        </>
+
+                                    ): null}
                                 </StyledTableCell>
                             </StyledTableRow>
                         ))}

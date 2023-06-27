@@ -30,6 +30,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import Input from '@mui/material/Input';
 import { fileUpload, getCvApi } from "../../api/userApi.js";
 import { profileImg } from "../functions/commonFunc.js";
+import { getAllRoles } from "../../api/roleApi.js";
+import { createLeaveBoardApi, getUserLeaveBoardApi } from "../../api/leaveRequestApi.js";
 
 
 
@@ -148,6 +150,7 @@ const Profile = () => {
     });
     const [openModal, setOpenModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [roles, setRoles] = useState([]);
   // For Modal open
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -193,8 +196,7 @@ const Profile = () => {
     });
 
     const [leaveSettings, setleaveSettings] = useState({
-        casualLeave: "",
-        sickLeave: "",
+        
     });
 
     const [skills, setSkills] = useState([]);
@@ -210,17 +212,10 @@ const Profile = () => {
         empId: userData?.empId,
         birthDate: userData?.birthDate,
         joiningDate: userData?.joiningDate,
-        role: userData?.role?.alias
+        role: userData?.role?._id
+    })
 
-        // firstName: "",
-        // lastName: "",
-        // email: "",
-        // designation: "",
-        // empId: "",
-        // birthDate: "",
-        // joiningDate: "",
-        // role: ""
-
+    const [updateLeaveSettings, setUpdateLeaveSettings] = useState({
 
     })
 
@@ -303,7 +298,6 @@ const Profile = () => {
         );
         const data = await res.json();
         const tempInfo = data[0];
-        // console.log("tempinfo", tempInfo);
         if (res.status === 200) {
             setUserData(data[0]);
             setIntro({
@@ -320,7 +314,8 @@ const Profile = () => {
                 designation: tempInfo?.designation?._id,
                 empId: tempInfo?.empId,
                 joiningDate: tempInfo?.joiningDate,
-                birthDate: tempInfo?.birthDate || ""
+                birthDate: tempInfo?.birthDate || "",
+                role: tempInfo?.role?._id
             })
             setSkills(tempInfo?.skills);
             setGoals(tempInfo?.goals);
@@ -456,16 +451,52 @@ const Profile = () => {
         }
     }
 
+    const getUsersLeave = async()=> {
+        const response = await getUserLeaveBoardApi(id, jwt)
+        if(response.status === 200){
+            const data = await response.json();
+            setleaveSettings({...data.data})
+           
+        }
+    }
 
+    const updateLeaveBoard = async ()=> {
+        const data = {}
+        const response = await createLeaveBoardApi(data, jwt);
+        if(response.status === 200) {}
+    }
+
+    const updateLeaveBoardSetting = async()=> {
+        try{
+            if(!Object.entries(updateLeaveSettings).length) return;
+            for (let s in updateLeaveSettings){
+                let response = await createLeaveBoardApi({userId: id,
+                     leaveCategory: s,
+                    leaveAmount: parseInt(updateLeaveSettings[s])
+                    }, jwt)
+            }
+    
+           await getUserLeaveBoardApi(id, jwt);
+           setCardEdit({...cardEdit, leaveSetting: false})
+
+        }catch(e){
+
+        }finally{
+            setUpdateLeaveSettings({})
+        }
+    }
     
   
     useEffect(() => {
         getSingleUser();
+        getUsersLeave();
     }, [id]);
-    // console.log(userData.imageBase64);
 
     useEffect(() => {
-        getAllDesignations()
+        getAllDesignations();
+        getAllRoles().then(d=> {
+            setRoles(d.data.roles);
+        })
     }, [])
 
     return loading ? (
@@ -481,10 +512,14 @@ const Profile = () => {
                             </div>
                             {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && (
                             <div class="col-sm-4">
+                             <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button>
                             {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
           {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
             Add CV
           </Button>} 
+          
+
+          
                             </div>
 
                             )}
@@ -595,7 +630,7 @@ const Profile = () => {
 
                                                             {/* {userData?.firstName} {userData?.lastName} */}
                                                         </h3>
-                                                        {!cardEdit.main ? (<small>{userData?.designation?.name}</small>)
+                                                        {!cardEdit.main ? (<small>{userData?.designation?.name} {`(${roles.length && roles?.find(r=> userData.role._id === r._id).alias})`}</small>)
                                                             : (
                                                                 <>
                                                                     <br />
@@ -613,6 +648,26 @@ const Profile = () => {
                                                                         {designation.map((val, ind) => {
                                                                             return (
                                                                                 <MenuItem  key={val._id} value={val?._id}>{val?.name}</MenuItem>
+                                                                            )
+                                                                        })}
+                                                                    </Select>
+                                                                    <br />
+                                                                    <br />
+
+                                                                    <Select name="role"
+                                                                    label="Select Role"
+                                                                    size="small"
+                                                                    sx={{width: .7}}
+                                                                    // value={mainInfo?.designation}
+                                                                        onChange={(e) => {
+                                                                            setMainInfo({ ...mainInfo, role: e.target.value })
+
+                                                                        }}
+                                                                    >
+
+                                                                        {roles?.map((val, ind) => {
+                                                                            return (
+                                                                                <MenuItem  key={val._id} value={val?._id}>{val?.alias}</MenuItem>
                                                                             )
                                                                         })}
                                                                     </Select>
@@ -1662,17 +1717,30 @@ const Profile = () => {
                                                     <>
                                                         {cardEdit.leaveSetting ? (
                                                             <>
-                                                                <Tooltip sx={{ marginLeft: "10px" }}>
-                                                                    <SendIcon className="edit-icon" />
+                                                                <Tooltip title="send" sx={{ marginLeft: "10px" }}>
+                                                                    <SendIcon className="edit-icon"
+                                                                    onClick={(e)=> {
+                                                                        updateLeaveBoardSetting()
+                                                                    }}
+
+                                                                    />
                                                                 </Tooltip>
                                                                 <Tooltip>
                                                                     <CancelIcon
                                                                         className="edit-icon"
-                                                                        onClick={() =>
+                                                                        onClick={(e) =>
+                                                                            {
+                                                                                setUpdateLeaveSettings({
+                                                                                    general: "",
+                                                                                    sick: ""
+                                                                                })
                                                                             setCardEdit({
                                                                                 ...cardEdit,
                                                                                 leaveSetting: false,
                                                                             })
+
+                                                                        }
+                                                                            
                                                                         }
                                                                     />
                                                                 </Tooltip>
@@ -1706,18 +1774,50 @@ const Profile = () => {
                                                     <div class="title">Annual Casual Leave</div>
                                                     <TextField
                                                         id="outlined-search"
-                                                        label="11"
+                                                        // label={leaveSettings?.general? leaveSettings.general: 0}
+                                                        sx={{
+                                                            "input::placeholder": {
+                                                                fontSize: "1rem",
+                                                                color: "black",
+                                                                opacity: 1
+                                                            }
+                                                        }}
+                                                        placeholder={leaveSettings?.general}
                                                         type="search"
+                                                        value={updateLeaveSettings?.general}
                                                         disabled={cardEdit.leaveSetting ? false : true}
+                                                        onChange={(e)=> {
+                                                            setUpdateLeaveSettings({
+                                                                ...updateLeaveSettings,
+                                                                general: e.target.value
+                                                            })
+                                                        }}
                                                     />
                                                 </li>
                                                 <li style={{ display: "flex", alignItems: "center" }}>
-                                                    <div class="title">Annual Sick Leave</div>
+                                                    <div class="title">Annual Sick Leave {leaveSettings.sickLeave}</div>
                                                     <TextField
                                                         id="outlined-search"
-                                                        label="7"
+                                                        sx={{
+                                                            "input::placeholder": {
+                                                                fontSize: "1rem",
+                                                                color: "black",
+                                                                opacity: 1
+                                                            }
+                                                        }}
+                                                        // label="Annual sick leave"
+                                                        placeholder={leaveSettings?.sick}
+                                                        value={updateLeaveSettings?.sick}
                                                         type="search"
+                                                        // label={leaveSettings?.sick ? leaveSettings.sick: 0}
                                                         disabled={cardEdit.leaveSetting ? false : true}
+                                                        onChange={(e)=> {
+
+                                                            setUpdateLeaveSettings({
+                                                                ...updateLeaveSettings,
+                                                                sick: e.target.value
+                                                            })
+                                                        }}
                                                     />
                                                 </li>
                                             </ul>

@@ -35,6 +35,7 @@ const UserSchema = new Schema({
     religion:String,
     imagePath: {type: String, default: "https://cdn-icons-png.flaticon.com/512/21/21104.png" },
     cvPath: {type: String},
+    isProfileUpdate: {type: Boolean},
     createdBy: {type: Schema.Types.ObjectId,  default: "000000000000000000000000"},
     updatedBy: {type: Schema.Types.ObjectId,  default: "000000000000000000000000"},
 },{timestamps: true});

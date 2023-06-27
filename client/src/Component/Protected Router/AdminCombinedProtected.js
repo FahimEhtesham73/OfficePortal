@@ -11,10 +11,9 @@ const AdminCombinedProtected = ({ children }) => {
         decoded = ''
     }
 
-    // console.log(decoded);
 
 
-    if (decoded?.role?.alias === 'Admin' || decoded?.role?.alias === 'Team Lead') {
+    if (decoded?.role?.alias === 'Admin' || decoded?.role?.alias === 'Team Lead' || decoded?.role?.alias === 'Project Lead') {
         return children
     }
     else {

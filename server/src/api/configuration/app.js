@@ -14,7 +14,7 @@ require('./index')(app);
 require("./routes")(app);
 
 //images routes
-app.use("/images", express.static(path.join(path.resolve("/home/nsl46/Saimom/Leave_Management_All_Files/Leave_Management_System/server/assets"), "images")))
+app.use("/images", express.static(path.join(path.resolve(process.env.FILESTORAGE), "images")))
     //not found url
 app.use(notFoundUrl);
 

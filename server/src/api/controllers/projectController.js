@@ -26,13 +26,14 @@ module.exports.createProject = async (req, res) => {
         const erros = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
 
-        const { projectName, projectSuperVisor, projectLead, projectMembers, projectStartTime, projectEndTime, projectOwner, superVisorTime, leadTime, memberTime, projectDescription } = req.body;
+        const { projectName, projectSuperVisor, projectLead, projectMembers, projectStartTime, projectEndTime,
+             projectOwner, superVisorTime, leadTime, memberTime, projectDescription, projectCode } = req.body;
 
         // console.log(" create project req body",req.body);
 
         if (!checkObjectValues(req.body)) return res.status(400).json({ message: "Fill all the mandatory fields" })
 
-        const isProjectAvailable = await Project.findOne({ projectName }).lean()
+        const isProjectAvailable = await Project.findOne({ $or: [{projectName: projectName}, {projectCode: projectCode}]}).lean()
         if (isProjectAvailable) return res.status(400).json({ "message": `${projectName} project is already created` })
 
         const data = {
@@ -47,6 +48,7 @@ module.exports.createProject = async (req, res) => {
             memberTime,
             projectStartTime,
             projectEndTime,
+            projectCode,
             createdBy: req.user._id
         }
 
@@ -130,8 +132,18 @@ module.exports.updateProject = async (req, res) => {
             if (arg === "isCurrentlyActive") {
                 args['isCurrentlyActive'] = updatedData['isCurrentlyActive']
             }
+            if (arg === "projectCode") {
+                args['projectCode'] = updatedData['projectCode']
+            }
         }
-
+        
+        const isProjectAvialbelInSameNameOrCode = await Project.aggregate([
+            {$match: {
+                $or: [{projectName: args.projectName}, {projectCode: args.projectCode}],
+                _id: {$ne: new mongoose.Types.ObjectId(projectId)}
+            }}
+        ]) 
+        if(isProjectAvialbelInSameNameOrCode.length > 0) return res.status(400).json({"message": "Project code or name already avialable"})      
         const updatedResult = await updateAProject(args, projectId);
 
        
@@ -161,12 +173,12 @@ module.exports.updateProject = async (req, res) => {
 module.exports.getAPoroject = async (req, res) => {
     try {
 
-        const projectId = req.params.id;
+        const projectCode = req.params.id;
 
-        if (!mongoose.isObjectIdOrHexString(projectId)) return res.status(400).json({ "error": "invalid project id" })
+        // if (!mongoose.isObjectIdOrHexString(projectId)) return res.status(400).json({ "error": "invalid project id" })
         const matchStage = {
             $match: {
-                _id: new mongoose.Types.ObjectId(projectId),
+                projectCode: projectCode,
                 $or: [
                     { projectLead: new mongoose.Types.ObjectId(req.user._id) },
                     { projectMembers: new mongoose.Types.ObjectId(req.user._id) },
@@ -180,7 +192,7 @@ module.exports.getAPoroject = async (req, res) => {
             const projects = await Project.aggregate([
                 {
                     $match: {
-                        _id: new mongoose.Types.ObjectId(projectId)
+                        projectCode: projectCode
                     }
                 },
                 projectSuperVisorLookupSatge,
@@ -273,7 +285,71 @@ module.exports.deleteSingleProject = async (req, res) => {
     const { projectId } = req.body;
     const project = await Project.findOne({_id: projectId});
     if (!project) return res.status(400).json("project not found");
-    await Project.findOneAndDelete(projectId);
+    await Project.findOneAndDelete({_id: projectId});
     return res.status(200).json("successfully deleted");
 
+}
+
+module.exports.getProjectUsers = async (req, res) => {
+    try{
+        const projectCode = req.body.projectCode;
+        if(!projectCode) return res.status(400).json({"message": "Invalid request"})
+
+        const projectUser = await Project.aggregate([
+            
+                {
+                  '$match': {
+                    'projectCode': projectCode
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'users', 
+                    'localField': 'projectSuperVisor', 
+                    'foreignField': '_id', 
+                    'as': 'superVisorDetails'
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'users', 
+                    'localField': 'projectLead', 
+                    'foreignField': '_id', 
+                    'as': 'projectLeadDetails'
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'users', 
+                    'localField': 'projectMembers', 
+                    'foreignField': '_id', 
+                    'as': 'membersDetails'
+                  }
+                }, {
+                  '$project': {
+                    'superVisorDetails._id': 1, 
+                    'superVisorDetails.firstName': 1, 
+                    'superVisorDetails.lastName': 1, 
+                    'superVisorDetails.email': 1, 
+                    'superVisorDetails.imagePath': 1, 
+                    'projectLeadDetails._id': 1, 
+                    'projectLeadDetails.firstName': 1, 
+                    'projectLeadDetails.lastName': 1, 
+                    'projectLeadDetails.email': 1, 
+                    'projectLeadDetails.imagePath': 1, 
+                    'membersDetails._id': 1, 
+                    'membersDetails.firstName': 1, 
+                    'membersDetails.lastName': 1, 
+                    'membersDetails.email': 1, 
+                    'membersDetails.imagePath': 1
+                  }
+                }
+              
+
+        ]);
+
+        const totalUser = [...projectUser.superVisorDetails, ...projectUser.projectLeadDetails, ...projectUser.membersDetails ]
+
+        return res.status(200).json({"message": "success", "data": totalUser});
+        
+    }catch(e){
+
+    }
 }

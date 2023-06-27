@@ -8,8 +8,8 @@ router.route("/create").post(Authorize, createAttendence) //punch in
 router.route("/getall").post(Authorize,  getAttendences) //get all attendeces
 router.route("/update").put(Authorize, updateAttendenceValidation, updateAttendece) //update a attendece
 router.route("/today").post(Authorize, getTodayAttendence)
-router.route("/alluseratendance").post(getAllUserAttendenceSheet)
-router.route("/todayspunch").get(todaysPunchInUsers)
+router.route("/alluseratendance").post(Authorize, getAllUserAttendenceSheet)
+router.route("/todayspunch").get(Authorize,todaysPunchInUsers)
 router.route("/modify").post(Authorize, modifyAttendenceValidation, modifiedORCreateAttendence);
 
 module.exports = router;

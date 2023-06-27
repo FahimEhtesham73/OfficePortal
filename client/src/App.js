@@ -1,5 +1,5 @@
 // Importing React Components
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom"
 
 // Importing bootstrap
@@ -13,24 +13,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // importing Project Components
 import Topnavbar from "./Component/shared/Topnavbar";
-import Profile from "./Component/Profile/Profile";
 import Signin from "./Component/Signin";
-import AllEmployees from "./Component/AllEmployees";
-import Punch from "./Component/Attendance/Punch";
-import Attendancesheet from "./Component/Attendance/Attendancesheet";
-import Holidays from "./Component/Leave/Holidays";
-import LeaveEmployee from "./Component/Leave/LeaveEmployee";
-import LeaveStatusLead from "./Component/Leave/LeaveStatusLead";
-import Teamlead from "./Component/TeamLead/Teamlead";
 import AdminCombinedProtected from "./Component/Protected Router/AdminCombinedProtected";
 import AuthenticateUser from "./Component/Protected Router/AuthenticateUser";
-import Project from "./Component/Project/Project";
-import ProjectDetail from "./Component/Project/ProjectDetail";
+import Loading from "./Component/Hook/Loading/Loading";
+
+const Punch = lazy(()=> import("./Component/Attendance/Punch"));
+const Profile = lazy(()=> import("./Component/Profile/Profile"));
+const AllEmployees = lazy(()=> import("./Component/AllEmployees"));
+const Attendancesheet = lazy(()=> import("./Component/Attendance/Attendancesheet"));
+const Holidays = lazy(()=> import("./Component/Leave/Holidays"));
+const LeaveEmployee = lazy(()=> import("./Component/Leave/LeaveEmployee"));
+const LeaveStatusLead = lazy(()=> import("./Component/Leave/LeaveStatusLead"));
+const Teamlead = lazy(()=> import("./Component/TeamLead/Teamlead"));
+const Project = lazy(()=> import("./Component/Project/Project"));
+const ProjectDetail = lazy(()=> import("./Component/Project/ProjectDetail"));
+
 
 const App = () => {
   return (
     <div className="App">
       <Topnavbar />
+      <Suspense fallback ={ <Loading />}>
       <Routes>
         <Route path="/signin" exact element={<Signin/>}/>
         <Route path='/profile/:id'  element={<AuthenticateUser><Profile/></AuthenticateUser>}/>
@@ -43,10 +47,10 @@ const App = () => {
         <Route path='/teamlead' element={<Teamlead/>}/>
         <Route path='/projects' element={<AuthenticateUser><Project /></AuthenticateUser>}/>
         <Route path='/projects/:id' element={ <AuthenticateUser> <ProjectDetail /> </AuthenticateUser> }/>
-
-
         {/* All Employees */}
       </Routes>
+
+      </Suspense>
       <ToastContainer />
     </div>
   );

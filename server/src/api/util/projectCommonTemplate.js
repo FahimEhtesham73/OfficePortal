@@ -37,6 +37,7 @@ module.exports.projectStage = {
         projectEndTime: 1,
         isCurrentlyActive: 1,
         projectMembers: 1,
+        projectCode: 1,
         projectSuperVisorDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
         projectLeadDetails: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 },
         projectMembersList: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 }

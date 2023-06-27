@@ -205,7 +205,7 @@ const menu = (
         )
     }
         title={ <p onClick={()=> {
-        navigate(`${project._id}`)
+        navigate(`${project.projectCode}`)
 
         }}> {project.projectName} </p> }
         
@@ -220,7 +220,7 @@ const menu = (
           {/* Owner: {project?.projectOwner} */}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {project.projectDescription}
+          {project?.projectDescription.slice(0,30)} {project?.projectDescription?.length> 30? "...": ""}
         </Typography>
       </CardContent>
       <Stack spacing={{ xs: 1, sm: 2 }} direction="row" justifyContent={"space-between"} useFlexGap flexWrap="wrap">

@@ -9156,3 +9156,12 @@ button.close {
   .profile-img:hover .middle {
     opacity: 1;
   }
+
+
+  .task-div label, .task-div span{
+    padding: .5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    align-items: center;
+    
+  }
