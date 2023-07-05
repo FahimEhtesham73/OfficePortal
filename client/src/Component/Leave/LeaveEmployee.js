@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react'
-import { styled } from '@mui/material/styles';
+import { responsiveFontSizes, styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -32,7 +32,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
 import userInfo from "../Hook/useUseInfo"
-import { createLeaveApi, createLeaveApiForSup, getLeaveApi } from '../../api/leaveRequestApi';
+import { createLeaveApi, createLeaveApiForSup, getLeaveApi, leaveSummeryApi } from '../../api/leaveRequestApi';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
@@ -109,6 +109,14 @@ function BootstrapDialogTitle(props) {
     );
 }
 
+function checkLeapYear(year) {
+
+    //three conditions to find out the leap year
+    if ((0 === year % 4) && (0 !== year % 100) || (0 === year % 400)) {
+        return true
+    } 
+    return false
+}
 const leaveStat = [
     {
         name: 'Annual Casual Leave',
@@ -136,12 +144,22 @@ const leaveStat = [
     },
 
 ]
+const YEAR = new Date().getFullYear()
 
+// const yearStartDate = new Date(`03/01/${year}`)
+// const yearEndDate = new Date(`02/28/${year+1}`)
 const LeaveEmployee = () => {
     const jwt = Cookies.get('_token');
 
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [search, setSearch] = useState({
+        leaveType: "",
+        leaveStatus: "",
+        startDate: new Date(`03/01/${YEAR}`),
+        endDate: checkLeapYear(YEAR+1) ? new Date(`02/29/${YEAR+1}`) : new Date(`02/28/${YEAR+1}`)
+    })
+    const [leaveSummery, setLeaveSummery] = useState({});
     const userData = userInfo();
 
     const [leaveRequest, setLeaveRequest] = useState({
@@ -162,6 +180,7 @@ const LeaveEmployee = () => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+    
     // For Action icon close
     const handleClose = () => {
         setLeaveRequest({
@@ -252,19 +271,29 @@ const LeaveEmployee = () => {
 
         }
     }
-    const rows = [
-        createData('Casual Leave', "1 Jan 2023", '2 Jan 2023', '2 days', 'Going To Hospital', 'Approved', 'Nahid'),
-        createData('Casual Leave', "18 Mar 2023", '18 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
-        createData('Sick Leave', "2 Feb 2023", '2 Feb 2023', '1 day', 'Fever', 'Approved', 'Nahid'),
-        createData('Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved', 'Nahid'),
-        createData('Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
-    ];
+    // const rows = [
+    //     createData('Casual Leave', "1 Jan 2023", '2 Jan 2023', '2 days', 'Going To Hospital', 'Approved', 'Nahid'),
+    //     createData('Casual Leave', "18 Mar 2023", '18 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
+    //     createData('Sick Leave', "2 Feb 2023", '2 Feb 2023', '1 day', 'Fever', 'Approved', 'Nahid'),
+    //     createData('Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved', 'Nahid'),
+    //     createData('Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
+    // ];
 
+    const getLeaveSummary = async ()=> {
+        const response = await leaveSummeryApi({userId: userData._id}, jwt);
+        if(response.status === 200) {
+            const responseData = await response.json();
+            setLeaveSummery(responseData.data)
+        }else{
+            console.log("nothing");
+        }
+    }
 
     const getLeaveData = async () => {
-        const response = await getLeaveApi({usersId: []}, jwt);
+        const response = await getLeaveApi({usersId: [], ...search}, jwt);
         if(response.status === 200){
             let responseData = await response.json()
+            setLeaveSummery(responseData.data)
             console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
@@ -275,6 +304,7 @@ const LeaveEmployee = () => {
 
     useEffect(()=> {
         getLeaveData()
+        getLeaveSummary()
     },[])
     const settings = ['Edit', 'Delete'];
     const menu = (
@@ -314,16 +344,33 @@ const LeaveEmployee = () => {
             </Box>
 
             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3} >
-                    {leaveStat.map((val, ind) => {
+                {/* <Grid container spacing={3} >
+                    {leaveSummery?.totalYearlyLeave?.map((val, ind) => {
                         // margin: "10px 20px 20px 0px",
                         return (
 
                             <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
                                 <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.leaveCategory.toUpperCase()}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.leaveAmount}</Typography>
+                                    </Box>
+                                </Card>
+                            </Grid>
+
+                        )
+                    })}
+                </Grid> */}
+                <Grid container spacing={3} >
+                    {leaveSummery?.totalTaken?.map((val, ind) => {
+                        // margin: "10px 20px 20px 0px",
+                        return (
+
+                            <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
+                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?._id.toUpperCase() || 0 }</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.total || 0}</Typography>
                                     </Box>
                                 </Card>
                             </Grid>
@@ -332,6 +379,79 @@ const LeaveEmployee = () => {
                     })}
                 </Grid>
 
+            </Box>
+
+             {/* Searching Div */}
+             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+                <Grid container spacing={3}>
+                
+                    {/* Leave type */}
+                    <Grid item xs={12} sm={4} md={2} >
+                        <FormControl sx={{ width: '100%' }}>
+                            <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                label="Select leave type"
+                                onChange={(e)=> setSearch({...search, leaveType: e.target.value})}
+                                >
+                                <MenuItem value={"Casual"}>Casual</MenuItem>
+                                <MenuItem value={"Sick"}>Sick</MenuItem>
+                                <MenuItem value={"Special"}>Special Leave</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* Leave Status */}
+                    <Grid item xs={12} sm={4} md={2} >
+
+                        <FormControl sx={{ maxHeight: 345, width: '100%' }}>
+                            <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                // value={age}
+                                
+                                label="Select leave type"
+                            onChange={(e)=> setSearch({...search, leaveStatus: e.target.value})}
+                            >
+                                <MenuItem value={"pending"}>Pending</MenuItem>
+                                <MenuItem value={"approved"}>Accepted</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* Date From */}
+                    <Grid item xs={12} sm={4} md={2} >
+
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
+                                <DatePicker onChange={(e)=> {
+                                    if(e?.['$y']){
+                                        console.log(e);
+                                        setSearch({
+                                            ...search,
+                                            startDate: new Date(`03/01/${e?.['$y']}`),
+                                            endDate: checkLeapYear(e?.['$y']+1)? new Date(`02/29/${e?.['$y'] + 1}`) :new Date(`02/28/${e?.['$y'] + 1}`)
+                                        })
+                                    }
+                                }} label="Year" views={['year']} sx={{ width: '100%', maxHeight: 345 }} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                    </Grid>
+                    {/* date To
+                    <Grid item xs={12} sm={4} md={2} >
+
+                        <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
+                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
+                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+
+                    </Grid> */}
+                    <Grid item xs={12} sm={4} md={2} >
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={getLeaveData}>Search</Button>
+                    </Grid>
+                </Grid>
             </Box>
         
         <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
