@@ -80,3 +80,16 @@ export const updateALeaveStatusAPI = async(data, token)=>{
     body: JSON.stringify(data),
     credentials: 'include',})
 }
+
+
+// status leave api
+export const leaveSummeryApi = async(data, token)=>{
+  return await fetch(`${process.env.REACT_APP_URL}/leave/leavesummary`,{method: "POST",  headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',})
+}
+
+

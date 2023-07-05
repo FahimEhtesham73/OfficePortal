@@ -1,4 +1,4 @@
-const { createLeave,createLeaveSv,getLeaveStatus, createUserLeaveAmount, getLeaveBoardAmount, getAllLeave, deleteALeave, updateALeave, leaveStatusChange } = require("../controllers/leaveController");
+const { createLeave,createLeaveSv,getLeaveStatus, createUserLeaveAmount, getLeaveBoardAmount, getAllLeave, deleteALeave, updateALeave, leaveStatusChange, getLeaveSummary } = require("../controllers/leaveController");
 const {Authorize,isAdminAndManager, isAdmin} = require("../middleware/commonMilddleware");
 const { createOrUpdateValidation, updateLeveDetailsValidation } = require("../util/validator/leaveValidation");
 const { createProjectValidation,upateProjectValidation } = require("../util/validator/projectValidation");
@@ -16,6 +16,6 @@ router.route("/deletealeave").delete(Authorize,deleteALeave);
 
 router.route("/createleavereqsvadmin").post(Authorize,createLeaveSv);
 router.route("/getleavestatus").get(Authorize,getLeaveStatus);
-
+router.route("/leavesummary").post(Authorize, getLeaveSummary)
 
 module.exports = router;

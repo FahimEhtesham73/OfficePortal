@@ -2,6 +2,7 @@ const { default: mongoose, mongo } = require("mongoose");
 const Project = require("../models/projectModel");
 const Leave = require('../models/leaveRequestModel');
 const LeaveBoard = require("../models/leaveModel")
+const User = require("../models/userModel");
 
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
@@ -432,14 +433,22 @@ module.exports.getLeaveBoardAmount = async (req, res, next) => {
 module.exports.getAllLeave = async (req, res, next) => {
     try {
         const body = req.body;
+        const leaveType = body.leaveType;
+        let leaveStartDate = new Date(body.startDate);
+        let leaveEndDate = new Date(body.endDate);
+
         let limit = body.limit ? parseInt(body.limit) : 10;
         let skip = body.skip ? parseInt(body.skip) : 0;
         let args = {}
+        let status = {}
+        
 
-        // console.log(req.user);
-
+        
 
         for (let query in body) {
+            if(body.leaveStatus.length){
+                isFullyApproved = body?.leaveStatus === "approved"? true : false 
+            }
             if (body['usersId'].length <= 0) {
                 args['usersId'] = [new mongoose.Types.ObjectId(req.user._id)]
 
@@ -454,11 +463,14 @@ module.exports.getAllLeave = async (req, res, next) => {
 
         }
 
-        console.log(args);
+        // console.log(args);
         let data = await Leave.aggregate([
             {
                 $match: {
-                    userId: { $in: args.usersId }
+                    userId: { $in: args.usersId },
+                    startDate: {$gte: leaveStartDate},
+                    endDate: {$lte: leaveEndDate},
+                    isFullyApproved: body?.leaveStatus === "approved" ? true : false 
                 }
 
             },
@@ -606,6 +618,64 @@ module.exports.getAllLeave = async (req, res, next) => {
     } catch (e) {
         console.log(e);
         next(e)
+    }
+}
+
+module.exports.getLeaveSummary = async (req, res, next)=> {
+    try{
+        console.log("body", req.body);
+        const userId = req.body.userId;
+        const isUserAvailable = await User.findOne({_id: userId}).lean();
+        if(!isUserAvailable) return res.status(400).json({"message": "User Not found"});
+        const year = parseInt(req.body.year) || new Date().getFullYear();
+
+        const yearStartDate = new Date(`03/01/${year}`)
+        const yearEndDate = new Date(`02/28/${year+1}`)
+        console.log("st", yearStartDate.toString());
+        console.log("end", yearEndDate);
+
+        const findUserLeave = await LeaveBoard.aggregate([
+            {
+                $match: {
+                    userId: new mongoose.Types.ObjectId(userId)
+                }
+            },
+
+            {
+                $project: {
+                    "leaveAmount": 1,
+                    "leaveCategory": 1
+                }
+            }
+        ]);
+
+
+        const totalLeaveTaken = await Leave.aggregate([
+            {
+                $match: {
+                    userId: {$in:  [new mongoose.Types.ObjectId(userId)]},
+                    startDate:{
+                        $gte:yearStartDate,
+                    } ,
+                    endDate: {$lte: yearEndDate} ,
+                    isFullyApproved: true
+                }
+            },
+            {
+                $group: {
+                    _id: "$leaveType",
+                    total: {$sum: "$totalDay" }
+                }
+            }
+           
+            
+        ]) 
+        return res.status(200).json({"message": "success", "data": {"totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken}}); 
+
+    }catch(err){
+        console.log(err);
+        next(err)
+
     }
 }
 
@@ -789,3 +859,13 @@ const isLeaveAvailabe = async(leaveId, approverId, role) => {
     ])
     return details;
 } 
+
+
+function checkLeapYear(year) {
+
+    //three conditions to find out the leap year
+    if ((0 === year % 4) && (0 !== year % 100) || (0 === year % 400)) {
+        return true
+    } 
+    return false
+}
