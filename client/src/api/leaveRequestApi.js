@@ -71,7 +71,6 @@ export const updateALeaveAPI = async(data, token)=>{
     credentials: 'include',})
 }
 
-// status leave api
 export const updateALeaveStatusAPI = async(data, token)=>{
   return await fetch(`${process.env.REACT_APP_URL}/leave/leavestatusupdate`,{method: "POST",  headers: {
       "Content-Type": "application/json",
@@ -82,9 +81,17 @@ export const updateALeaveStatusAPI = async(data, token)=>{
 }
 
 
-// status leave api
 export const leaveSummeryApi = async(data, token)=>{
   return await fetch(`${process.env.REACT_APP_URL}/leave/leavesummary`,{method: "POST",  headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify(data),
+    credentials: 'include',})
+}
+
+export const searchLeaveApi = async(data, token)=>{
+  return await fetch(`${process.env.REACT_APP_URL}/leave/filterleave`,{method: "POST",  headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer " + token
     },

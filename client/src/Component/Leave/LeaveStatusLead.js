@@ -32,7 +32,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
-import { deleteALeaveApi, getLeaveStatusApi, updateALeaveStatusAPI } from '../../api/leaveRequestApi';
+import { deleteALeaveApi, getLeaveStatusApi, searchLeaveApi, updateALeaveStatusAPI } from '../../api/leaveRequestApi';
 import userInfo from '../Hook/useUseInfo';
 import Cookies from 'js-cookie';
 import { leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
@@ -40,6 +40,7 @@ import { Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { toast } from 'react-toastify';
 import userRole from '../Hook/userHook';
+import jwtDecode from 'jwt-decode';
 
 
 // table cell styling
@@ -117,12 +118,35 @@ const leaveStat = [
 ]
 
 const LeaveStatusLead = () => {
-    const jwt = Cookies.get("_token")
+     const jwt = Cookies.get('_token')
+    const jwtUser = Cookies.get('_info')
+    var decoded
+    var decodedUser
+    if (jwt) {
+        decoded = jwtDecode(jwt);
+    } else {
+        decoded = ''
+    }
+
+    if (jwtUser) {
+        decodedUser = jwtDecode(jwtUser);
+    } else {
+        decodedUser = ''
+    }
     const [open, setOpen] = useState(false);
     const [statusOpen, setStatusOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [statusachorEl, setStatusAnchorEl] = useState(null)
     const [singleLeave, setSingleLeave] = useState({})
+    const [allUser, setAllUser] = useState([])
+    const [filteredId, setFilteredId] = useState("")
+    const [search, setSearch] = useState({
+        userId: filteredId,
+        leaveType: "",
+        isFullyApproved: "",
+        startDate: "",
+        endDate: ""
+    })
 
     const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
     // For Action icon open
@@ -145,6 +169,14 @@ const LeaveStatusLead = () => {
         console.log(e.currentTarget.value);
         setStatusAnchorEl(null);
     };
+    const handleChange = (e)=> {
+        const name = e.target.name;
+        const val = e.target.value;
+        setSearch({
+            ...search,
+            [name]: val,
+        })
+    }
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -196,9 +228,37 @@ const LeaveStatusLead = () => {
 
     useEffect(() => {
         getLeaveStatus()
+        getAllUser()
     }, [])
 
 
+    const getAllUser = async () => {
+        const res = await fetch(`${process.env.REACT_APP_URL}/users/userlist`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+        })
+        const data = await res.json()
+        
+        // console.log("All User", data);
+        if (res.status === 200) {
+            setAllUser(data.data[0].result)
+        }  
+
+    }
+    const searchLeave = async ()=> {
+        const response = await searchLeaveApi(search, jwt);
+        if(response.status === 200){
+            const responseData = await response.json()
+            console.log(responseData);
+            dispatch({
+                type: leaveReducerState.GET_DATA,
+                payload: responseData
+            })
+        }
+    }
     const getLeaveStatus = async () => {
         const response = await getLeaveStatusApi(userInfo()._id, jwt);
         if (response.status === 200) {
@@ -303,38 +363,46 @@ const LeaveStatusLead = () => {
     )
     return (
         <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+           
+           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
-                <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
-                    Apply Leave
-                </Button>
-            </Box>
-            {/* Card For leave Information */}
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3}>
-                    {leaveStat.map((val, ind) => {
-                        return (
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
-                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
-                                    </Box>
-                                </Card>
-                            </Grid>
-                        )
-                    })}
-
-                </Grid>
+               
             </Box>
 
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2168px' }}>
+                <Grid container spacing={3} >
                     <Grid item xs={12} sm={4} md={2} >
-                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
-                    </Grid>
+                        {(userRole() === 'Admin' || userRole() === "Project Lead" || userRole() === "Team Lead") && 
+                        (
+                            <FormControl sx={{ width: '100% !important'}} >
+                                <InputLabel  id="demo-simple-select-label">Select Employee</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    // value={age}
+                                    handleChange
+                                    label="Age"
+                                    onChange={(e) => {
+                                        setFilteredId(e.target.value)
+                                        // handleChange(e)
+                                        setSearch({...search, userId:e.target.value})
+                                    }}
+                                >
+                                    <MenuItem value={decodedUser?._id}>{decodedUser?.firstName}</MenuItem>
+                                    {
+                                        allUser && allUser.map((val, ind) => {
+                                            return (
+                                                <MenuItem value={val._id}>{val.firstName}</MenuItem>
+                                                )
+                                            })
+                                        }
+                                </Select>
+                            </FormControl>
+
+                        )}
+                        </Grid>
+                        
                     {/* Leave type */}
                     <Grid item xs={12} sm={4} md={2} >
                         <FormControl sx={{ width: '100%' }}>
@@ -344,12 +412,12 @@ const LeaveStatusLead = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select leave type"
-                            // onChange={handleChange}
+                                name="leaveType"
+                            onChange={handleChange}
                             >
-                                <MenuItem value={10}>Casual</MenuItem>
-                                <MenuItem value={20}>Half day</MenuItem>
-                                <MenuItem value={30}>Sick</MenuItem>
-                                <MenuItem value={30}>Special Leave</MenuItem>
+                                <MenuItem value={"Casual"}>Casual</MenuItem>
+                                <MenuItem value={"Sick"}>Sick</MenuItem>
+                                <MenuItem value={"Special"}>Special Leave</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -362,13 +430,21 @@ const LeaveStatusLead = () => {
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 // value={age}
+                                name='leaveType'
                                 label="Select leave type"
-                            // onChange={handleChange}
+                            onChange={(e)=> {
+                                if(e.target.value === "accepted"){
+                                    setSearch({...search, isFullyApproved: true})
+                                }else{
+                                    setSearch({...search, isFullyApproved: false})
+
+                                }
+                            
+                            }
+                        }
                             >
-                                <MenuItem value={10}>Pending</MenuItem>
-                                <MenuItem value={20}>Accepted</MenuItem>
-                                <MenuItem value={30}>Declined</MenuItem>
-                                <MenuItem value={30}>New</MenuItem>
+                                <MenuItem value={"accepted"}>Accepted</MenuItem>
+                                <MenuItem value={"declined"}>Declined</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -377,7 +453,14 @@ const LeaveStatusLead = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345 }} />
+                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345 }}
+                                onChange={(e)=> {
+                                    if(e?.['$d']){
+                                        let d = new Date(e['$d']).setHours(0,0,0,0)
+                                        setSearch({...search, startDate: new Date(d)})
+                                    }
+                                }}
+                                />
                             </DemoContainer>
                         </LocalizationProvider>
                     </Grid>
@@ -386,13 +469,20 @@ const LeaveStatusLead = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }}  onChange={e=>console.log(e)}/>
+                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }}  onChange={e=>{
+                                     if(e?.['$d']){
+                                        let d = new Date(e['$d']).setHours(0,0,0,0)
+                                        setSearch({...search, endDate: new Date(d)})
+                                    }
+                                }}/>
                             </DemoContainer>
                         </LocalizationProvider>
 
                     </Grid>
                     <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}>Search</Button>
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}
+                        onClick={searchLeave}
+                        >Search</Button>
                     </Grid>
                 </Grid>
             </Box>
@@ -534,7 +624,7 @@ const LeaveStatusLead = () => {
             </TableContainer>
 
             {/* Modal */}
-            <BootstrapDialog
+            {/* <BootstrapDialog
                 onClose={handleClickClose}
                 aria-labelledby="customized-dialog-title"
                 open={open}
@@ -579,7 +669,7 @@ const LeaveStatusLead = () => {
                         Apply
                     </Button>
                 </DialogActions>
-            </BootstrapDialog>
+            </BootstrapDialog> */}
         </Box>
     )
 }

@@ -268,11 +268,11 @@ const LeaveDataTable = (props) => {
                                     >
                                         
                                         <MenuItem  onClick={handleEditFun}  >
+
                                             <Typography 
                                             textAlign="center">Edit</Typography>
                                         </MenuItem>
 
-                                        {row?.isFullyApproved ? null: (
                                             <MenuItem onClick={(e) => {
                                                 // handleClickOpen()
                                                 console.log("deleted");
@@ -283,7 +283,6 @@ const LeaveDataTable = (props) => {
                                             }}>
                                                 <Typography textAlign="center">Delete</Typography>
                                             </MenuItem>
-                                        )}
 
 
                                         {/* ))} */}
@@ -439,7 +438,7 @@ const LeaveDataTable = (props) => {
                    
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={(e)=> {
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} disabled={'true'} autoFocus onClick={(e)=> {
                         // console.log(e);
                         updateALeaveDetails()
                         

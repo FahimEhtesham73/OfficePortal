@@ -93,7 +93,9 @@ module.exports.createLeave = async (req, res) => {
             totalDay,
             leaveReason,
             approvedByLeader: formattedLeaderArr,
-            approvedBySuperVisor: formattedSvArray
+            approvedBySuperVisor: formattedSvArray,
+            isAllLeaderApproved: true,
+
         }
 
         const leave = await Leave.create({ ...data });
@@ -727,6 +729,7 @@ module.exports.updateALeave = async (req, res, next) => {
 module.exports.deleteALeave = async (req, res, next) => {
     try {
 
+
         const leaveId = req.query.leaveId;
         if (!leaveId) return res.status(400).json({ "message": "Invalid request" })
         const leaveDetails = await Leave.findOne({ _id: leaveId }).lean();
@@ -832,6 +835,7 @@ module.exports.searchLeave = async (req, res) => {
 
         // const erros = validationMessages(validationResult(req).mapped());
         // if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
+        console.log(req.body);
         const userId = req.body.userId
         const leaveType = req.body.leaveType
         const isFullyApproved = req.body.isFullyApproved
@@ -875,6 +879,7 @@ module.exports.searchLeave = async (req, res) => {
               {
                 $unwind: "$user"
               },
+
         ])
         console.log(matchQuery);
 
