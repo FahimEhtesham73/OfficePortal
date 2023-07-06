@@ -18,7 +18,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { red } from "@mui/material/colors";
 import moment from "moment"
 import Cookies from 'js-cookie';
-import {  makeStyles} from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
@@ -38,42 +38,42 @@ import { createLeaveBoardApi, getUserLeaveBoardApi } from "../../api/leaveReques
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
-      padding: theme.spacing(3)
+        padding: theme.spacing(3)
     },
     '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-  
+        padding: theme.spacing(1),
+
     },
-  }));
-  
-  
-  function BootstrapDialogTitle(props) {
+}));
+
+
+function BootstrapDialogTitle(props) {
     const { children, onClose, ...other } = props;
-  
+
     return (
-      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-        {children}
-        {onClose ? (
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        ) : null}
-      </DialogTitle>
+        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+            {children}
+            {onClose ? (
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </DialogTitle>
     );
-  }
-  
-  
+}
+
+
 const useStyles = makeStyles(theme => ({
-    mainPofileStyle : {
+    mainPofileStyle: {
         color: "red",
     }
 }))
@@ -85,9 +85,9 @@ const blue = {
     500: '#007FFF',
     600: '#0072E5',
     900: '#003A75',
-  };
+};
 
-  const grey = {
+const grey = {
     50: '#f6f8fa',
     100: '#eaeef2',
     200: '#d0d7de',
@@ -98,9 +98,9 @@ const blue = {
     700: '#424a53',
     800: '#32383f',
     900: '#24292f',
-  };
+};
 
-  const StyledTextarea = styled(TextareaAutosize)(
+const StyledTextarea = styled(TextareaAutosize)(
     ({ theme }) => `
     width: 320px;
     font-family: IBM Plex Sans, sans-serif;
@@ -128,11 +128,11 @@ const blue = {
       outline: 0;
     }
   `,
-  );
+);
 
 const Profile = () => {
-  const jwt = Cookies.get('_token')
-  const styles = useStyles();
+    const jwt = Cookies.get('_token')
+    const styles = useStyles();
     const { id } = useParams();
     const [file, setFile] = useState();
     const [imageFile, setImageFile] = useState();
@@ -151,15 +151,15 @@ const Profile = () => {
     const [openModal, setOpenModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [roles, setRoles] = useState([]);
-  // For Modal open
-  const handleModalOpen = () => {
-    setOpenModal(true);
-  };
+    // For Modal open
+    const handleModalOpen = () => {
+        setOpenModal(true);
+    };
 
-  // For Modal Close
-  const handleModalClose = () => {
-    setOpenModal(false);
-  };
+    // For Modal Close
+    const handleModalClose = () => {
+        setOpenModal(false);
+    };
     const userInfoData = userInfo();
 
     // const [userMain, setUserMain] = useState({})
@@ -196,7 +196,7 @@ const Profile = () => {
     });
 
     const [leaveSettings, setleaveSettings] = useState({
-        
+
     });
 
     const [skills, setSkills] = useState([]);
@@ -335,7 +335,7 @@ const Profile = () => {
 
     const getImagePath = (imagePath) => {
         const pathArray = imagePath.split("/");
-        const lastTwo = `${pathArray[pathArray.length-2]}/${pathArray[pathArray.length-1]}`
+        const lastTwo = `${pathArray[pathArray.length - 2]}/${pathArray[pathArray.length - 1]}`
         console.log("last two", lastTwo);
         return lastTwo;
     }
@@ -361,18 +361,18 @@ const Profile = () => {
             sentData = { experinces };
         }
 
-        if(card === "main"){
-            sentData = {...mainInfo}
+        if (card === "main") {
+            sentData = { ...mainInfo }
         }
         // console.log("data", sentData);
-// return;
+        // return;
         const res = await fetch(
             `${process.env.REACT_APP_URL}/users/updateUser/${id}`,
             {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + jwt 
+                    "Authorization": "Bearer " + jwt
                 },
                 body: JSON.stringify(sentData),
             }
@@ -427,66 +427,67 @@ const Profile = () => {
     }
 
     const getCv = async () => {
-        try{
-            const data = await getCvApi({userId: id}, jwt);
-            if(data.status !== 200) {
-            toast.warning("Cv not found", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        try {
+            const data = await getCvApi({ userId: id }, jwt);
+            if (data.status !== 200) {
+                toast.warning("Cv not found", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
-            }else if(data.status === 200 ){
+            } else if (data.status === 200) {
                 const response = await data.json();
 
                 var a = document.createElement("a"); //Create <a>
-                a.href = "data:application/pdf;base64," +  response.data; //Image Base64 Goes here
-                a.download = `${userInfoData?.firstName}_cv.pdf`; 
+                a.href = "data:application/pdf;base64," + response.data; //Image Base64 Goes here
+                a.download = `${userInfoData?.firstName}_cv.pdf`;
                 // console.log(a);//File name Here
                 a.click(); //Downloaded file
                 // getCv()
-            }else{
-            toast.warning("Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+            } else {
+                toast.warning("Something went wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
             }
-        }catch(err){
+        } catch (err) {
             toast.warning("Cv not found", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
         }
     }
 
-    const getUsersLeave = async()=> {
+    const getUsersLeave = async () => {
         const response = await getUserLeaveBoardApi(id, jwt)
-        if(response.status === 200){
+        if (response.status === 200) {
             const data = await response.json();
-            setleaveSettings({...data.data})
-           
+            setleaveSettings({ ...data.data })
+
         }
     }
 
-    const updateLeaveBoard = async ()=> {
+    const updateLeaveBoard = async () => {
         const data = {}
         const response = await createLeaveBoardApi(data, jwt);
-        if(response.status === 200) {}
+        if (response.status === 200) { }
     }
 
-    const updateLeaveBoardSetting = async()=> {
-        try{
-            if(!Object.entries(updateLeaveSettings).length) return;
-            for (let s in updateLeaveSettings){
-                let response = await createLeaveBoardApi({userId: id,
-                     leaveCategory: s,
+    const updateLeaveBoardSetting = async () => {
+        try {
+            if (!Object.entries(updateLeaveSettings).length) return;
+            for (let s in updateLeaveSettings) {
+                let response = await createLeaveBoardApi({
+                    userId: id,
+                    leaveCategory: s,
                     leaveAmount: parseInt(updateLeaveSettings[s])
-                    }, jwt)
+                }, jwt)
             }
-    
-           await getUserLeaveBoardApi(id, jwt);
-           setCardEdit({...cardEdit, leaveSetting: false})
 
-        }catch(e){
+            await getUserLeaveBoardApi(id, jwt);
+            setCardEdit({ ...cardEdit, leaveSetting: false })
 
-        }finally{
+        } catch (e) {
+
+        } finally {
             setUpdateLeaveSettings({})
         }
     }
-    
-  
+
+
     useEffect(() => {
         getSingleUser();
         getUsersLeave();
@@ -494,7 +495,7 @@ const Profile = () => {
 
     useEffect(() => {
         getAllDesignations();
-        getAllRoles().then(d=> {
+        getAllRoles().then(d => {
             setRoles(d.data.roles);
         })
     }, [])
@@ -510,17 +511,14 @@ const Profile = () => {
                             <div class="col-sm-8">
                                 <h3 class="page-title">Profile</h3>
                             </div>
-                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && (
-                            <div class="col-sm-4">
-                             <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button>
-                            {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
-          {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
-            Add CV
-          </Button>} 
-          
-
-          
-                            </div>
+                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) && (
+                                <div class="col-sm-4">
+                                    <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button>
+                                    {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
+                                    {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
+                                        Add CV
+                                    </Button>}
+                                </div>
 
                             )}
                         </div>
@@ -530,56 +528,56 @@ const Profile = () => {
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    
+
                                     <div class="profile-view">
                                         <div class="profile-img-wrap">
                                             <div class="profile-img">
                                                 {/* <a href="#"> */}
-                                                    {/* {geeeetImg()} */}
-                                                    <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(userData?.imagePath)} sx={{ width: 120, height: 120 }} />
+                                                {/* {geeeetImg()} */}
+                                                <Avatar imgProps={{ crossOrigin: "false" }} alt='Employee' src={profileImg(userData?.imagePath)} sx={{ width: 120, height: 120 }} />
 
-                                                    <div class="middle">
-                                                    <label for="file-input" style={{color: "#2776d3"}}>
-                                                        <UploadIcon sx={{color: "#2776D3"}} />
+                                                <div class="middle">
+                                                    <label for="file-input" style={{ color: "#2776d3" }}>
+                                                        <UploadIcon sx={{ color: "#2776D3" }} />
                                                         Upload
                                                     </label>
-                                                    <input id="file-input" accept="image/*" type="file"  style={{display: "none"}}
-                                                    
-                                                    onChange={(e)=> {
-                                                        
-                                                        let formData = new FormData();
-                                                        formData.append("type", "img")
-                                                        formData.append("userId", id)
-                                                        formData.append("file", e.target.files[0])
-                                                        fileUpload(formData, jwt).then( d => {
-                                                            // setOpenModal(false)
-                                                            if(d.status === 200){
-                                                                toast.success("img uploaded successfully", {
-                                                                    position: toast.POSITION.TOP_CENTER,
-                                                                    autoClose: 2000,
-                                                                    pauseOnHover: false,
-                                                                })
-                                                                getSingleUser()
-                                                            }
-                                                            else{
-                                                                
-                                                                toast.warning("Something went wrong", {
+                                                    <input id="file-input" accept="image/*" type="file" style={{ display: "none" }}
+
+                                                        onChange={(e) => {
+
+                                                            let formData = new FormData();
+                                                            formData.append("type", "img")
+                                                            formData.append("userId", id)
+                                                            formData.append("file", e.target.files[0])
+                                                            fileUpload(formData, jwt).then(d => {
+                                                                // setOpenModal(false)
+                                                                if (d.status === 200) {
+                                                                    toast.success("img uploaded successfully", {
+                                                                        position: toast.POSITION.TOP_CENTER,
+                                                                        autoClose: 2000,
+                                                                        pauseOnHover: false,
+                                                                    })
+                                                                    getSingleUser()
+                                                                }
+                                                                else {
+
+                                                                    toast.warning("Something went wrong", {
+                                                                        position: toast.POSITION.TOP_CENTER,
+                                                                        autoClose: 2000,
+                                                                        pauseOnHover: false,
+                                                                    });
+                                                                }
+                                                            }).catch(err => {
+                                                                console.log(err.response.data.message);
+                                                                toast.warning(err?.response?.data?.message || "Something went wrong", {
                                                                     position: toast.POSITION.TOP_CENTER,
                                                                     autoClose: 2000,
                                                                     pauseOnHover: false,
                                                                 });
-                                                            }
-                                                        }).catch(err=> {
-                                                            console.log(err.response.data.message);
-                                                            toast.warning(err?.response?.data?.message||"Something went wrong", {
-                                                                position: toast.POSITION.TOP_CENTER,
-                                                                autoClose: 2000,
-                                                                pauseOnHover: false,
-                                                            });
-                                                        })
-                                                    }}
-                                                />                                                    
-                                                    </div>
+                                                            })
+                                                        }}
+                                                    />
+                                                </div>
                                                 {/* </a> */}
                                             </div>
                                         </div>
@@ -594,9 +592,9 @@ const Profile = () => {
                                                             ) : (
                                                                 <>
                                                                     <TextField
-                                                                    label="Frist Name"
-                                                                    size="small"
-                                                                    sx={{width:.7}}
+                                                                        label="Frist Name"
+                                                                        size="small"
+                                                                        sx={{ width: .7 }}
                                                                         type="text"
                                                                         name="firstName"
                                                                         placeholder="firstame"
@@ -610,9 +608,9 @@ const Profile = () => {
                                                                     <br />
 
                                                                     <TextField
-                                                                    label="Last Name"
-                                                                    size="small"
-                                                                    sx={{width:.7}}
+                                                                        label="Last Name"
+                                                                        size="small"
+                                                                        sx={{ width: .7 }}
 
                                                                         style={{ marginTop: "10px" }}
                                                                         type="text"
@@ -630,15 +628,15 @@ const Profile = () => {
 
                                                             {/* {userData?.firstName} {userData?.lastName} */}
                                                         </h3>
-                                                        {!cardEdit.main ? (<small>{userData?.designation?.name} {`(${roles.length && roles?.find(r=> userData.role._id === r._id).alias})`}</small>)
+                                                        {!cardEdit.main ? (<small>{userData?.designation?.name} {`(${roles.length && roles?.find(r => userData.role._id === r._id).alias})`}</small>)
                                                             : (
                                                                 <>
                                                                     <br />
                                                                     <Select name="designation"
-                                                                    label="Select designation"
-                                                                    size="small"
-                                                                    sx={{width: .7}}
-                                                                    value={mainInfo?.designation}
+                                                                        label="Select designation"
+                                                                        size="small"
+                                                                        sx={{ width: .7 }}
+                                                                        value={mainInfo?.designation}
                                                                         onChange={(e) => {
                                                                             setMainInfo({ ...mainInfo, designation: e.target.value })
 
@@ -647,7 +645,7 @@ const Profile = () => {
 
                                                                         {designation.map((val, ind) => {
                                                                             return (
-                                                                                <MenuItem  key={val._id} value={val?._id}>{val?.name}</MenuItem>
+                                                                                <MenuItem key={val._id} value={val?._id}>{val?.name}</MenuItem>
                                                                             )
                                                                         })}
                                                                     </Select>
@@ -655,10 +653,10 @@ const Profile = () => {
                                                                     <br />
 
                                                                     <Select name="role"
-                                                                    label="Select Role"
-                                                                    size="small"
-                                                                    sx={{width: .7}}
-                                                                    // value={mainInfo?.designation}
+                                                                        label="Select Role"
+                                                                        size="small"
+                                                                        sx={{ width: .7 }}
+                                                                        // value={mainInfo?.designation}
                                                                         onChange={(e) => {
                                                                             setMainInfo({ ...mainInfo, role: e.target.value })
 
@@ -667,7 +665,7 @@ const Profile = () => {
 
                                                                         {roles?.map((val, ind) => {
                                                                             return (
-                                                                                <MenuItem  key={val._id} value={val?._id}>{val?.alias}</MenuItem>
+                                                                                <MenuItem key={val._id} value={val?._id}>{val?.alias}</MenuItem>
                                                                             )
                                                                         })}
                                                                     </Select>
@@ -676,12 +674,12 @@ const Profile = () => {
                                                         }
 
                                                         <div class="staff-id">
-                                                            {!cardEdit.main ?`Employee ID : ${userData?.empId }` : <>
+                                                            {!cardEdit.main ? `Employee ID : ${userData?.empId}` : <>
                                                                 <TextField
-                                                                size="small"
-                                                                sx={{maxWidth: .7}}
-                                                                label="Employee Id"
-                                                                    style={{ marginTop: "10px", width:"70%" }}
+                                                                    size="small"
+                                                                    sx={{ maxWidth: .7 }}
+                                                                    label="Employee Id"
+                                                                    style={{ marginTop: "10px", width: "70%" }}
 
                                                                     type="text"
                                                                     name="empId"
@@ -694,12 +692,12 @@ const Profile = () => {
                                                             </>}
                                                         </div>
                                                         <div class="small doj ">
-                                                            
-                                                            {!cardEdit.main ? `Date of Join : ${moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")} `: <>
+
+                                                            {!cardEdit.main ? `Date of Join : ${moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")} ` : <>
 
                                                                 <TextField
                                                                     style={{ marginTop: "10px" }}
-                                                                    sx={{width:.7}}
+                                                                    sx={{ width: .7 }}
                                                                     size="small"
                                                                     type="date"
                                                                     name="joiningDate"
@@ -716,9 +714,9 @@ const Profile = () => {
                                                 </div>
                                                 <div class="col-md-7" >
                                                     <ul class="personal-info" >
-                                                        
+
                                                         <li>
-                                                            
+
                                                             {!cardEdit.main ? <div>
                                                                 {/* <div class="title">Email:</div> */}
                                                                 Email : {" "}
@@ -731,7 +729,7 @@ const Profile = () => {
                                                                     label="Email"
                                                                     name="email"
                                                                     size="small"
-                                                                    sx={{width: .5}}
+                                                                    sx={{ width: .5 }}
                                                                     value={mainInfo?.email}
                                                                     onChange={(e) => {
                                                                         handleFields(e, "main");
@@ -740,47 +738,47 @@ const Profile = () => {
                                                             </>}
 
                                                         </li>
-                                                        {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
-                                (
+                                                        {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) &&
+                                                            (
 
-                                                        <li>
-                                                            {!cardEdit.main ? <div>
-                                                            {/* <div class="title">Birthday:</div> */}
-                                                            Birthday : {" "}
-                                                                <span class="__cf_email__">
-                                                                    {mainInfo?.birthDate ?moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD") : "N/A"}
-                                                                </span>
-                                                            </div> : <>
-                                                                <TextField
-                                                                    sx={{width: .5}}
+                                                                <li>
+                                                                    {!cardEdit.main ? <div>
+                                                                        {/* <div class="title">Birthday:</div> */}
+                                                                        Birthday : {" "}
+                                                                        <span class="__cf_email__">
+                                                                            {mainInfo?.birthDate ? moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD") : "N/A"}
+                                                                        </span>
+                                                                    </div> : <>
+                                                                        <TextField
+                                                                            sx={{ width: .5 }}
 
-                                                                    type="date"
-                                                                    name="birthDate"
-                                                                    size="small"
-                                                                    value={moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD")}
-                                                                    onChange={(e) => {
-                                                                        handleFields(e, "main");
-                                                                    }}
-                                                                />
-                                                            </>}
-                                                            
-                                                        </li>
-                                )}
+                                                                            type="date"
+                                                                            name="birthDate"
+                                                                            size="small"
+                                                                            value={moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD")}
+                                                                            onChange={(e) => {
+                                                                                handleFields(e, "main");
+                                                                            }}
+                                                                        />
+                                                                    </>}
 
-                                {
-                                    (userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
-                                    (
-    
-                                                            <li>
-                                                                <Button
-                                                                variant="contained"
-                                                                onClick={()=> {
-                                                                    
-                                                                       getCv()
-                                                                }} >View CV</Button>
-                                                            </li>
-                                    )
-                                }
+                                                                </li>
+                                                            )}
+
+                                                        {
+                                                            (userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) &&
+                                                            (
+
+                                                                <li>
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        onClick={() => {
+
+                                                                            getCv()
+                                                                        }} >View CV</Button>
+                                                                </li>
+                                                            )
+                                                        }
                                                     </ul>
                                                 </div>
                                             </div>
@@ -790,51 +788,51 @@ const Profile = () => {
                                             class="edit-icon" href="#"></a> */}
                                             {
                                                 userInfoData?.role.alias === "Admin" ? (
-                                                !cardEdit.main ? (
-                                                    <Tooltip title="Edit">
-                                                        <EditIcon
-                                                            className="edit-icon"
-                                                            onClick={() => {
-                                                                setCardEdit({ ...cardEdit, main: true });
-                                                            }}
-                                                        />
-                                                    </Tooltip>
-                                                ) : (
-                                                    <>
-                                                        <Tooltip title="Save" sx={{ marginLeft: "10px" }}>
-                                                            <SendIcon
-                                                            sx={{
-                                                                display: (mainInfo.birthDate && 
-                                                                    mainInfo.designation &&
-                                                                    mainInfo.email &&
-                                                                    mainInfo.empId &&
-                                                                    mainInfo.firstName &&
-                                                                    mainInfo.lastName &&
-                                                                    mainInfo.joiningDate 
-                                                                    )? "block": "none"
-                                                            }}
-
+                                                    !cardEdit.main ? (
+                                                        <Tooltip title="Edit">
+                                                            <EditIcon
                                                                 className="edit-icon"
                                                                 onClick={() => {
-                                                                    updateUser("main");
-                                                                    // console.log("main info", mainInfo);
-                                                                    setCardEdit({ ...cardEdit, main: false });
+                                                                    setCardEdit({ ...cardEdit, main: true });
                                                                 }}
                                                             />
                                                         </Tooltip>
-                                                        <Tooltip title="Cancel">
-                                                            <CancelIcon
-                                                                className="edit-icon"
-                                                                onClick={() =>
-                                                                    setCardEdit({ ...cardEdit, main: false })
-                                                                }
-                                                            />
-                                                        </Tooltip>
-                                                    </>
-                                                )
-                                            ) : (
-                                                ""
-                                            )}
+                                                    ) : (
+                                                        <>
+                                                            <Tooltip title="Save" sx={{ marginLeft: "10px" }}>
+                                                                <SendIcon
+                                                                    sx={{
+                                                                        display: (mainInfo.birthDate &&
+                                                                            mainInfo.designation &&
+                                                                            mainInfo.email &&
+                                                                            mainInfo.empId &&
+                                                                            mainInfo.firstName &&
+                                                                            mainInfo.lastName &&
+                                                                            mainInfo.joiningDate
+                                                                        ) ? "block" : "none"
+                                                                    }}
+
+                                                                    className="edit-icon"
+                                                                    onClick={() => {
+                                                                        updateUser("main");
+                                                                        // console.log("main info", mainInfo);
+                                                                        setCardEdit({ ...cardEdit, main: false });
+                                                                    }}
+                                                                />
+                                                            </Tooltip>
+                                                            <Tooltip title="Cancel">
+                                                                <CancelIcon
+                                                                    className="edit-icon"
+                                                                    onClick={() =>
+                                                                        setCardEdit({ ...cardEdit, main: false })
+                                                                    }
+                                                                />
+                                                            </Tooltip>
+                                                        </>
+                                                    )
+                                                ) : (
+                                                    ""
+                                                )}
                                         </div>
                                     </div>
                                 </div>
@@ -893,21 +891,21 @@ const Profile = () => {
                                             <ul class="personal-info">
                                                 {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) && (
 
-                                                <li>
-                                                    <div class="title">Phone</div>
-                                                    {!cardEdit.intro ? (
-                                                        <div>{userData?.personalPhone}</div>
-                                                    ) : (
-                                                        <input
-                                                            type="text"
-                                                            name="personalPhone"
-                                                            value={intro.personalPhone}
-                                                            onChange={(e) => {
-                                                                handleFields(e, "intro");
-                                                            }}
-                                                        />
-                                                    )}
-                                                </li>
+                                                    <li>
+                                                        <div class="title">Phone</div>
+                                                        {!cardEdit.intro ? (
+                                                            <div>{userData?.personalPhone}</div>
+                                                        ) : (
+                                                            <input
+                                                                type="text"
+                                                                name="personalPhone"
+                                                                value={intro.personalPhone}
+                                                                onChange={(e) => {
+                                                                    handleFields(e, "intro");
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </li>
                                                 )}
                                                 <li>
                                                     <div class="title">Nationality</div>
@@ -939,27 +937,27 @@ const Profile = () => {
                                                         />
                                                     )}
                                                 </li>
-                                                    {
-                                                        (userInfoData?.role?.alias === "Admin" || userInfoData?._id.toString() === id)
-                                                        && (
+                                                {
+                                                    (userInfoData?.role?.alias === "Admin" || userInfoData?._id.toString() === id)
+                                                    && (
 
-                                                <li>
-                                                    <div class="title">Marital status</div>
-                                                    {!cardEdit.intro ? (
-                                                        <div>{userData?.maritalStatus}</div>
-                                                    ) : (
-                                                        <input
-                                                            type="text"
-                                                            name="maritalStatus"
-                                                            value={intro.maritalStatus}
-                                                            onChange={(e) => {
-                                                                handleFields(e, "intro");
-                                                            }}
-                                                        />
-                                                    )}
-                                                </li>
-                                                        )
-                                                    }
+                                                        <li>
+                                                            <div class="title">Marital status</div>
+                                                            {!cardEdit.intro ? (
+                                                                <div>{userData?.maritalStatus}</div>
+                                                            ) : (
+                                                                <input
+                                                                    type="text"
+                                                                    name="maritalStatus"
+                                                                    value={intro.maritalStatus}
+                                                                    onChange={(e) => {
+                                                                        handleFields(e, "intro");
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </li>
+                                                    )
+                                                }
                                                 <li>
                                                     <div class="title">Blood Group</div>
                                                     {!cardEdit.intro ? (
@@ -982,12 +980,12 @@ const Profile = () => {
                             </div>
                             {/* skills And Goal Setting */}
                             <div class="row">
-                                <div class={`col-md-${(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) ? "6": "12" } d-flex`}>
+                                <div class={`col-md-${(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) ? "6" : "12"} d-flex`}>
                                     <div class="card profile-box flex-fill">
                                         <div class="card-body">
                                             <h3 class="card-title">
                                                 skills
-                                               
+
                                                 {userInfoData?._id.toString() === id ||
                                                     userInfoData?.role.alias === "Admin" ? (
                                                     <>
@@ -998,7 +996,7 @@ const Profile = () => {
                                                                         className="edit-icon"
                                                                         onClick={() => {
                                                                             updateUser("skills");
-                                                                            setCardEdit({...cardEdit, skills: false})
+                                                                            setCardEdit({ ...cardEdit, skills: false })
 
                                                                         }}
                                                                     />
@@ -1113,141 +1111,141 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
-                                (
-                                <div class="col-md-6 d-flex">
-                                    <div class="card profile-box flex-fill">
-                                        <div class="card-body">
-                                            <h3 class="card-title">
-                                                Goal Setting
-                                                {userInfoData?._id.toString() === id ||
-                                                    userInfoData?.role.alias === "Admin" ? (
-                                                    <>
-                                                        {cardEdit.goalSetting ? (
+                                {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) &&
+                                    (
+                                        <div class="col-md-6 d-flex">
+                                            <div class="card profile-box flex-fill">
+                                                <div class="card-body">
+                                                    <h3 class="card-title">
+                                                        Goal Setting
+                                                        {userInfoData?._id.toString() === id ||
+                                                            userInfoData?.role.alias === "Admin" ? (
                                                             <>
-                                                                <Tooltip sx={{ marginLeft: "10px" }}>
-                                                                    <SendIcon
-                                                                        className="edit-icon"
-                                                                        onClick={() => {
-                                                                            updateUser("goal");
-                                                                            setCardEdit({...cardEdit, goalSetting: false})
-                                                                        } }
-                                                                        
-                                                                    />
-                                                                </Tooltip>
-                                                                <Tooltip title="Cancel">
-                                                                    <CancelIcon
-                                                                        className="edit-icon"
-                                                                        onClick={() =>
-                                                                            setCardEdit({
-                                                                                ...cardEdit,
-                                                                                goalSetting: false,
-                                                                            })
-                                                                        }
-                                                                    />
-                                                                </Tooltip>
+                                                                {cardEdit.goalSetting ? (
+                                                                    <>
+                                                                        <Tooltip sx={{ marginLeft: "10px" }}>
+                                                                            <SendIcon
+                                                                                className="edit-icon"
+                                                                                onClick={() => {
+                                                                                    updateUser("goal");
+                                                                                    setCardEdit({ ...cardEdit, goalSetting: false })
+                                                                                }}
+
+                                                                            />
+                                                                        </Tooltip>
+                                                                        <Tooltip title="Cancel">
+                                                                            <CancelIcon
+                                                                                className="edit-icon"
+                                                                                onClick={() =>
+                                                                                    setCardEdit({
+                                                                                        ...cardEdit,
+                                                                                        goalSetting: false,
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </Tooltip>
+                                                                    </>
+                                                                ) : (
+                                                                    ""
+                                                                )}
+                                                                {!cardEdit.goalSetting && (
+                                                                    <Tooltip title="Edit" sx={{ marginLeft: "10px" }}>
+                                                                        <EditIcon
+                                                                            className="edit-icon"
+                                                                            onClick={() => {
+                                                                                setCardEdit({
+                                                                                    ...cardEdit,
+                                                                                    goalSetting: true,
+                                                                                });
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                )}
                                                             </>
                                                         ) : (
                                                             ""
                                                         )}
-                                                        {!cardEdit.goalSetting && (
-                                                            <Tooltip title="Edit" sx={{ marginLeft: "10px" }}>
-                                                                <EditIcon
-                                                                    className="edit-icon"
-                                                                    onClick={() => {
-                                                                        setCardEdit({
-                                                                            ...cardEdit,
-                                                                            goalSetting: true,
-                                                                        });
+                                                    </h3>
+                                                    <div class="experience-box">
+                                                        <ul class="experience-list">
+                                                            {goals?.map((val, ind) => {
+                                                                return (
+                                                                    <>
+                                                                        <li key={ind}>
+                                                                            <div class="experience-user">
+                                                                                <div class="before-circle"></div>
+                                                                            </div>
+                                                                            <div class="experience-content">
+                                                                                {cardEdit.goalSetting && (
+                                                                                    <Tooltip title='delete'>
+                                                                                        <DeleteIcon
+                                                                                            className="edit-icon"
+                                                                                            onClick={() =>
+                                                                                                setGoals(
+                                                                                                    goals.filter(
+                                                                                                        (val, indx) => indx !== ind
+                                                                                                    )
+                                                                                                )
+                                                                                            }
+                                                                                        />
+                                                                                    </Tooltip>
+                                                                                )}
+                                                                                <div class="timeline-content">
+                                                                                    <a href="#/" class="name">
+                                                                                        {val.goalType}
+                                                                                    </a>
+                                                                                    <div>{val.goalName}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                );
+                                                            })}
+                                                        </ul>
+
+                                                        {cardEdit.goalSetting && (
+                                                            <>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Goal Type"
+                                                                    name="goalType"
+                                                                    value={goalSettingField.goalType}
+                                                                    onChange={(e) => {
+                                                                        handleFields(e, "goal");
                                                                     }}
                                                                 />
-                                                            </Tooltip>
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </h3>
-                                            <div class="experience-box">
-                                                <ul class="experience-list">
-                                                    {goals?.map((val, ind) => {
-                                                        return (
-                                                            <>
-                                                                <li key={ind}>
-                                                                    <div class="experience-user">
-                                                                        <div class="before-circle"></div>
-                                                                    </div>
-                                                                    <div class="experience-content">
-                                                                        {cardEdit.goalSetting && (
-                                                                            <Tooltip title='delete'>
-                                                                                <DeleteIcon
-                                                                                    className="edit-icon"
-                                                                                    onClick={() =>
-                                                                                        setGoals(
-                                                                                            goals.filter(
-                                                                                                (val, indx) => indx !== ind
-                                                                                            )
-                                                                                        )
-                                                                                    }
-                                                                                />
-                                                                            </Tooltip>
-                                                                        )}
-                                                                        <div class="timeline-content">
-                                                                            <a href="#/" class="name">
-                                                                                {val.goalType}
-                                                                            </a>
-                                                                            <div>{val.goalName}</div>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
+                                                                <br />
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Goal Names"
+                                                                    name="goalName"
+                                                                    style={{
+                                                                        marginTop: "10px",
+                                                                        marginBottom: "10px",
+                                                                    }}
+                                                                    value={goalSettingField.goalName}
+                                                                    onChange={(e) => {
+                                                                        handleFields(e, "goal");
+                                                                    }}
+                                                                />
+                                                                <br />
+                                                                <Button
+                                                                    disabled={(goalSettingField.goalName && goalSettingField.goalType) ? false : true}
+                                                                    variant="contained"
+                                                                    onClick={() => {
+                                                                        addGoals();
+                                                                    }}
+                                                                >
+                                                                    Add
+                                                                </Button>
                                                             </>
-                                                        );
-                                                    })}
-                                                </ul>
-
-                                                {cardEdit.goalSetting && (
-                                                    <>
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Goal Type"
-                                                            name="goalType"
-                                                            value={goalSettingField.goalType}
-                                                            onChange={(e) => {
-                                                                handleFields(e, "goal");
-                                                            }}
-                                                        />
-                                                        <br />
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Goal Names"
-                                                            name="goalName"
-                                                            style={{
-                                                                marginTop: "10px",
-                                                                marginBottom: "10px",
-                                                            }}
-                                                            value={goalSettingField.goalName}
-                                                            onChange={(e) => {
-                                                                handleFields(e, "goal");
-                                                            }}
-                                                        />
-                                                        <br />
-                                                        <Button
-                                                            disabled={(goalSettingField.goalName && goalSettingField.goalType) ? false : true}
-                                                            variant="contained"
-                                                            onClick={() => {
-                                                                addGoals();
-                                                            }}
-                                                        >
-                                                            Add
-                                                        </Button>
-                                                    </>
-                                                )}
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                )}
+                                    )}
                             </div>
                             {/* Education And Experience */}
                             <div class="row">
@@ -1263,9 +1261,8 @@ const Profile = () => {
                                                             <>
                                                                 <Tooltip sx={{ marginLeft: "10px" }}>
                                                                     <SendIcon className="edit-icon"
-                                                                        onClick={() => 
-                                                                          {  updateUser("eduInfo"); setCardEdit({...cardEdit, eduInfo: false})}
-                                                                    }
+                                                                        onClick={() => { updateUser("eduInfo"); setCardEdit({ ...cardEdit, eduInfo: false }) }
+                                                                        }
                                                                     />
                                                                 </Tooltip>
                                                                 <Tooltip title='cancel'>
@@ -1311,13 +1308,13 @@ const Profile = () => {
                                                                         {cardEdit.eduInfo && (
                                                                             <Tooltip title='delete'>
                                                                                 <DeleteIcon className="edit-icon"
-                                                                                onClick={() =>
-                                                                                    setEducations(
-                                                                                        educations.filter(
-                                                                                            (val, indx) => indx !== ind
+                                                                                    onClick={() =>
+                                                                                        setEducations(
+                                                                                            educations.filter(
+                                                                                                (val, indx) => indx !== ind
+                                                                                            )
                                                                                         )
-                                                                                    )
-                                                                                }
+                                                                                    }
                                                                                 />
                                                                             </Tooltip>
                                                                         )}
@@ -1342,7 +1339,7 @@ const Profile = () => {
                                                         {/* <input type="text" placeholder='Institution' name="institution" value={educationField.institution} onChange={(e) => {
                                                             handleFields(e, 'eduInfo')
                                                         }} /> */}
-<TextField
+                                                        <TextField
                                                             id="outlined-search"
                                                             label="Degree / Certifiacation*"
                                                             name="degree"
@@ -1428,7 +1425,7 @@ const Profile = () => {
                                                             </DemoContainer>
                                                         </LocalizationProvider>
                                                         {/* <br /> */}
-                                                        
+
                                                         <TextField
                                                             id="outlined-search"
                                                             label="Location"
@@ -1449,7 +1446,7 @@ const Profile = () => {
 
                                                         <Button
                                                             disabled={(educationField.institution &&
-                                                                educationField.degree 
+                                                                educationField.degree
                                                             ) ? false : true}
                                                             sx={{
                                                                 // width: .5
@@ -1479,7 +1476,7 @@ const Profile = () => {
                                                             <>
                                                                 <Tooltip sx={{ marginLeft: "10px" }}>
                                                                     <SendIcon className="edit-icon"
-                                                                        onClick={() => {updateUser("experiences"); setCardEdit({...cardEdit, experience: false})}}
+                                                                        onClick={() => { updateUser("experiences"); setCardEdit({ ...cardEdit, experience: false }) }}
                                                                     />
                                                                 </Tooltip>
                                                                 <Tooltip title='cancel'>
@@ -1531,26 +1528,26 @@ const Profile = () => {
                                                                         {cardEdit.experience && (
                                                                             <Tooltip title="delete">
                                                                                 <DeleteIcon className="edit-icon"
-                                                                                onClick={() =>
-                                                                                    setExperiences(
-                                                                                        experinces.filter(
-                                                                                            (val, indx) => indx !== ind
+                                                                                    onClick={() =>
+                                                                                        setExperiences(
+                                                                                            experinces.filter(
+                                                                                                (val, indx) => indx !== ind
+                                                                                            )
                                                                                         )
-                                                                                    )
-                                                                                }
-                                                                                 />
+                                                                                    }
+                                                                                />
                                                                             </Tooltip>
                                                                         )}
                                                                         <div class="timeline-content">
                                                                             <a href="#/" class="name">
-                                                                                {val?.title} {val?.contribution? "on": "at"} {val?.company}.
+                                                                                {val?.title} {val?.contribution ? "on" : "at"} {val?.company}.
                                                                             </a>
                                                                             <br />
                                                                             {val?.contribution && (
 
-                                                                            <span>
-                                                                                {val.contribution}
-                                                                            </span>
+                                                                                <span>
+                                                                                    {val.contribution}
+                                                                                </span>
                                                                             )}
                                                                             <span class="time">
                                                                                 {val?.startYear && new Date(val.startYear).toLocaleDateString()} -{" "}
@@ -1689,7 +1686,7 @@ const Profile = () => {
 
                                                         <Button
                                                             variant="contained"
-                                                            disabled={(experienceField.company  && experienceField.startYear && experienceField.location && experienceField.title) ? false : true}
+                                                            disabled={(experienceField.company && experienceField.startYear && experienceField.location && experienceField.title) ? false : true}
                                                             onClick={() => {
                                                                 addExperineces();
                                                             }}
@@ -1704,127 +1701,126 @@ const Profile = () => {
                                 </div>
                             </div>
                             {/* Leave Setting */}
-                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id ) && 
+                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) &&
                                 (
 
-                            <div class="row">
-                                <div class="col-md-12 d-flex">
-                                    <div class="card profile-box flex-fill">
-                                        <div class="card-body">
-                                            <h3 class="card-title">
-                                                Leave Setting
-                                                {userInfoData?.role.alias === "Admin" ? (
-                                                    <>
-                                                        {cardEdit.leaveSetting ? (
+                                    <div class="row">
+                                        <div class="col-md-12 d-flex">
+                                            <div class="card profile-box flex-fill">
+                                                <div class="card-body">
+                                                    <h3 class="card-title">
+                                                        Leave Setting
+                                                        {userInfoData?.role.alias === "Admin" ? (
                                                             <>
-                                                                <Tooltip title="send" sx={{ marginLeft: "10px" }}>
-                                                                    <SendIcon className="edit-icon"
-                                                                    onClick={(e)=> {
-                                                                        updateLeaveBoardSetting()
-                                                                    }}
+                                                                {cardEdit.leaveSetting ? (
+                                                                    <>
+                                                                        <Tooltip title="send" sx={{ marginLeft: "10px" }}>
+                                                                            <SendIcon className="edit-icon"
+                                                                                onClick={(e) => {
+                                                                                    updateLeaveBoardSetting()
+                                                                                }}
 
-                                                                    />
-                                                                </Tooltip>
-                                                                <Tooltip>
-                                                                    <CancelIcon
-                                                                        className="edit-icon"
-                                                                        onClick={(e) =>
-                                                                            {
-                                                                                setUpdateLeaveSettings({
-                                                                                    general: "",
-                                                                                    sick: ""
-                                                                                })
-                                                                            setCardEdit({
-                                                                                ...cardEdit,
-                                                                                leaveSetting: false,
-                                                                            })
+                                                                            />
+                                                                        </Tooltip>
+                                                                        <Tooltip>
+                                                                            <CancelIcon
+                                                                                className="edit-icon"
+                                                                                onClick={(e) => {
+                                                                                    setUpdateLeaveSettings({
+                                                                                        general: "",
+                                                                                        sick: ""
+                                                                                    })
+                                                                                    setCardEdit({
+                                                                                        ...cardEdit,
+                                                                                        leaveSetting: false,
+                                                                                    })
 
-                                                                        }
-                                                                            
-                                                                        }
-                                                                    />
-                                                                </Tooltip>
+                                                                                }
+
+                                                                                }
+                                                                            />
+                                                                        </Tooltip>
+                                                                    </>
+                                                                ) : (
+                                                                    ""
+                                                                )}
+                                                                {!cardEdit.leaveSetting && (
+                                                                    <Tooltip
+                                                                        title="Edit"
+                                                                        sx={{ marginLeft: "-10px" }}
+                                                                    >
+                                                                        <EditIcon
+                                                                            className="edit-icon"
+                                                                            onClick={() => {
+                                                                                setCardEdit({
+                                                                                    ...cardEdit,
+                                                                                    leaveSetting: true,
+                                                                                });
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                )}
                                                             </>
                                                         ) : (
                                                             ""
                                                         )}
-                                                        {!cardEdit.leaveSetting && (
-                                                            <Tooltip
-                                                                title="Edit"
-                                                                sx={{ marginLeft: "-10px" }}
-                                                            >
-                                                                <EditIcon
-                                                                    className="edit-icon"
-                                                                    onClick={() => {
-                                                                        setCardEdit({
-                                                                            ...cardEdit,
-                                                                            leaveSetting: true,
-                                                                        });
-                                                                    }}
-                                                                />
-                                                            </Tooltip>
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </h3>
-                                            <ul class="personal-info">
-                                                <li style={{ display: "flex", alignItems: "center" }}>
-                                                    <div class="title">Annual Casual Leave</div>
-                                                    <TextField
-                                                        id="outlined-search"
-                                                        // label={leaveSettings?.general? leaveSettings.general: 0}
-                                                        sx={{
-                                                            "input::placeholder": {
-                                                                fontSize: "1rem",
-                                                                color: "black",
-                                                                opacity: 1
-                                                            }
-                                                        }}
-                                                        placeholder={leaveSettings?.general}
-                                                        type="search"
-                                                        value={updateLeaveSettings?.general}
-                                                        disabled={cardEdit.leaveSetting ? false : true}
-                                                        onChange={(e)=> {
-                                                            setUpdateLeaveSettings({
-                                                                ...updateLeaveSettings,
-                                                                general: e.target.value
-                                                            })
-                                                        }}
-                                                    />
-                                                </li>
-                                                <li style={{ display: "flex", alignItems: "center" }}>
-                                                    <div class="title">Annual Sick Leave {leaveSettings.sickLeave}</div>
-                                                    <TextField
-                                                        id="outlined-search"
-                                                        sx={{
-                                                            "input::placeholder": {
-                                                                fontSize: "1rem",
-                                                                color: "black",
-                                                                opacity: 1
-                                                            }
-                                                        }}
-                                                        // label="Annual sick leave"
-                                                        placeholder={leaveSettings?.sick}
-                                                        value={updateLeaveSettings?.sick}
-                                                        type="search"
-                                                        // label={leaveSettings?.sick ? leaveSettings.sick: 0}
-                                                        disabled={cardEdit.leaveSetting ? false : true}
-                                                        onChange={(e)=> {
+                                                    </h3>
+                                                    <ul class="personal-info">
+                                                        <li style={{ display: "flex", alignItems: "center" }}>
+                                                            <div class="title">Annual Casual Leave</div>
+                                                            <TextField
+                                                                id="outlined-search"
+                                                                // label={leaveSettings?.general? leaveSettings.general: 0}
+                                                                sx={{
+                                                                    "input::placeholder": {
+                                                                        fontSize: "1rem",
+                                                                        color: "black",
+                                                                        opacity: 1
+                                                                    }
+                                                                }}
+                                                                placeholder={leaveSettings?.general}
+                                                                type="search"
+                                                                value={updateLeaveSettings?.general}
+                                                                disabled={cardEdit.leaveSetting ? false : true}
+                                                                onChange={(e) => {
+                                                                    setUpdateLeaveSettings({
+                                                                        ...updateLeaveSettings,
+                                                                        general: e.target.value
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </li>
+                                                        <li style={{ display: "flex", alignItems: "center" }}>
+                                                            <div class="title">Annual Sick Leave {leaveSettings.sickLeave}</div>
+                                                            <TextField
+                                                                id="outlined-search"
+                                                                sx={{
+                                                                    "input::placeholder": {
+                                                                        fontSize: "1rem",
+                                                                        color: "black",
+                                                                        opacity: 1
+                                                                    }
+                                                                }}
+                                                                // label="Annual sick leave"
+                                                                placeholder={leaveSettings?.sick}
+                                                                value={updateLeaveSettings?.sick}
+                                                                type="search"
+                                                                // label={leaveSettings?.sick ? leaveSettings.sick: 0}
+                                                                disabled={cardEdit.leaveSetting ? false : true}
+                                                                onChange={(e) => {
 
-                                                            setUpdateLeaveSettings({
-                                                                ...updateLeaveSettings,
-                                                                sick: e.target.value
-                                                            })
-                                                        }}
-                                                    />
-                                                </li>
-                                            </ul>
+                                                                    setUpdateLeaveSettings({
+                                                                        ...updateLeaveSettings,
+                                                                        sick: e.target.value
+                                                                    })
+                                                                }}
+                                                            />
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
                                 )}
                         </div>
                     </div>
@@ -1835,58 +1831,58 @@ const Profile = () => {
 
 
             {/* modal */}
-    <BootstrapDialog
-    onClose={handleModalClose}
-    aria-labelledby="customized-dialog-title"
-    open={openModal}
-  >
-    <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
-      Add CV
-    </BootstrapDialogTitle>
-    <DialogContent sx={{
-      display: "flex", justifyContent: "center", flexDirection: "column",
-      overflowY: "auto"
-    }}>
+            <BootstrapDialog
+                onClose={handleModalClose}
+                aria-labelledby="customized-dialog-title"
+                open={openModal}
+            >
+                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
+                    Add CV
+                </BootstrapDialogTitle>
+                <DialogContent sx={{
+                    display: "flex", justifyContent: "center", flexDirection: "column",
+                    overflowY: "auto"
+                }}>
 
-      <input  label="cv " name='file' onChange={(e)=> {
-        setFile(e.target.files[0])
-      }} accept="application/pdf"  
-      encType="multipart/form-data"
-      type="file" sx={{ minWidth: 365, maxHeight: 345, margin: "0px 20px 10px 0px" }}
-      
-      required />
-      
-    </DialogContent>
-    <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-      <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={()=> {
-        let formData = new FormData();
-        formData.append("type", "cv")
-        formData.append("userId", id)
-        formData.append("file", file)
-        fileUpload(formData, jwt).then( d => {
-            setOpenModal(false)
-            toast.success("Cv uploaded successfully", {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 2000,
-                pauseOnHover: false,
-            })
-        }).catch(err=> {
-            toast.warning(err?.response?.data?.message||"Something went wrong", {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 2000,
-                pauseOnHover: false,
-            });
-        })
-           
-      }}  >
-        Upload
-      </Button>
-    </DialogActions>
-  </BootstrapDialog>
+                    <input label="cv " name='file' onChange={(e) => {
+                        setFile(e.target.files[0])
+                    }} accept="application/pdf"
+                        encType="multipart/form-data"
+                        type="file" sx={{ minWidth: 365, maxHeight: 345, margin: "0px 20px 10px 0px" }}
+
+                        required />
+
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+                        let formData = new FormData();
+                        formData.append("type", "cv")
+                        formData.append("userId", id)
+                        formData.append("file", file)
+                        fileUpload(formData, jwt).then(d => {
+                            setOpenModal(false)
+                            toast.success("Cv uploaded successfully", {
+                                position: toast.POSITION.TOP_CENTER,
+                                autoClose: 2000,
+                                pauseOnHover: false,
+                            })
+                        }).catch(err => {
+                            toast.warning(err?.response?.data?.message || "Something went wrong", {
+                                position: toast.POSITION.TOP_CENTER,
+                                autoClose: 2000,
+                                pauseOnHover: false,
+                            });
+                        })
+
+                    }}  >
+                        Upload
+                    </Button>
+                </DialogActions>
+            </BootstrapDialog>
         </>
     );
 
-   
+
 };
 
 export default Profile;

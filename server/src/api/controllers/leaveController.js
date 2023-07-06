@@ -153,6 +153,7 @@ module.exports.getLeaveStatus = async (req, res) => {
         const userId = req.query.userId
         const userRole = req.user.role.alias
         const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear()
         if (userRole === 'Team Lead') {
             const findRequest = await Leave.aggregate([
                 {
@@ -165,13 +166,11 @@ module.exports.getLeaveStatus = async (req, res) => {
                     }
                 },
                 {
-                    $addFields: {
-                        month: { $month: "$createdAt" }
-                    }
-                },
-                {
                     $match: {
-                        month: currentMonth
+                        startDate:{
+                            $gte:new Date(`${currentYear}-03-01`),
+                            $lte:new Date(`${currentYear+1}-02-28`)
+                        }
                     }
                 },
                 {
@@ -200,7 +199,7 @@ module.exports.getLeaveStatus = async (req, res) => {
                         updatedAt: 1
                     }
                 },
-               // Populate the userId field
+                // Populate the userId field
                 {
                     $lookup: {
                         from: "users",
@@ -240,13 +239,11 @@ module.exports.getLeaveStatus = async (req, res) => {
                     }
                 },
                 {
-                    $addFields: {
-                        month: { $month: "$createdAt" }
-                    }
-                },
-                {
                     $match: {
-                        month: currentMonth
+                        startDate:{
+                            $gte:new Date(`${currentYear}-03-01`),
+                            $lte:new Date(`${currentYear+1}-02-28`)
+                        }
                     }
                 },
                 {
@@ -325,13 +322,11 @@ module.exports.getLeaveStatus = async (req, res) => {
                     }
                 },
                 {
-                    $addFields: {
-                        month: { $month: "$createdAt" }
-                    }
-                },
-                {
                     $match: {
-                        month: currentMonth
+                        startDate:{
+                            $gte:new Date(`${currentYear}-03-01`),
+                            $lte:new Date(`${currentYear+1}-02-28`)
+                        }
                     }
                 },
 
@@ -441,13 +436,13 @@ module.exports.getAllLeave = async (req, res, next) => {
         let skip = body.skip ? parseInt(body.skip) : 0;
         let args = {}
         let status = {}
-        
 
-        
+
+
 
         for (let query in body) {
-            if(body.leaveStatus.length){
-                isFullyApproved = body?.leaveStatus === "approved"? true : false 
+            if (body.leaveStatus.length) {
+                isFullyApproved = body?.leaveStatus === "approved" ? true : false
             }
             if (body['usersId'].length <= 0) {
                 args['usersId'] = [new mongoose.Types.ObjectId(req.user._id)]
@@ -468,9 +463,9 @@ module.exports.getAllLeave = async (req, res, next) => {
             {
                 $match: {
                     userId: { $in: args.usersId },
-                    startDate: {$gte: leaveStartDate},
-                    endDate: {$lte: leaveEndDate},
-                    isFullyApproved: body?.leaveStatus === "approved" ? true : false 
+                    startDate: { $gte: leaveStartDate },
+                    endDate: { $lte: leaveEndDate },
+                    isFullyApproved: body?.leaveStatus === "approved" ? true : false
                 }
 
             },
@@ -621,16 +616,16 @@ module.exports.getAllLeave = async (req, res, next) => {
     }
 }
 
-module.exports.getLeaveSummary = async (req, res, next)=> {
-    try{
+module.exports.getLeaveSummary = async (req, res, next) => {
+    try {
         console.log("body", req.body);
         const userId = req.body.userId;
-        const isUserAvailable = await User.findOne({_id: userId}).lean();
-        if(!isUserAvailable) return res.status(400).json({"message": "User Not found"});
+        const isUserAvailable = await User.findOne({ _id: userId }).lean();
+        if (!isUserAvailable) return res.status(400).json({ "message": "User Not found" });
         const year = parseInt(req.body.year) || new Date().getFullYear();
 
         const yearStartDate = new Date(`03/01/${year}`)
-        const yearEndDate = new Date(`02/28/${year+1}`)
+        const yearEndDate = new Date(`02/28/${year + 1}`)
         console.log("st", yearStartDate.toString());
         console.log("end", yearEndDate);
 
@@ -653,26 +648,26 @@ module.exports.getLeaveSummary = async (req, res, next)=> {
         const totalLeaveTaken = await Leave.aggregate([
             {
                 $match: {
-                    userId: {$in:  [new mongoose.Types.ObjectId(userId)]},
-                    startDate:{
-                        $gte:yearStartDate,
-                    } ,
-                    endDate: {$lte: yearEndDate} ,
+                    userId: { $in: [new mongoose.Types.ObjectId(userId)] },
+                    startDate: {
+                        $gte: yearStartDate,
+                    },
+                    endDate: { $lte: yearEndDate },
                     isFullyApproved: true
                 }
             },
             {
                 $group: {
                     _id: "$leaveType",
-                    total: {$sum: "$totalDay" }
+                    total: { $sum: "$totalDay" }
                 }
             }
-           
-            
-        ]) 
-        return res.status(200).json({"message": "success", "data": {"totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken}}); 
 
-    }catch(err){
+
+        ])
+        return res.status(200).json({ "message": "success", "data": { "totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken } });
+
+    } catch (err) {
         console.log(err);
         next(err)
 
@@ -750,33 +745,39 @@ module.exports.leaveStatusChange = async (req, res, next) => {
         // }
 
         let leaveDetails = await isLeaveAvailabe(leaveId, approverId, role);
-        if(!leaveDetails.length) return res.status(400).json({"message": "Data not found"})
+        if (!leaveDetails.length) return res.status(400).json({ "message": "Data not found" })
         leaveDetails = leaveDetails[0]
-        if(role === "admin") {
-            await Leave.findOneAndUpdate({_id: leaveId}, {$set: {
-                apporovedAdminId: approverId,
-                isAdminApproved: status,
-                isFullyApproved: status === "Approved"?  true: false
-            }})
-            return res.status(200).json({"message": "success"})
+        if (role === "admin") {
+            await Leave.findOneAndUpdate({ _id: leaveId }, {
+                $set: {
+                    apporovedAdminId: approverId,
+                    isAdminApproved: status,
+                    isFullyApproved: status === "Approved" ? true : false
+                }
+            })
+            return res.status(200).json({ "message": "success" })
         }
-        
-        
-        if(role === 'projectlead'){
+
+
+        if (role === 'projectlead') {
             console.log("hello");
-            await Leave.findOneAndUpdate({_id: leaveId, "approvedBySuperVisor.sId": approverId}, {$set: {
-                "approvedBySuperVisor.$.isApproved": status
+            await Leave.findOneAndUpdate({ _id: leaveId, "approvedBySuperVisor.sId": approverId }, {
+                $set: {
+                    "approvedBySuperVisor.$.isApproved": status
 
-            }})
+                }
+            })
         }
-        if(role === "teamlead"){
+        if (role === "teamlead") {
             // console.log("team lead", leaveDetails);
-          
 
-            await Leave.findOneAndUpdate({_id: leaveId, "approvedByLeader.tId": approverId}, {$set: {
-                "approvedByLeader.$.isApproved": status
 
-            }})
+            await Leave.findOneAndUpdate({ _id: leaveId, "approvedByLeader.tId": approverId }, {
+                $set: {
+                    "approvedByLeader.$.isApproved": status
+
+                }
+            })
             // console.log("l", l);
 
 
@@ -787,27 +788,27 @@ module.exports.leaveStatusChange = async (req, res, next) => {
         let allprojectLeadtrueFlag = true;
 
 
-        let details = await Leave.findOne({_id: leaveId}).lean();
+        let details = await Leave.findOne({ _id: leaveId }).lean();
 
-        for(let lead of details?.approvedByLeader){
-            if(lead.isApproved !== "Approved"){
+        for (let lead of details?.approvedByLeader) {
+            if (lead.isApproved !== "Approved") {
                 allLeadtrueFlag = false
                 break;
-            }  
+            }
         }
-        for(let lead of details?.approvedBySuperVisor){
-            if(lead.isApproved !== "Approved"){
+        for (let lead of details?.approvedBySuperVisor) {
+            if (lead.isApproved !== "Approved") {
                 allprojectLeadtrueFlag = false
                 break;
-            }  
+            }
         }
 
-        
+
         console.log("lead", allLeadtrueFlag, "super", allprojectLeadtrueFlag);
-        let updated = await Leave.findOneAndUpdate({_id: leaveId}, {$set: {isAllLeaderApproved: allLeadtrueFlag, isAllSuperVisorApproved: allprojectLeadtrueFlag}},{new: true})
+        let updated = await Leave.findOneAndUpdate({ _id: leaveId }, { $set: { isAllLeaderApproved: allLeadtrueFlag, isAllSuperVisorApproved: allprojectLeadtrueFlag } }, { new: true })
 
 
-        return res.status(200).json({"message": "Success","data": updated})
+        return res.status(200).json({ "message": "Success", "data": updated })
 
     } catch (err) {
         console.log(err);
@@ -815,50 +816,113 @@ module.exports.leaveStatusChange = async (req, res, next) => {
     }
 }
 
+// Filter the leaves
+module.exports.searchLeave = async (req, res) => {
+    try {
+
+        // const erros = validationMessages(validationResult(req).mapped());
+        // if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
+        const userId = req.body.userId
+        const leaveType = req.body.leaveType
+        const isFullyApproved = req.body.isFullyApproved
+        const startDate = req.body.startDate
+        const endDate = req.body.endDate
+        if((startDate!=='' && endDate==='') || (endDate!=='' && startDate==='')){
+            return res.status(400).json({message:"Fill Both Start Date and End Date"})
+        }
+
+        const matchQuery = {};
+        if (userId) {
+            matchQuery['userId'] = new mongoose.Types.ObjectId(userId);
+        }
+        if (leaveType) {
+            matchQuery['leaveType'] = leaveType
+            //   new monngoose.Types.ObjectId(desgntn);
+        }
+        if (isFullyApproved!=='') {
+            matchQuery['isFullyApproved'] = isFullyApproved;
+        }
+        if (startDate && endDate) {
+            firstDate = new Date(startDate).setHours(0,0,0,0)
+      lastDate = new Date(endDate).setHours(23,59,59,999)
+            matchQuery['$and'] = [{startDate:{$gte:new Date(firstDate)}},{endDate:{$lte:new Date(lastDate)}}];
+        }
+        // if (endDate) {
+        //     matchQuery['endDate'] = endDate;
+        // }
+
+        const result = await Leave.aggregate([
+               
+            { $match: matchQuery },
+            {
+                $lookup: {
+                  from: "users",
+                  localField: "userId",
+                  foreignField: "_id",
+                  as: "user"
+                }
+              },
+              {
+                $unwind: "$user"
+              },
+        ])
+        console.log(matchQuery);
+
+        return res.status(200).send(result)
+
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ "message": "Something went wrong" });
+    }
+}
 
 
 // helper 
 
-const isLeaveAvailabe = async(leaveId, approverId, role) => {
+const isLeaveAvailabe = async (leaveId, approverId, role) => {
     let matchQuery = {}
-    if(role === "admin") {
-        matchQuery=  {
-          $match:{_id: new mongoose.Types.ObjectId(leaveId), isAllLeaderApproved: true, isAllSuperVisorApproved: true}
-      }
+    if (role === "admin") {
+        matchQuery = {
+            $match: { _id: new mongoose.Types.ObjectId(leaveId), isAllLeaderApproved: true, isAllSuperVisorApproved: true }
+        }
     }
-      if(role === 'teamlead'){
-        matchQuery =  {
+    if (role === 'teamlead') {
+        matchQuery = {
             $match: {
                 $and: [
-                    {_id: new mongoose.Types.ObjectId(leaveId)},
-                    
-                    {$or: [
-                        {"approvedByLeader.tId": new mongoose.Types.ObjectId(approverId)}
-                    ]}
+                    { _id: new mongoose.Types.ObjectId(leaveId) },
+
+                    {
+                        $or: [
+                            { "approvedByLeader.tId": new mongoose.Types.ObjectId(approverId) }
+                        ]
+                    }
 
                 ]
             }
         }
-      }
-      if(role === 'projectlead'){
-        matchQuery =  {
+    }
+    if (role === 'projectlead') {
+        matchQuery = {
             $match: {
                 $and: [
-                    {_id: new mongoose.Types.ObjectId(leaveId)},
-                    
-                    {$or: [
-                        {"approvedBySuperVisor.sId": new mongoose.Types.ObjectId(approverId)}
-                    ]}
+                    { _id: new mongoose.Types.ObjectId(leaveId) },
+
+                    {
+                        $or: [
+                            { "approvedBySuperVisor.sId": new mongoose.Types.ObjectId(approverId) }
+                        ]
+                    }
 
                 ]
             }
         }
-      }
+    }
     const details = await Leave.aggregate([
         matchQuery
     ])
     return details;
-} 
+}
 
 
 function checkLeapYear(year) {
@@ -866,6 +930,6 @@ function checkLeapYear(year) {
     //three conditions to find out the leap year
     if ((0 === year % 4) && (0 !== year % 100) || (0 === year % 400)) {
         return true
-    } 
+    }
     return false
 }

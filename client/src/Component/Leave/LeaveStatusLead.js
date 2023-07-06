@@ -386,7 +386,7 @@ const LeaveStatusLead = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }} />
+                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }}  onChange={e=>console.log(e)}/>
                             </DemoContainer>
                         </LocalizationProvider>
 
