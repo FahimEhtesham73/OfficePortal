@@ -118,30 +118,20 @@ function checkLeapYear(year) {
     return false
 }
 const leaveStat = [
+   
     {
-        name: 'Annual Casual Leave',
-        amount: 11
-    },
-    {
-        name: 'Annual Sick Leave',
-        amount: 7
-    },
-    {
+        _id: "Casual",
         name: 'Casual Leave taken',
-        amount: 3
     },
     {
+        _id: "Sick",
         name: 'Sick Leave Taken',
-        amount: 2
     },
     {
-        name: 'Remaining Casual Leave',
-        amount: 8
+        _id: "Special",
+        name: 'Special Leave Taken',
     },
-    {
-        name: 'Remaining Sick Leave',
-        amount: 5
-    },
+    
 
 ]
 const YEAR = new Date().getFullYear()
@@ -280,9 +270,10 @@ const LeaveEmployee = () => {
     // ];
 
     const getLeaveSummary = async ()=> {
-        const response = await leaveSummeryApi({userId: userData._id}, jwt);
+        const response = await leaveSummeryApi({userId: userData._id, year: search.startDate.getFullYear()}, jwt);
         if(response.status === 200) {
             const responseData = await response.json();
+            console.log(responseData.data);
             setLeaveSummery(responseData.data)
         }else{
             console.log("nothing");
@@ -293,7 +284,6 @@ const LeaveEmployee = () => {
         const response = await getLeaveApi({usersId: [], ...search}, jwt);
         if(response.status === 200){
             let responseData = await response.json()
-            setLeaveSummery(responseData.data)
             console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
@@ -362,15 +352,15 @@ const LeaveEmployee = () => {
                     })}
                 </Grid> */}
                 <Grid container spacing={3} >
-                    {leaveSummery?.totalTaken?.map((val, ind) => {
+                    {leaveStat?.map((val, ind) => {
                         // margin: "10px 20px 20px 0px",
                         return (
 
                             <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
                                 <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?._id.toUpperCase() || 0 }</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.total || 0}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.name}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{leaveSummery?.totalTaken?.find(v=> v._id === val._id)?.total || 0}</Typography>
                                     </Box>
                                 </Card>
                             </Grid>
@@ -449,7 +439,7 @@ const LeaveEmployee = () => {
 
                     </Grid> */}
                     <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={getLeaveData}>Search</Button>
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={()=> {getLeaveData(); getLeaveSummary()}}>Search</Button>
                     </Grid>
                 </Grid>
             </Box>

@@ -447,7 +447,11 @@ module.exports.getAllLeave = async (req, res, next) => {
 
         for (let query in body) {
             if(body.leaveStatus.length){
-                isFullyApproved = body?.leaveStatus === "approved"? true : false 
+                status.isFullyApproved = body?.leaveStatus === "approved"? true : false 
+            }
+            if(body.leaveType.length){
+                status.leaveType = body?.leaveType
+
             }
             if (body['usersId'].length <= 0) {
                 args['usersId'] = [new mongoose.Types.ObjectId(req.user._id)]
@@ -470,7 +474,7 @@ module.exports.getAllLeave = async (req, res, next) => {
                     userId: { $in: args.usersId },
                     startDate: {$gte: leaveStartDate},
                     endDate: {$lte: leaveEndDate},
-                    isFullyApproved: body?.leaveStatus === "approved" ? true : false 
+                    ...status
                 }
 
             },
@@ -478,9 +482,12 @@ module.exports.getAllLeave = async (req, res, next) => {
                 $skip: parseInt(limit * skip)
             },
 
+
             {
                 $limit: limit
             },
+
+            {$sort: {"startDate": -1}},
             {
                 $lookup: {
                     from: 'users',
@@ -623,7 +630,6 @@ module.exports.getAllLeave = async (req, res, next) => {
 
 module.exports.getLeaveSummary = async (req, res, next)=> {
     try{
-        console.log("body", req.body);
         const userId = req.body.userId;
         const isUserAvailable = await User.findOne({_id: userId}).lean();
         if(!isUserAvailable) return res.status(400).json({"message": "User Not found"});
@@ -649,7 +655,7 @@ module.exports.getLeaveSummary = async (req, res, next)=> {
             }
         ]);
 
-
+        
         const totalLeaveTaken = await Leave.aggregate([
             {
                 $match: {
@@ -667,9 +673,11 @@ module.exports.getLeaveSummary = async (req, res, next)=> {
                     total: {$sum: "$totalDay" }
                 }
             }
-           
-            
-        ]) 
+        ]);
+
+        let totalLeaveTakenByUser = [{_id: "Sick", total: 0}, {_id: "Casual", total: 0}, {_id: "Special", total: 0}]
+        
+        
         return res.status(200).json({"message": "success", "data": {"totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken}}); 
 
     }catch(err){

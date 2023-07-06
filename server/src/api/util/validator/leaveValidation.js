@@ -17,13 +17,7 @@ module.exports.createOrUpdateValidation = [
     body("leaveAmount").isNumeric().customSanitizer(v=> Number(v))
 ]
 
-// _id: '6494071ed97efce47d57cf0a',
-// userId: '642d4a3d362e3543b1bddc93',
-// leaveType: 'Sick',
-// startDate: '2023-06-22T18:00:00.000Z',
-// endDate: '2023-06-22T18:00:00.000Z',
-// totalDay: 0.5,
-// leaveReason: 'shorir betha barse'
+
 module.exports.updateLeveDetailsValidation = [
     body("_id").isMongoId(),
     body("userId").isMongoId(),
@@ -36,3 +30,20 @@ module.exports.updateLeveDetailsValidation = [
     body("leaveReason").notEmpty().isString(),
 
 ]
+
+module.exports.getAllLeave = [
+    body("leaveType").custom(v=> typeof v === "string"),
+    body("limit").custom(v=> typeof v === 'number').customSanitizer(v=> Number(v)),
+    body("skip").custom(v=> typeof v === 'number').customSanitizer(v=> Number(v)),
+    body("startDate").custom(v=> isDateString(v)),
+    body("endDate").custom(v=> isDateString(v)),
+
+]
+
+function isDateString(v){
+    if (isNaN(v)) {
+        return false;
+    } else {
+        return true;
+    }
+}
