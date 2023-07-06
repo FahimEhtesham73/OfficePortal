@@ -153,11 +153,15 @@ module.exports.createLeaveSv = async (req, res) => {
 module.exports.getLeaveStatus = async (req, res) => {
     try {
         const userId = req.query.userId
+        const pageNumber = parseInt(req.query.pageNumber)
+        const pageSize = parseInt(req.query.pageSize)
         const userRole = req.user.role.alias
-        const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear()
+        const lepYearDay = checkLeapYear(currentYear + 1) ? 29 : 28
         if (userRole === 'Team Lead') {
             const findRequest = await Leave.aggregate([
+
+
                 {
                     $match: {
                         $and: [
@@ -167,11 +171,12 @@ module.exports.getLeaveStatus = async (req, res) => {
 
                     }
                 },
+
                 {
                     $match: {
-                        startDate:{
-                            $gte:new Date(`${currentYear}-03-01`),
-                            $lte:new Date(`${currentYear+1}-02-28`)
+                        startDate: {
+                            $gte: new Date(`${currentYear}-03-01`),
+                            $lte: new Date(`${currentYear + 1}-02-${lepYearDay}`)
                         }
                     }
                 },
@@ -224,7 +229,25 @@ module.exports.getLeaveStatus = async (req, res) => {
                         leaveReason: 1,
                         totalDay: 1,
                     }
+                },
+
+                {
+                    $facet: {
+                        totalCount: [{ $count: "count" }],
+                        data: [
+                            { $skip: (pageNumber - 1) * pageSize },
+                            { $limit: pageSize }
+                        ]
+                    }
+                },
+
+                {
+                    $project: {
+                        totalCount: { $arrayElemAt: ["$totalCount.count", 0] },
+                        data: 1
+                    }
                 }
+
             ])
             return res.status(200).send(findRequest)
         }
@@ -242,9 +265,9 @@ module.exports.getLeaveStatus = async (req, res) => {
                 },
                 {
                     $match: {
-                        startDate:{
-                            $gte:new Date(`${currentYear}-03-01`),
-                            $lte:new Date(`${currentYear+1}-02-28`)
+                        startDate: {
+                            $gte: new Date(`${currentYear}-03-01`),
+                            $lte: new Date(`${currentYear + 1}-02-${lepYearDay}`)
                         }
                     }
                 },
@@ -307,6 +330,22 @@ module.exports.getLeaveStatus = async (req, res) => {
                         totalDay: 1,
                         approvedBy: 1
                     }
+                },
+                {
+                    $facet: {
+                        totalCount: [{ $count: "count" }],
+                        data: [
+                            { $skip: (pageNumber - 1) * pageSize },
+                            { $limit: pageSize }
+                        ]
+                    }
+                },
+
+                {
+                    $project: {
+                        totalCount: { $arrayElemAt: ["$totalCount.count", 0] },
+                        data: 1
+                    }
                 }
             ])
             return res.status(200).send(findRequest)
@@ -325,9 +364,9 @@ module.exports.getLeaveStatus = async (req, res) => {
                 },
                 {
                     $match: {
-                        startDate:{
-                            $gte:new Date(`${currentYear}-03-01`),
-                            $lte:new Date(`${currentYear+1}-02-28`)
+                        startDate: {
+                            $gte: new Date(`${currentYear}-03-01`),
+                            $lte: new Date(`${currentYear + 1}-02-${lepYearDay}`)
                         }
                     }
                 },
@@ -375,12 +414,29 @@ module.exports.getLeaveStatus = async (req, res) => {
                         approvedByLeader: "$approvedByLeader.firstName"
                     }
                 },
+                {
+                    $facet: {
+                        totalCount: [{ $count: "count" }],
+                        data: [
+                            { $skip: (pageNumber - 1) * pageSize },
+                            { $limit: pageSize }
+                        ]
+                    }
+                },
+
+                {
+                    $project: {
+                        totalCount: { $arrayElemAt: ["$totalCount.count", 0] },
+                        data: 1
+                    }
+                }
 
             ])
             return res.status(200).send(findRequest)
         }
 
     } catch (e) {
+        console.log(e);
         return res.status(500).json({ message: "Something Went Wrong" })
     }
 }
@@ -413,6 +469,7 @@ module.exports.createUserLeaveAmount = async (req, res, next) => {
         next(err)
     }
 }
+
 module.exports.getLeaveBoardAmount = async (req, res, next) => {
     try {
         const userId = req.query.userId;
@@ -443,10 +500,10 @@ module.exports.getAllLeave = async (req, res, next) => {
 
 
         for (let query in body) {
-            if(body.leaveStatus.length){
-                status.isFullyApproved = body?.leaveStatus === "approved"? true : false 
+            if (body.leaveStatus.length) {
+                status.isFullyApproved = body?.leaveStatus === "approved" ? true : false
             }
-            if(body.leaveType.length){
+            if (body.leaveType.length) {
                 status.leaveType = body?.leaveType
 
             }
@@ -469,8 +526,8 @@ module.exports.getAllLeave = async (req, res, next) => {
             {
                 $match: {
                     userId: { $in: args.usersId },
-                    startDate: {$gte: leaveStartDate},
-                    endDate: {$lte: leaveEndDate},
+                    startDate: { $gte: leaveStartDate },
+                    endDate: { $lte: leaveEndDate },
                     ...status
                 }
 
@@ -484,7 +541,7 @@ module.exports.getAllLeave = async (req, res, next) => {
                 $limit: limit
             },
 
-            {$sort: {"startDate": -1}},
+            { $sort: { "startDate": -1 } },
             {
                 $lookup: {
                     from: 'users',
@@ -625,8 +682,8 @@ module.exports.getAllLeave = async (req, res, next) => {
     }
 }
 
-module.exports.getLeaveSummary = async (req, res, next)=> {
-    try{
+module.exports.getLeaveSummary = async (req, res, next) => {
+    try {
         const userId = req.body.userId;
         const isUserAvailable = await User.findOne({ _id: userId }).lean();
         if (!isUserAvailable) return res.status(400).json({ "message": "User Not found" });
@@ -652,7 +709,7 @@ module.exports.getLeaveSummary = async (req, res, next)=> {
             }
         ]);
 
-        
+
         const totalLeaveTaken = await Leave.aggregate([
             {
                 $match: {
@@ -672,13 +729,13 @@ module.exports.getLeaveSummary = async (req, res, next)=> {
             }
         ]);
 
-        let totalLeaveTakenByUser = [{_id: "Sick", total: 0}, {_id: "Casual", total: 0}, {_id: "Special", total: 0}]
-        
-        
-        return res.status(200).json({"message": "success", "data": {"totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken}}); 
+        let totalLeaveTakenByUser = [{ _id: "Sick", total: 0 }, { _id: "Casual", total: 0 }, { _id: "Special", total: 0 }]
 
 
-      
+        return res.status(200).json({ "message": "success", "data": { "totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken } });
+
+
+
     } catch (err) {
         console.log(err);
         next(err)
@@ -835,14 +892,18 @@ module.exports.searchLeave = async (req, res) => {
 
         // const erros = validationMessages(validationResult(req).mapped());
         // if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
-        console.log(req.body);
+        const userRole = req.user.role.alias
+        const selfId = req.query.selfId
         const userId = req.body.userId
         const leaveType = req.body.leaveType
         const isFullyApproved = req.body.isFullyApproved
         const startDate = req.body.startDate
         const endDate = req.body.endDate
-        if((startDate!=='' && endDate==='') || (endDate!=='' && startDate==='')){
-            return res.status(400).json({message:"Fill Both Start Date and End Date"})
+        const pageNumber = parseInt(req.query.pageNumber)
+        const pageSize = parseInt(req.query.pageSize)
+
+        if ((startDate !== '' && endDate === '') || (endDate !== '' && startDate === '')) {
+            return res.status(400).json({ message: "Fill Both Start Date and End Date" })
         }
 
         const matchQuery = {};
@@ -853,32 +914,144 @@ module.exports.searchLeave = async (req, res) => {
             matchQuery['leaveType'] = leaveType
             //   new monngoose.Types.ObjectId(desgntn);
         }
-        if (isFullyApproved!=='') {
+        if (isFullyApproved !== '') {
             matchQuery['isFullyApproved'] = isFullyApproved;
         }
         if (startDate && endDate) {
-            firstDate = new Date(startDate).setHours(0,0,0,0)
-      lastDate = new Date(endDate).setHours(23,59,59,999)
-            matchQuery['$and'] = [{startDate:{$gte:new Date(firstDate)}},{endDate:{$lte:new Date(lastDate)}}];
+            firstDate = new Date(startDate).setHours(0, 0, 0, 0)
+            lastDate = new Date(endDate).setHours(23, 59, 59, 999)
+            matchQuery['$and'] = [{ startDate: { $gte: new Date(firstDate) } }, { endDate: { $lte: new Date(lastDate) } }];
         }
-        // if (endDate) {
-        //     matchQuery['endDate'] = endDate;
-        // }
+
+        var initalMatchQuery = {}
+        var approvedProjection = {}
+        const project = {
+            $project: {
+                _id: 1,
+                userId: 1,
+                leaveType: 1,
+                isAllLeaderApproved: 1,
+                isAdminApproved: 1,
+                isAllSuperVisorApproved: 1,
+                startDate: 1,
+                endDate: 1,
+                isFullyApproved: 1,
+                leaveReason: 1,
+                totalDay: 1,
+                createdBy: 1,
+                updatedBy: 1,
+                createdAt: 1,
+                updatedAt: 1
+            }
+        }
+
+        if (userRole === 'Team Lead') {
+            initalMatchQuery = {
+                $match: {
+                    $and: [
+                        { 'approvedByLeader.tId': new mongoose.Types.ObjectId(selfId) },
+                        { 'userId': { $ne: new mongoose.Types.ObjectId(selfId) } }
+                    ]
+
+                }
+            }
+
+            approvedProjection = {
+                $filter: {
+                    input: "$approvedByLeader",
+                    as: "leader",
+                    cond: { $eq: ["$$leader.tId", new mongoose.Types.ObjectId(selfId)] }
+                }
+            }
+            project.$project['isApproved'] = approvedProjection
+        }
+        if (userRole === 'Project Lead') {
+            initalMatchQuery = {
+                $match: {
+                    $and: [
+                        { 'approvedBySuperVisor.sId': new mongoose.Types.ObjectId(selfId) },
+                        { 'userId': { $ne: new mongoose.Types.ObjectId(selfId) } },
+                        { 'isAllLeaderApproved': { $eq: true } }
+                    ]
+
+                }
+            }
+
+            approvedProjection = {
+                $filter: {
+                    input: "$approvedBySuperVisor",
+                    as: "superVisor",
+                    cond: { $eq: ["$$superVisor.sId", new mongoose.Types.ObjectId(selfId)] }
+                }
+            }
+            approvedProjection = {
+                $filter: {
+                    input: "$approvedByLeader",
+                    as: "leader",
+                    cond: { $eq: ["$$leader.tId", new mongoose.Types.ObjectId(selfId)] }
+                }
+            }
+            project.$project['isApproved'] = approvedProjection
+        }
+        if (userRole === 'Admin') {
+            initalMatchQuery = {
+                $match: {
+                    $and: [
+                        { 'isAllLeaderApproved': { $eq: true } },
+                        { 'isAllSuperVisorApproved': { $eq: true } },
+                        { 'userId': { $ne: new mongoose.Types.ObjectId(selfId) } }
+                    ]
+
+                }
+            }
+
+        }
 
         const result = await Leave.aggregate([
-               
+            initalMatchQuery,
             { $match: matchQuery },
+            project,
             {
                 $lookup: {
-                  from: "users",
-                  localField: "userId",
-                  foreignField: "_id",
-                  as: "user"
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "user"
                 }
-              },
-              {
+            },
+            {
                 $unwind: "$user"
-              },
+            },
+            // Project the desired fields
+            {
+                $project: {
+                    user: "$user.firstName",
+                    leaveType: 1,
+                    isApproved: '$isApproved.isApproved',
+                    startDate: 1,
+                    endDate: 1,
+                    leaveReason: 1,
+                    totalDay: 1,
+                    isAdminApproved: 1,
+
+                }
+            },
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    data: [
+                        { $skip: (pageNumber - 1) * pageSize },
+                        { $limit: pageSize }
+                    ]
+                }
+            },
+
+            {
+                $project: {
+                    totalCount: { $arrayElemAt: ["$totalCount.count", 0] },
+                    data: 1
+                }
+            }
 
         ])
         console.log(matchQuery);

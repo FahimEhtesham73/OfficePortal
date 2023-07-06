@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { styled } from '@mui/material/styles';
+import {  makeStyles } from '@material-ui/core';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -26,6 +27,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
+import Pagination from '@mui/material/Pagination';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -43,6 +45,17 @@ import userRole from '../Hook/userHook';
 import jwtDecode from 'jwt-decode';
 
 
+const PAGESIZE = 2;
+const useStyles = makeStyles((theme) => ({
+    cardWrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: "60px",
+        width: "100%",
+        flexWrap: 'wrap'
+    },
+}))
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -147,6 +160,14 @@ const LeaveStatusLead = () => {
         startDate: "",
         endDate: ""
     })
+    const [statusQuery, setStatusQuery] = useState({
+        pageSize: PAGESIZE,
+        // pageNumber: 1,
+        totalCount: 0,
+    })
+    const [pageNumber, setPageNumber] = useState(1)
+    const [isFilterApiCalling, setIsFilterApi] = useState(false);
+
 
     const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
     // For Action icon open
@@ -197,16 +218,16 @@ const LeaveStatusLead = () => {
         return { name, type, from, to, day, leaveReason, status, };
     }
 
-    const deleteAleave =  async(id)=> {
+    const deleteAleave = async (id) => {
         const response = await deleteALeaveApi(id, jwt)
-        if(response.status === 200) {
-            dispatch({type: leaveReducerState.DELETE_DATA, payload: id})
+        if (response.status === 200) {
+            dispatch({ type: leaveReducerState.DELETE_DATA, payload: id })
             toast.success("Deleted Successfully", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 1000,
                 pauseOnHover: false,
             })
-        }else{
+        } else {
             toast.warning("Unsuccess", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 1000,
@@ -222,12 +243,23 @@ const LeaveStatusLead = () => {
         createData('Faysal', 'Sick Leave', "18 Feb 2023", '18 Feb 2023', '1 day', 'Stomach Pain', 'Approved'),
         createData('Abir', 'Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Pending'),
     ];
-    const settings = [ 'Delete'];
+    const settings = ['Delete'];
     const leaveStatusSettings = ['Pending', 'Approved', 'Declined']
 
-
+    const paginationHandle = (e, v)=> {
+                // setStatusQuery({
+                //         ...statusQuery,
+                //         pageNumber: v
+                //     })
+                setPageNumber(v)
+                    if(isFilterApiCalling){
+                        searchLeave(v)
+                    }else{
+                        getLeaveStatus(v)
+                    }
+    }
     useEffect(() => {
-        getLeaveStatus()
+        getLeaveStatus(1)
         getAllUser()
     }, [])
 
@@ -248,30 +280,49 @@ const LeaveStatusLead = () => {
         }  
 
     }
-    const searchLeave = async ()=> {
-        const response = await searchLeaveApi(search, jwt);
+    const searchLeave = async (pageNumber)=> {
+        
+        
+        if ((search.startDate !== '' && search.endDate === '') || (search.endDate !== '' && search.startDate === '') || (search?.startDate > search.endDate)) {
+            
+            toast.warning("Invalid Date range", {
+                position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
+            })
+            return 
+        }
+        setIsFilterApi(true);
+        // setStatusQuery({
+        //     ...statusQuery,
+        //     pageSize: PAGESIZE,
+        //     pageNumber: pageNumber ? pageNumber: 1
+        // })
+        const response = await searchLeaveApi({search: search, pageSize: statusQuery.pageSize, pageNumber: pageNumber || 1 , selfId: decoded._id}, jwt);
         if(response.status === 200){
             const responseData = await response.json()
             console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
-                payload: responseData
+                payload: responseData[0].data
             })
+            setStatusQuery({...statusQuery, totalCount: responseData[0].totalCount})
+            
         }
     }
-    const getLeaveStatus = async () => {
-        const response = await getLeaveStatusApi(userInfo()._id, jwt);
+    const getLeaveStatus = async (pageNumber) => {
+     
+        const response = await getLeaveStatusApi({userId: userInfo()._id, pageNumber: pageNumber, pageSize: statusQuery.pageSize }, jwt);
         if (response.status === 200) {
             let responseData = await response.json();
-            console.log(responseData);
+            setStatusQuery({...statusQuery, totalCount: responseData[0].totalCount})
+            console.log("313",statusQuery);
             dispatch({
                 type: leaveReducerState.GET_DATA,
-                payload: responseData
+                payload: responseData[0].data
             })
         }
     }
 
-    const updateStatus = async(data, status) => {
+    const updateStatus = async (data, status) => {
         const requestData = {
             leaveId: data._id,
             approverId: userInfo()._id,
@@ -279,21 +330,21 @@ const LeaveStatusLead = () => {
         }
         console.log(requestData);
         // return
-        const response = await updateALeaveStatusAPI(requestData,jwt);
-        if(response.status === 200){
+        const response = await updateALeaveStatusAPI(requestData, jwt);
+        if (response.status === 200) {
             toast.success("Success", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 2000,
                 pauseOnHover: false,
             })
-            await getLeaveStatus()
+            await getLeaveStatus(pageNumber)
             dispatch({
                 type: leaveReducerState.EMPTYDATA
             });
             setSingleLeave({})
-            
-        }else{
-           dispatch({
+
+        } else {
+            dispatch({
                 type: leaveReducerState.EMPTYDATA
             });
             setSingleLeave({})
@@ -323,13 +374,13 @@ const LeaveStatusLead = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
         >
-                <MenuItem key={'delete'} onClick={() => {
-                    handleClickOpen()
-                    handleClose()
-                }}>
-                    <Typography textAlign="center">Delete</Typography>
-                </MenuItem>
-            
+            <MenuItem key={'delete'} onClick={() => {
+                handleClickOpen()
+                handleClose()
+            }}>
+                <Typography textAlign="center">Delete</Typography>
+            </MenuItem>
+
         </Menu>
     )
 
@@ -481,7 +532,7 @@ const LeaveStatusLead = () => {
                     </Grid>
                     <Grid item xs={12} sm={4} md={2} >
                         <Button variant="contained" sx={{ height: '50px', width: '100%' }}
-                        onClick={searchLeave}
+                        onClick={(e)=> searchLeave(1)}
                         >Search</Button>
                     </Grid>
                 </Grid>
@@ -528,11 +579,11 @@ const LeaveStatusLead = () => {
                                     </Tooltip>
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={(e)=>{ 
+                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={(e) => {
                                         statusHandleClick(e)
-                                        setSingleLeave({...row})
-                                    
-                                    }}>{userRole() === "Admin"? row.isAdminApproved : row?.isApproved} <ArrowDropDownIcon onClick={(e)=> {
+                                        setSingleLeave({ ...row })
+
+                                    }}>{userRole() === "Admin" ? row.isAdminApproved : row?.isApproved} <ArrowDropDownIcon onClick={(e) => {
                                         dispatch({
                                             type: leaveReducerState.VIEW_DATA,
                                             payload: row
@@ -554,23 +605,22 @@ const LeaveStatusLead = () => {
                                         }}
                                         open={Boolean(statusachorEl)}
                                         onClose={statusHandleClose}
-                                        
-                                      
+
+
                                     >
-                                        {leaveStatusSettings.map((setting) =>
-                                        {
-                                            return(
+                                        {leaveStatusSettings.map((setting) => {
+                                            return (
                                                 <MenuItem key={setting} value={setting} onClick={(e) => {
                                                     let status = e.currentTarget.childNodes[0].textContent;
-                                                    
+
                                                     updateStatus(singleLeave, status)
                                                     statusHandleClose(e)
-                                                    
+
                                                 }}>
                                                     <Typography textAlign="center" value={setting} >{setting}</Typography>
                                                 </MenuItem>
                                             )
-                                            
+
                                         }
                                         )}
                                     </Menu>
@@ -579,49 +629,53 @@ const LeaveStatusLead = () => {
                                     {userRole() === "Admin" ? (
                                         <>
 
-                                        <IconButton aria-label="settings" >
-                                            <MoreVertIcon onClick={(e)=>
-                                                {
-                                                    dispatch({type: leaveReducerState.VIEW_DATA, payload: row})
-                                                     handleClick(e)
-                                                 }
-                                                 } />
-                                        </IconButton>
-                                        <Menu
-                                        sx={{ mt: '45px' }}
-                                        id="menu-appbar"
-                                        anchorEl={anchorEl}
-                                        anchorOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                        }}
-                                        keepMounted
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                        }}
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleClose}
-                                    >
-                                            <MenuItem key={'delete'} onClick={(e) => {
-                                                // handleClickOpen()
-                                                console.log("deleted");
-                                                handleClose(e)
-                                                deleteAleave(state.singleLeave._id)
-                                            }}>
-                                                <Typography textAlign="center">Delete</Typography>
-                                            </MenuItem>
-                                        
-                                    </Menu>
+                                            <IconButton aria-label="settings" >
+                                                <MoreVertIcon onClick={(e) => {
+                                                    dispatch({ type: leaveReducerState.VIEW_DATA, payload: row })
+                                                    handleClick(e)
+                                                }
+                                                } />
+                                            </IconButton>
+                                            <Menu
+                                                sx={{ mt: '45px' }}
+                                                id="menu-appbar"
+                                                anchorEl={anchorEl}
+                                                anchorOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'right',
+                                                }}
+                                                keepMounted
+                                                transformOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'right',
+                                                }}
+                                                open={Boolean(anchorEl)}
+                                                onClose={handleClose}
+                                            >
+                                                <MenuItem key={'delete'} onClick={(e) => {
+                                                    // handleClickOpen()
+                                                    console.log("deleted");
+                                                    handleClose(e)
+                                                    deleteAleave(state.singleLeave._id)
+                                                }}>
+                                                    <Typography textAlign="center">Delete</Typography>
+                                                </MenuItem>
+
+                                            </Menu>
                                         </>
 
-                                    ): null}
+                                    ) : null}
                                 </StyledTableCell>
                             </StyledTableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: "100%", marginTop: "50px",display:"flex",justifyContent:'center' }}>
+                <Pagination page={pageNumber} count={Math.ceil(statusQuery.totalCount / statusQuery.pageSize)}
+                onChange={(e, v)=> paginationHandle(e, v)}
+                />
+            </Box>
 
             {/* Modal */}
             {/* <BootstrapDialog

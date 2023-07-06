@@ -54,7 +54,7 @@ export const deleteALeaveApi = async(data, token)=>{
 
 //get leave for team lead and supervison
 export const getLeaveStatusApi = async(data, token)=>{
-  return await fetch(`${process.env.REACT_APP_URL}/leave/getleavestatus?userId=${data}`,{method: "GET",  headers: {
+  return await fetch(`${process.env.REACT_APP_URL}/leave/getleavestatus?userId=${data.userId}&pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,{method: "GET",  headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer " + token
     },
@@ -91,11 +91,11 @@ export const leaveSummeryApi = async(data, token)=>{
 }
 
 export const searchLeaveApi = async(data, token)=>{
-  return await fetch(`${process.env.REACT_APP_URL}/leave/filterleave`,{method: "POST",  headers: {
+  return await fetch(`${process.env.REACT_APP_URL}/leave/filterleave?selfId=${data.selfId}&pageNumber=${data.pageNumber}&pageSize=${data.pageSize}`,{method: "POST",  headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer " + token
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data.search),
     credentials: 'include',})
 }
 
