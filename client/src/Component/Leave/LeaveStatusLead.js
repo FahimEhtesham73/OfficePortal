@@ -179,8 +179,11 @@ const LeaveStatusLead = () => {
         setAnchorEl(null);
     };
     // For Leave Status Option
-    const statusHandleClick = (event) => {
-        setStatusAnchorEl(event.currentTarget)
+    const statusHandleClick = (event, value) => {
+        console.log(value);
+        if((userRole() === "Admin" && value.isAdminApproved === "Pending")  || (userRole() !== "Admin" && value.isApproved[0] === "Pending" )){
+            setStatusAnchorEl(event.currentTarget)
+        }
     }
     // For Leave Status Option Close
     const statusHandleClose = (e) => {
@@ -426,13 +429,12 @@ const LeaveStatusLead = () => {
                     <Grid item xs={12} sm={4} md={2} >
                         {(userRole() === 'Admin' || userRole() === "Project Lead" || userRole() === "Team Lead") && 
                         (
-                            <FormControl sx={{ width: '100% !important'}} >
-                                <InputLabel  id="demo-simple-select-label">Select Employee</InputLabel>
+                            <FormControl sx={{ width: '100%'}} >
+                                <InputLabel  id="demo-simple-select-label"  >Select Employee</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     // value={age}
-                                    handleChange
                                     label="Age"
                                     onChange={(e) => {
                                         setFilteredId(e.target.value)
@@ -440,7 +442,7 @@ const LeaveStatusLead = () => {
                                         setSearch({...search, userId:e.target.value})
                                     }}
                                 >
-                                    <MenuItem value={decodedUser?._id}>{decodedUser?.firstName}</MenuItem>
+                                    {/* <MenuItem value={decodedUser?._id}>{decodedUser?.firstName}</MenuItem> */}
                                     {
                                         allUser && allUser.map((val, ind) => {
                                             return (
@@ -495,7 +497,7 @@ const LeaveStatusLead = () => {
                         }
                             >
                                 <MenuItem value={"accepted"}>Accepted</MenuItem>
-                                <MenuItem value={"declined"}>Declined</MenuItem>
+                                <MenuItem value={"declined"}>Not Accepted</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -578,18 +580,28 @@ const LeaveStatusLead = () => {
                                         <VisibilityIcon sx={{ cursor: "pointer" }} />
                                     </Tooltip>
                                 </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={(e) => {
-                                        statusHandleClick(e)
+                                <StyledTableCell component="th" scope="row" >
+                                    <div style={{ border: '1px solid', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer",
+                                    color: ((userRole()!=="Admin" && row?.isApproved[0] === "Approved") || (userRole()==="Admin" && row?.isAdminApproved === "Approved") ) ? "green": ((userRole()!=="Admin" && row?.isApproved[0] === "Declined") || (userRole()==="Admin" && row?.isAdminApproved === "Declined") )  ? "red": "auto"
+                                    ,
+                                     
+                                
+                                }}  onClick={(e) => {
+                                        statusHandleClick(e, row)
                                         setSingleLeave({ ...row })
 
-                                    }}>{userRole() === "Admin" ? row.isAdminApproved : row?.isApproved} <ArrowDropDownIcon onClick={(e) => {
+                                    }}>{userRole() === "Admin" ? row.isAdminApproved : row?.isApproved[0]}
+                                    
+                                         <ArrowDropDownIcon sx={{
+                                            display: ((userRole()!=="Admin" && row?.isApproved[0] !== "Pending") || (userRole()==="Admin" && row?.isAdminApproved !== "Pending") ) ? "none": "block"
+                                         }}  onClick={(e) => {
                                         dispatch({
                                             type: leaveReducerState.VIEW_DATA,
                                             payload: row
                                         })
                                         setSingleLeave(row)
                                     }} /></div>
+                                    
                                     <Menu
                                         sx={{ mt: '45px' }}
                                         id="menu-appbar"
@@ -624,6 +636,8 @@ const LeaveStatusLead = () => {
                                         }
                                         )}
                                     </Menu>
+
+                                   
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {userRole() === "Admin" ? (

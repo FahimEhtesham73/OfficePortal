@@ -308,7 +308,7 @@ const Topnavbar = (props) => {
                   </ListItem>
                 }
                 {/* Team Lead */}
-                <ListItem disablePadding sx={{ display: 'block' }}>
+                {/* <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -328,7 +328,7 @@ const Topnavbar = (props) => {
                     </ListItemIcon>
                     <ListItemText primary={'Team Leads'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
-                </ListItem>
+                </ListItem> */}
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{

@@ -3,11 +3,15 @@ const Attendence = require("../models/attendenceModel");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
 
-const User = require('../models/userModel')
+const User = require('../models/userModel');
+const { isDateString } = require("../util/validator/commonValidation");
 
 
 module.exports.createAttendence = async (req, res) => {
   try {
+    console.log(req.body);
+    const errors = validationMessages(validationResult(req).mapped());
+    if (isErrorFounds(errors)) return res.status(400).json({ "message": errors })
     const checkInTime = new Date(req.body.checkInTime);
     // const timeZone = req.body.tz;
     const status = req.body.status;
@@ -188,8 +192,8 @@ module.exports.updateAttendece = async (req, res) => {
 
 module.exports.getTodayAttendence = async (req, res) => {
   try {
-    // const errors = validationMessages(validationResult(req).mapped());
-    // if(isErrorFounds(errors)) return res.status(400).json(errors)
+    const errors = validationMessages(validationResult(req).mapped());
+    if(isErrorFounds(errors)) return res.status(400).json(errors)
     // const body = req.body;
     const checkInTime = new Date(req.body.checkInTime);
     // req.body.checkInTime;
@@ -225,7 +229,6 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
     let lastDate = ""
     let range = []
     const searchingDate = req.body.searchingDate
-    console.log(searchingDate);
     if (searchingDate === '') {
       const todayYear = new Date().getFullYear()
       const todayMonth = new Date().getMonth()

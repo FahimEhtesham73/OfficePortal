@@ -866,15 +866,17 @@ const Punch = () => {
                                 label="Start Time"
 
                                 onChange={(e) => {
-                                    console.log("start time", startDateTime);
-                                    let customizeDateTime = new Date(startDateTime);
-                                    const extractTime = new Date(e["$d"])?.toTimeString();
-                                    const splitinngTime = extractTime.split(" ")[0].split(":");
-                                    customizeDateTime.setHours(splitinngTime[0])
-                                    customizeDateTime.setMinutes(splitinngTime[1])
+                                    if(e?.['$d']){
+                                        let customizeDateTime = new Date(startDateTime);
+                                        const extractTime = new Date(e["$d"])?.toTimeString();
+                                        const splitinngTime = extractTime.split(" ")[0].split(":");
+                                        customizeDateTime.setHours(splitinngTime[0])
+                                        customizeDateTime.setMinutes(splitinngTime[1])
+    
+                                        setStartDateTime(customizeDateTime)
+                                        // handleTimeChange("05/01/2023")
 
-                                    setStartDateTime(customizeDateTime)
-                                    // handleTimeChange("05/01/2023")
+                                    }
                                 }}
 
 
@@ -900,17 +902,20 @@ const Punch = () => {
                                 value={dayjs(endDateTime && endDateTime)}
                                 label="End Time"
                                 onChange={(e) => {
-                                    setEndDateTimeChanged(true);
-                                    
-                                    let customizeDateTime = new Date(typeof endDateTime !== 'string' ? updateAttendence.key : endDateTime );
-                                    console.log("end time", typeof endDateTime);
+                                    if(e?.['$d']){
+                                        setEndDateTimeChanged(true);
+                                        
+                                        let customizeDateTime = new Date(typeof endDateTime !== 'string' ? updateAttendence.key : endDateTime );
+                                        console.log("end time", typeof endDateTime);
+    
+                                        const extractTime = new Date(e["$d"])?.toTimeString();
+                                        const splitinngTime = extractTime.split(" ")[0].split(":");
+                                        customizeDateTime.setHours(splitinngTime[0])
+                                        customizeDateTime.setMinutes(splitinngTime[1])
+    
+                                        setEndDateTime(customizeDateTime)
 
-                                    const extractTime = new Date(e["$d"])?.toTimeString();
-                                    const splitinngTime = extractTime.split(" ")[0].split(":");
-                                    customizeDateTime.setHours(splitinngTime[0])
-                                    customizeDateTime.setMinutes(splitinngTime[1])
-
-                                    setEndDateTime(customizeDateTime)
+                                    }
 
                                     
                                 }}

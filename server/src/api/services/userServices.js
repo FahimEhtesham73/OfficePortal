@@ -30,7 +30,7 @@ module.exports.verifyHash = async (password, hashpassword) => {
  * @param {object} userData - Contains user information
  * @returns {string} - jwt token  
  */
-module.exports.tokenGeneration =  (userData) => {
+module.exports.tokenGeneration =  (userData, expiresIn="12h") => {
     const privateKey = fs.readFileSync(path.join(`${__dirname}/../../../`, "keys", "private.key"));
     let i  = 'NSL';          // Issuer 
     let s  = 'query@nextsolutionlab.com';   // Subject 
@@ -40,7 +40,7 @@ module.exports.tokenGeneration =  (userData) => {
         issuer:  i,
         subject:  s,
         audience:  a,
-        expiresIn:  "12h",
+        expiresIn:  expiresIn,
         algorithm:  "RS256"
        };
 
@@ -54,21 +54,28 @@ module.exports.tokenGeneration =  (userData) => {
  * @returns {boolean} -Return a boolean value  
  */
 module.exports.verifyToken =  (token) => {
-    const publicKey = fs.readFileSync(path.join(`${__dirname}/../../../`, "keys", "public.key"));
-    let i  = 'NSL';          // Issuer 
-    let s  = 'query@nextsolutionlab.com';        // Subject 
-    let a  = 'https://nextsolutionlab.com'; // Audience
+    var isVerified;
+    try{
+        const publicKey = fs.readFileSync(path.join(`${__dirname}/../../../`, "keys", "public.key"));
+        let i  = 'NSL';          // Issuer 
+        let s  = 'query@nextsolutionlab.com';        // Subject 
+        let a  = 'https://nextsolutionlab.com'; // Audience
+    
+        const signOptions = {
+            issuer:  i,
+            subject:  s,
+            audience:  a,
+            expiresIn:  "12h",
+            algorithm:  "RS256"
+           };
+    
+        const isVerified =  jwt.verify(token, publicKey, signOptions);
+        return isVerified;
 
-    const signOptions = {
-        issuer:  i,
-        subject:  s,
-        audience:  a,
-        expiresIn:  "12h",
-        algorithm:  "RS256"
-       };
+    }catch(err){
+        return false
+    }
 
-    const isVerified =  jwt.verify(token, publicKey, signOptions);
-    return isVerified
 }
 
 

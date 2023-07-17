@@ -8,8 +8,10 @@ const { verifyToken, tokenGeneration } = require("../services/userServices");
 async function Authorize (req, res, next){
         try{
             let headerToken = req.header("Authorization").split(" ")[1].trim();
+            
             const isTokenValid = verifyToken(headerToken);
             req.user = isTokenValid;
+            
             const user = await User.findOne({_id: req.user._id})
             .populate("role", "alias name")
             .populate("designation", "name")

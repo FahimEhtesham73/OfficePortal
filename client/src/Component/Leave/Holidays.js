@@ -30,7 +30,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-
+import userInfo from "../Hook/useUseInfo"
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -104,7 +104,8 @@ const rows = [
 ];
 
 const Holidays = () => {
-    const jwt = Cookies.get('_token')
+    const jwt = Cookies.get('_token');
+    const userInformaiton = userInfo()
 
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false);
@@ -348,9 +349,12 @@ const Holidays = () => {
         <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Holidays 2023</Typography>
+                {userInformaiton.role.alias === "Admin" ? (
+
                 <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
                     Add Holiday
                 </Button>
+                ) : null}
             </Box>
             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw",marginBottom:"100px" }}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -380,6 +384,7 @@ const Holidays = () => {
                                 <StyledTableCell component="th" scope="row">
                                     {formattedDay(row.date)}
                                 </StyledTableCell>
+                                
                                 <StyledTableCell component="th" scope="row">
                                     <IconButton aria-label="settings" >
                                         <MoreVertIcon onClick={(e) => {

@@ -3,9 +3,9 @@ const path = require("path");
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage, getUserUnderSuperVisorOrTemlead } = require("../controllers/userController");
+const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage, getUserUnderSuperVisorOrTemlead, passwordReset, resetConfirmation } = require("../controllers/userController");
 const { hasPermission,Authorize, isAdminTeamLeadProjectLead, isAdmin } = require("../middleware/commonMilddleware");
-const { createEmployeeValidation, signinValidation, signinDataValidation,searchEmployeeValidation, updateSingleUserValidation } = require("../util/validator/userValidation");
+const { createEmployeeValidation, signinValidation, signinDataValidation,searchEmployeeValidation, updateSingleUserValidation, resetPasswordValidation, changePasswordValidation } = require("../util/validator/userValidation");
 
 router.route("/getalluser").get(Authorize,allUser); // get all user
 router.route("/create").post(Authorize,isAdmin, createEmployeeValidation, createUser); // create a user
@@ -17,6 +17,9 @@ router.route("/searchuser").post(Authorize,searchEmployeeValidation,searchUser)
 router.route("/imgupload").post(Authorize,profileImgUpload)
 router.route("/viewcv").post(Authorize, viewCv)
 router.route("/userlist").get(Authorize, isAdminTeamLeadProjectLead,  getUserUnderSuperVisorOrTemlead);
+router.route("/resetpassword").post(resetPasswordValidation, passwordReset);
+router.route("/passwordchange").post(changePasswordValidation,resetConfirmation);
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{

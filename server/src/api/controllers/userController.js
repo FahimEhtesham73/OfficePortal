@@ -1,18 +1,20 @@
 
 const fs = require("fs");
-const {readFile} = require("fs/promises")
-const path = require("path")
+const {readFile} = require("fs/promises");
+const path = require("path");
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
 const Module = require("../models/moduleModel");
 const Permission = require("../models/rolePermissionModel");
-const Department = require("../models/departmentModel")
-const Designation = require("../models/designationModel")
-const Project = require("../models/projectModel")
+const Department = require("../models/departmentModel");
+const Designation = require("../models/designationModel");
+const Project = require("../models/projectModel");
+const ResetPassowrd = require("../models/passwordReset");
+const Session = require("../models/sessionModel");
 const monngoose = require('mongoose')
 // const SubModule = require("../models/subModule");
 const jwt = require("jsonwebtoken");
-const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession } = require("../services/userServices");
+const { verifyHash, tokenGeneration, hashPasswordGenarator, createSession, verifyToken } = require("../services/userServices");
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
@@ -168,7 +170,7 @@ module.exports.updateSingleUser = async (req, res) => {
                 .populate("designation", "name")
                 .populate("department", "name")
             console.log(updateUser);
-            return res.status(200).json(updateUser)
+            return res.status(200).json({"message": "User info updated successfully"})
         }
         
         else{
@@ -537,5 +539,56 @@ lastProjectStage = {
     }catch(err){
         console.log(err);
         return res.status(500).json({"message": "Something went wrong"});
+    }
+}
+
+module.exports.passwordReset = async ( req, res, next ) => {
+    try{
+        const errors = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(errors)) return res.status(400).json({"errors": errors})
+        const userId = req.body.userId;
+        const user = await User.findOne({_id: userId}).lean();
+        // if(userId !== req.user._id) return res.status(403).json({"message": "Invalid request"}) 
+        if(!user) return res.status(400).json({'message': "User not found"});
+        const email = user.email;
+        if(!email) return res.status(400).json({'message': "User email not found"});
+
+        const isEmailTokenAvialbe = await ResetPassowrd.findOne({userId}).lean();
+        if(isEmailTokenAvialbe) return res.status(200).json({"message": 'Check your email or try after sometimes'})
+        //frontend domain name 
+        const domainName = "http://localhost:3000/password-reset/";
+        const emailToken = tokenGeneration({email, redirectUrl:domainName}, 180 );
+        //send eamil
+        const emailLink = domainName+emailToken;
+        const resetDbData = await ResetPassowrd.create({userId: userId, token: emailToken})
+        
+        return res.status(200).json({'message': "success", "data": emailLink })
+    }catch(err){
+        console.log(err);
+        next(err)
+    }
+}
+
+module.exports.resetConfirmation = async ( req, res, next ) => {
+    try{
+        const errors = validationMessages(validationResult(req).mapped());
+        if(isErrorFounds(errors)) return res.status(400).json({"errors": errors})
+        const userId = req.body.userId;
+        const token = req.body.token;
+        const password = req.body.password;
+        const user = await User.findOne({_id: userId}).lean();
+        if(!user) return res.status(400).json({"message": "Invalid request"})
+        const isValid = verifyToken(token);
+        if(!isValid) return res.status(400).json({"message": "Invalid Token or token expired"});
+        const hashPassword = await hashPasswordGenarator(password);
+        await User.updateOne({_id: user}, {$set: {password: hashPassword}});
+        await Session.deleteOne({userId})
+        await ResetPassowrd.deleteOne({userId})
+        
+        return res.status(200).json({"message": "Password updated successfully"});
+        
+    }catch(err){
+        console.log(err);
+        next(err)
     }
 }

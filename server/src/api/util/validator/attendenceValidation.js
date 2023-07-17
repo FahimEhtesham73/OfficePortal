@@ -1,25 +1,36 @@
 const {check, body} = require("express-validator")
 const { default: mongoose } = require("mongoose")
+const {isDateString} = require("../validator/commonValidation")
+const { AttendeceTypes } = require("../commonValues")
 
-module.exports.createAttendence = [
+module.exports.createAttendenceValidation = [
     body("checkInTime").custom(v=> {
-        try{
-
-        }catch(err){
-            return false
+        body("checkInTime").custom(v=> {
+            return isDateString(v)
+        })
+        return true;
+    }),
+    body("status").custom(v=> {
+        if(v.length > 0){
+            return v.every(i=> AttendeceTypes.includes(i))
         }
     })
 ]
 
 
 module.exports.updateAttendenceValidation = [
-    // body("aId").isMongoId().withMessage("Not valid"),
-    // body("userId").isMongoId().withMessage("Not valid"),
-    // body("updateDate").custom(v=> {
-    //     if(v.checkOutTime && n){
+    body("aId").custom(v=> {
+        if(v.length){
+            return mongoose.isObjectIdOrHexString(v)
+        }
+        return true;
+    }),
+    body("userId").isMongoId().withMessage("Not valid"),
+    body("updateDate").custom(v=> {
+        if(v.checkOutTime && n){
             
-    //     }
-    // })
+        }
+    })
 ]
 
 module.exports.getAttendenceValidation = [
@@ -63,7 +74,12 @@ module.exports.modifyAttendenceValidation = [
         return val
     }),
 
-    // body("checkInTime").custom().withMessage("required"),
+    body("checkInTime").custom(v=> {
+        if(v.length > 0){
+            return isDateString(v);
+        }
+        return true;
+    }).withMessage("required"),
     body("modifiedCheckOutTime").custom((v, {req})=> {
         if(v &&  (new Date(v).getTime() < new Date(req.body.modifiedCheckOutTime).getTime())){
             // if(new Date(v).getTime() > new Date(req.body.modifiedCheckOutTime).getTime()){
@@ -74,4 +90,13 @@ module.exports.modifyAttendenceValidation = [
         }
         return true
     }).withMessage("invalid date time")
+]
+
+module.exports.getTodaysAttendenceValidation = [
+    body("checkInTime").custom(v=> {
+        if(v.length > 0){
+            return isDateString(v)
+        }
+        return true;
+    })
 ]
