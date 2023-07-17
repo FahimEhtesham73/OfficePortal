@@ -159,7 +159,6 @@ module.exports.getLeaveStatus = async (req, res) => {
         if (userRole === 'Team Lead') {
             const findRequest = await Leave.aggregate([
 
-
                 {
                     $match: {
                         $and: [
@@ -1058,7 +1057,6 @@ module.exports.searchLeave = async (req, res) => {
         return res.status(500).json({ "message": "Something went wrong" });
     }
 }
-
 
 // helper 
 
