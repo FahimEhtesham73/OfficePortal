@@ -1,9 +1,10 @@
 const {body, check} = require("express-validator");
-const { isObjectIdOrHexString } = require("mongoose")
+const { isObjectIdOrHexString, default: mongoose } = require("mongoose");
+const { isDateString } = require("./commonValidation");
 
 module.exports.taskCreationValidation = [
     body("taskName").notEmpty().isString(),
-    body("projectCode").notEmpty().isString(),
+    // body("projectCode").notEmpty().isString(),
     body("projectCode").custom(v=> {
         if(v){
             return typeof v === 'string'
@@ -14,13 +15,12 @@ module.exports.taskCreationValidation = [
     body("assignedMembers").custom(v=> {
         if(v){
            let isValid =  v.every(i=> isObjectIdOrHexString(i) )
-           console.log("is undefined",isValid);
            return isValid
         }
         return true;
     }),
-    // body("startTime").isDate({strictMode: false}),
-    // body("endTime").isDate({strictMode: false}),
+    body("startTime").custom(v=> isDateString(v)),
+    body("endTime").custom(v=> isDateString(v)),
     body("progress").custom(v=> {
         if(v) return !Number.isNaN(v)
         return true
@@ -75,8 +75,8 @@ module.exports.taskUpdateValidation = [
         }
         return true;
     }),
-    // body("startTime").isDate({strictMode: false}),
-    // body("endTime").isDate({strictMode: false}),
+    body("startTime").custom(v=> isDateString(v)),
+    body("endTime").custom(v=> isDateString(v)),
     body("updatedData.taskType").custom(v=> {
         if(v){
             let list = ["feature", "bug", "test", "reasearch", "meeting", "design", "others"];
@@ -121,4 +121,40 @@ module.exports.taskUpdateValidation = [
 
 ]
 
+module.exports.filterTaskValidation = [
+    // body("query.userId").custom(v=> {
+    //     if(v.length > 0){
+    //         return v.every(i=> mongoose.isObjectIdOrHexString(i));
 
+    //     }
+    // }),
+    body("query.startTime").custom(v=> {
+        if(v.length){
+            return isDateString(v);
+        }
+        return true;
+    }),
+    body("query.endTime").custom(v=> {
+        if(v.length){
+            return isDateString(v);
+        }
+        return true;
+    }),
+    body("query.priority").custom(v=>{
+        let list = ['low', 'high', "medium"]
+        if(v.length>0){
+            return v.every(i=> list.includes(i))
+        }
+        return true;
+    }),
+    body("query.taskType").custom(v=>{
+        let list = ["feature", "bug", "test", "research", "meeting", "design", "others"]
+        if(v.length>0){
+            return v.every(i=> list.includes(i))
+        }
+        return true;
+    }),
+    // body("sortBy"),
+
+
+]

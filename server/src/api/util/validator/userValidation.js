@@ -47,3 +47,11 @@ module.exports.updateSingleUserValidation = [
     }),
     check("id").isMongoId().withMessage("Invalid id")
 ]
+
+module.exports.resetPasswordValidation = body('userId').isMongoId()
+
+module.exports.changePasswordValidation = [
+    body("userId").isMongoId(),
+    body("token").notEmpty().customSanitizer(v => v.trim()),
+    body("password").notEmpty().isString().isLength({min: 8, max: 12}).withMessage("Password should be 8-10 characters")
+]

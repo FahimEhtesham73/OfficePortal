@@ -29,6 +29,28 @@ export const totalHolidays = (startDate, endDate) => {
     }
 }
 
+export const totalHolidaysCustomize = (startDate, endDate, customHolidays = []) => {
+  if (new Date(startDate) < new Date(endDate)) {
+    endDate = new Date(endDate).setHours(23, 59, 59, 999);
+    startDate = new Date(new Date(startDate).setHours(0, 0, 0, 0));
+    let count = 0;
+    while (startDate <= endDate) {
+      const dayOfWeek = startDate.getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) { // 0 represents Sunday, 6 represents Saturday
+        count++;
+      } else if (customHolidays.includes(startDate.toISOString().split('T')[0])) {
+        count++;
+      }
+
+      startDate.setDate(startDate.getDate() + 1);
+    }
+
+    return count;
+  } else {
+    return 0;
+  }
+};
+
 
 export const taskDataPrepration = (data) => 
 {

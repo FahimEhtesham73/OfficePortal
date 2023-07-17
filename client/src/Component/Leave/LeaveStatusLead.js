@@ -34,7 +34,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid';
-import { deleteALeaveApi, getLeaveStatusApi, updateALeaveStatusAPI } from '../../api/leaveRequestApi';
+import { deleteALeaveApi, getLeaveStatusApi, searchLeaveApi, updateALeaveStatusAPI } from '../../api/leaveRequestApi';
 import userInfo from '../Hook/useUseInfo';
 import Cookies from 'js-cookie';
 import { leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
@@ -42,9 +42,10 @@ import { Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { toast } from 'react-toastify';
 import userRole from '../Hook/userHook';
+import jwtDecode from 'jwt-decode';
 
 
-
+const PAGESIZE = 2;
 const useStyles = makeStyles((theme) => ({
     cardWrapper: {
         display: 'flex',
@@ -130,12 +131,43 @@ const leaveStat = [
 ]
 
 const LeaveStatusLead = () => {
-    const jwt = Cookies.get("_token")
+     const jwt = Cookies.get('_token')
+    const jwtUser = Cookies.get('_info')
+    var decoded
+    var decodedUser
+    if (jwt) {
+        decoded = jwtDecode(jwt);
+    } else {
+        decoded = ''
+    }
+
+    if (jwtUser) {
+        decodedUser = jwtDecode(jwtUser);
+    } else {
+        decodedUser = ''
+    }
     const [open, setOpen] = useState(false);
     const [statusOpen, setStatusOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
     const [statusachorEl, setStatusAnchorEl] = useState(null)
     const [singleLeave, setSingleLeave] = useState({})
+    const [allUser, setAllUser] = useState([])
+    const [filteredId, setFilteredId] = useState("")
+    const [search, setSearch] = useState({
+        userId: filteredId,
+        leaveType: "",
+        isFullyApproved: "",
+        startDate: "",
+        endDate: ""
+    })
+    const [statusQuery, setStatusQuery] = useState({
+        pageSize: PAGESIZE,
+        // pageNumber: 1,
+        totalCount: 0,
+    })
+    const [pageNumber, setPageNumber] = useState(1)
+    const [isFilterApiCalling, setIsFilterApi] = useState(false);
+
 
     const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
     // For Action icon open
@@ -147,8 +179,11 @@ const LeaveStatusLead = () => {
         setAnchorEl(null);
     };
     // For Leave Status Option
-    const statusHandleClick = (event) => {
-        setStatusAnchorEl(event.currentTarget)
+    const statusHandleClick = (event, value) => {
+        console.log(value);
+        if((userRole() === "Admin" && value.isAdminApproved === "Pending")  || (userRole() !== "Admin" && value.isApproved[0] === "Pending" )){
+            setStatusAnchorEl(event.currentTarget)
+        }
     }
     // For Leave Status Option Close
     const statusHandleClose = (e) => {
@@ -158,6 +193,14 @@ const LeaveStatusLead = () => {
         console.log(e.currentTarget.value);
         setStatusAnchorEl(null);
     };
+    const handleChange = (e)=> {
+        const name = e.target.name;
+        const val = e.target.value;
+        setSearch({
+            ...search,
+            [name]: val,
+        })
+    }
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
@@ -206,20 +249,78 @@ const LeaveStatusLead = () => {
     const settings = ['Delete'];
     const leaveStatusSettings = ['Pending', 'Approved', 'Declined']
 
-
+    const paginationHandle = (e, v)=> {
+                // setStatusQuery({
+                //         ...statusQuery,
+                //         pageNumber: v
+                //     })
+                setPageNumber(v)
+                    if(isFilterApiCalling){
+                        searchLeave(v)
+                    }else{
+                        getLeaveStatus(v)
+                    }
+    }
     useEffect(() => {
-        getLeaveStatus()
+        getLeaveStatus(1)
+        getAllUser()
     }, [])
 
 
-    const getLeaveStatus = async () => {
-        const response = await getLeaveStatusApi(userInfo()._id, jwt);
-        if (response.status === 200) {
-            let responseData = await response.json();
+    const getAllUser = async () => {
+        const res = await fetch(`${process.env.REACT_APP_URL}/users/userlist`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
+            },
+        })
+        const data = await res.json()
+        
+        // console.log("All User", data);
+        if (res.status === 200) {
+            setAllUser(data.data[0].result)
+        }  
+
+    }
+    const searchLeave = async (pageNumber)=> {
+        
+        
+        if ((search.startDate !== '' && search.endDate === '') || (search.endDate !== '' && search.startDate === '') || (search?.startDate > search.endDate)) {
+            
+            toast.warning("Invalid Date range", {
+                position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
+            })
+            return 
+        }
+        setIsFilterApi(true);
+        // setStatusQuery({
+        //     ...statusQuery,
+        //     pageSize: PAGESIZE,
+        //     pageNumber: pageNumber ? pageNumber: 1
+        // })
+        const response = await searchLeaveApi({search: search, pageSize: statusQuery.pageSize, pageNumber: pageNumber || 1 , selfId: decoded._id}, jwt);
+        if(response.status === 200){
+            const responseData = await response.json()
             console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
-                payload: responseData
+                payload: responseData[0].data
+            })
+            setStatusQuery({...statusQuery, totalCount: responseData[0].totalCount})
+            
+        }
+    }
+    const getLeaveStatus = async (pageNumber) => {
+     
+        const response = await getLeaveStatusApi({userId: userInfo()._id, pageNumber: pageNumber, pageSize: statusQuery.pageSize }, jwt);
+        if (response.status === 200) {
+            let responseData = await response.json();
+            setStatusQuery({...statusQuery, totalCount: responseData[0].totalCount})
+            console.log("313",statusQuery);
+            dispatch({
+                type: leaveReducerState.GET_DATA,
+                payload: responseData[0].data
             })
         }
     }
@@ -239,7 +340,7 @@ const LeaveStatusLead = () => {
                 autoClose: 2000,
                 pauseOnHover: false,
             })
-            await getLeaveStatus()
+            await getLeaveStatus(pageNumber)
             dispatch({
                 type: leaveReducerState.EMPTYDATA
             });
@@ -315,39 +416,46 @@ const LeaveStatusLead = () => {
         </Menu>
     )
     return (
-        <Box sx={{  marginLeft: { sm: '60px', md: "280px", xs: "30px" }, marginRight: "30px" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
+           
+           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
-                <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
-                    Apply Leave
-                </Button>
-            </Box>
-            {/* Card For leave Information */}
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3}>
-                    {leaveStat.map((val, ind) => {
-                        return (
-                            <Grid item xs={12} sm={6} md={3}>
-                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
-                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.name}</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.amount}</Typography>
-                                    </Box>
-                                </Card>
-                            </Grid>
-                        )
-                    })}
-
-                </Grid>
+               
             </Box>
 
             {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2168px' }}>
+                <Grid container spacing={3} >
                     <Grid item xs={12} sm={4} md={2} >
-                        <TextField id="outlined-search" label="Employee ID" type="search" sx={{ maxHeight: 200, width: '100%' }} />
-                    </Grid>
+                        {(userRole() === 'Admin' || userRole() === "Project Lead" || userRole() === "Team Lead") && 
+                        (
+                            <FormControl sx={{ width: '100%'}} >
+                                <InputLabel  id="demo-simple-select-label"  >Select Employee</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    // value={age}
+                                    label="Age"
+                                    onChange={(e) => {
+                                        setFilteredId(e.target.value)
+                                        // handleChange(e)
+                                        setSearch({...search, userId:e.target.value})
+                                    }}
+                                >
+                                    {/* <MenuItem value={decodedUser?._id}>{decodedUser?.firstName}</MenuItem> */}
+                                    {
+                                        allUser && allUser.map((val, ind) => {
+                                            return (
+                                                <MenuItem value={val._id}>{val.firstName}</MenuItem>
+                                                )
+                                            })
+                                        }
+                                </Select>
+                            </FormControl>
+
+                        )}
+                        </Grid>
+                        
                     {/* Leave type */}
                     <Grid item xs={12} sm={4} md={2} >
                         <FormControl sx={{ width: '100%' }}>
@@ -357,12 +465,12 @@ const LeaveStatusLead = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select leave type"
-                            // onChange={handleChange}
+                                name="leaveType"
+                            onChange={handleChange}
                             >
-                                <MenuItem value={10}>Casual</MenuItem>
-                                <MenuItem value={20}>Half day</MenuItem>
-                                <MenuItem value={30}>Sick</MenuItem>
-                                <MenuItem value={30}>Special Leave</MenuItem>
+                                <MenuItem value={"Casual"}>Casual</MenuItem>
+                                <MenuItem value={"Sick"}>Sick</MenuItem>
+                                <MenuItem value={"Special"}>Special Leave</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -375,13 +483,21 @@ const LeaveStatusLead = () => {
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 // value={age}
+                                name='leaveType'
                                 label="Select leave type"
-                            // onChange={handleChange}
+                            onChange={(e)=> {
+                                if(e.target.value === "accepted"){
+                                    setSearch({...search, isFullyApproved: true})
+                                }else{
+                                    setSearch({...search, isFullyApproved: false})
+
+                                }
+                            
+                            }
+                        }
                             >
-                                <MenuItem value={10}>Pending</MenuItem>
-                                <MenuItem value={20}>Accepted</MenuItem>
-                                <MenuItem value={30}>Declined</MenuItem>
-                                <MenuItem value={30}>New</MenuItem>
+                                <MenuItem value={"accepted"}>Accepted</MenuItem>
+                                <MenuItem value={"declined"}>Not Accepted</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -390,7 +506,14 @@ const LeaveStatusLead = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345 }} />
+                                <DatePicker label="From" sx={{ width: '100%', maxHeight: 345 }}
+                                onChange={(e)=> {
+                                    if(e?.['$d']){
+                                        let d = new Date(e['$d']).setHours(0,0,0,0)
+                                        setSearch({...search, startDate: new Date(d)})
+                                    }
+                                }}
+                                />
                             </DemoContainer>
                         </LocalizationProvider>
                     </Grid>
@@ -399,13 +522,20 @@ const LeaveStatusLead = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }} onChange={e => console.log(e)} />
+                                <DatePicker label="To" sx={{ width: '100%', maxHeight: 345, }}  onChange={e=>{
+                                     if(e?.['$d']){
+                                        let d = new Date(e['$d']).setHours(0,0,0,0)
+                                        setSearch({...search, endDate: new Date(d)})
+                                    }
+                                }}/>
                             </DemoContainer>
                         </LocalizationProvider>
 
                     </Grid>
                     <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}>Search</Button>
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }}
+                        onClick={(e)=> searchLeave(1)}
+                        >Search</Button>
                     </Grid>
                 </Grid>
             </Box>
@@ -450,18 +580,28 @@ const LeaveStatusLead = () => {
                                         <VisibilityIcon sx={{ cursor: "pointer" }} />
                                     </Tooltip>
                                 </StyledTableCell>
-                                <StyledTableCell component="th" scope="row">
-                                    <div style={{ border: '1px solid black', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer" }} onClick={(e) => {
-                                        statusHandleClick(e)
+                                <StyledTableCell component="th" scope="row" >
+                                    <div style={{ border: '1px solid', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer",
+                                    color: ((userRole()!=="Admin" && row?.isApproved[0] === "Approved") || (userRole()==="Admin" && row?.isAdminApproved === "Approved") ) ? "green": ((userRole()!=="Admin" && row?.isApproved[0] === "Declined") || (userRole()==="Admin" && row?.isAdminApproved === "Declined") )  ? "red": "auto"
+                                    ,
+                                     
+                                
+                                }}  onClick={(e) => {
+                                        statusHandleClick(e, row)
                                         setSingleLeave({ ...row })
 
-                                    }}>{userRole() === "Admin" ? row.isAdminApproved : row?.isApproved} <ArrowDropDownIcon onClick={(e) => {
+                                    }}>{userRole() === "Admin" ? row.isAdminApproved : row?.isApproved[0]}
+                                    
+                                         <ArrowDropDownIcon sx={{
+                                            display: ((userRole()!=="Admin" && row?.isApproved[0] !== "Pending") || (userRole()==="Admin" && row?.isAdminApproved !== "Pending") ) ? "none": "block"
+                                         }}  onClick={(e) => {
                                         dispatch({
                                             type: leaveReducerState.VIEW_DATA,
                                             payload: row
                                         })
                                         setSingleLeave(row)
                                     }} /></div>
+                                    
                                     <Menu
                                         sx={{ mt: '45px' }}
                                         id="menu-appbar"
@@ -496,6 +636,8 @@ const LeaveStatusLead = () => {
                                         }
                                         )}
                                     </Menu>
+
+                                   
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {userRole() === "Admin" ? (
@@ -544,11 +686,13 @@ const LeaveStatusLead = () => {
                 </Table>
             </TableContainer>
             <Box sx={{ width: "100%", marginTop: "50px",display:"flex",justifyContent:'center' }}>
-                <Pagination count={10} color="primary" />
+                <Pagination page={pageNumber} count={Math.ceil(statusQuery.totalCount / statusQuery.pageSize)}
+                onChange={(e, v)=> paginationHandle(e, v)}
+                />
             </Box>
 
             {/* Modal */}
-            <BootstrapDialog
+            {/* <BootstrapDialog
                 onClose={handleClickClose}
                 aria-labelledby="customized-dialog-title"
                 open={open}
@@ -593,7 +737,7 @@ const LeaveStatusLead = () => {
                         Apply
                     </Button>
                 </DialogActions>
-            </BootstrapDialog>
+            </BootstrapDialog> */}
         </Box>
     )
 }

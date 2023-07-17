@@ -138,7 +138,6 @@ module.exports.getSingleTask = async (req, res) => {
 module.exports.updateATask = async (req, res) => {
     try {
 
-        console.log(req.body);
         const erros = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
         const taskId = req.body.taskid;
@@ -239,7 +238,8 @@ module.exports.deleteATask = async (req, res) => {
 
 module.exports.filterTask = async (req, res)=> {
     try{
-        console.log(req.body);
+        const erros = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros });     
         const query = req.body.query;
         const projectCode = req.body.pcd;
         const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;

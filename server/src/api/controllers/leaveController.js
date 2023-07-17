@@ -27,6 +27,8 @@ function checkObjectValues(obj) {
 
 module.exports.createLeave = async (req, res) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json({ "message": "Invalid request" })
         const userRole = req.user.role.alias
         const { userId, leaveType, startDate, endDate, totalDay, leaveReason } = req.body
 
@@ -93,7 +95,9 @@ module.exports.createLeave = async (req, res) => {
             totalDay,
             leaveReason,
             approvedByLeader: formattedLeaderArr,
-            approvedBySuperVisor: formattedSvArray
+            approvedBySuperVisor: formattedSvArray,
+            isAllLeaderApproved: req.user.role.name === "teamlead" ? true: false,
+
         }
 
         const leave = await Leave.create({ ...data });
@@ -113,8 +117,9 @@ module.exports.createLeave = async (req, res) => {
 
 module.exports.createLeaveSv = async (req, res) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json({ "message": "Invalid request" })
         const userRole = req.user.role.alias
-        console.log("user role from cookie", userRole);
         const { userId, leaveType, startDate, endDate, totalDay, leaveReason } = req.body
 
 
@@ -150,6 +155,8 @@ module.exports.createLeaveSv = async (req, res) => {
 
 module.exports.getLeaveStatus = async (req, res) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json(errors)
         const userId = req.query.userId
         const pageNumber = parseInt(req.query.pageNumber)
         const pageSize = parseInt(req.query.pageSize)
@@ -243,7 +250,8 @@ module.exports.getLeaveStatus = async (req, res) => {
                         totalCount: { $arrayElemAt: ["$totalCount.count", 0] },
                         data: 1
                     }
-                }
+                },
+
 
             ])
             return res.status(200).send(findRequest)
@@ -441,7 +449,6 @@ module.exports.getLeaveStatus = async (req, res) => {
 
 module.exports.createUserLeaveAmount = async (req, res, next) => {
     try {
-        console.log(req.body);
         const errors = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(errors)) return res.status(400).json({ "message": "Invalid request" })
         const userId = req.body.userId;
@@ -470,7 +477,7 @@ module.exports.createUserLeaveAmount = async (req, res, next) => {
 module.exports.getLeaveBoardAmount = async (req, res, next) => {
     try {
         const userId = req.query.userId;
-        if (!userId) return res.status(400).json({ "message": "unsuccess" })
+        if (!userId) return res.status(400).json({ "message": "Invalid request" })
         const data = await LeaveBoard.find({ userId }).lean();
         let obj = {};
         for (let d of data) {
@@ -483,6 +490,8 @@ module.exports.getLeaveBoardAmount = async (req, res, next) => {
 }
 module.exports.getAllLeave = async (req, res, next) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json(errors)
         const body = req.body;
         const leaveType = body.leaveType;
         let leaveStartDate = new Date(body.startDate);
@@ -572,6 +581,7 @@ module.exports.getAllLeave = async (req, res, next) => {
                     "approvedBySuperVisor": 1,
                     "isAdminApproved": 1,
                     "isFullyApproved": 1,
+                    "isAllLeaderApproved":1,
                     "isAllSuperVisorApproved": 1,
                     "startDate": 1,
                     "endDate": 1,
@@ -681,6 +691,8 @@ module.exports.getAllLeave = async (req, res, next) => {
 
 module.exports.getLeaveSummary = async (req, res, next) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json(errors)
         const userId = req.body.userId;
         const isUserAvailable = await User.findOne({ _id: userId }).lean();
         if (!isUserAvailable) return res.status(400).json({ "message": "User Not found" });
@@ -688,8 +700,7 @@ module.exports.getLeaveSummary = async (req, res, next) => {
 
         const yearStartDate = new Date(`03/01/${year}`)
         const yearEndDate = new Date(`02/28/${year + 1}`)
-        console.log("st", yearStartDate.toString());
-        console.log("end", yearEndDate);
+
 
         const findUserLeave = await LeaveBoard.aggregate([
             {
@@ -726,7 +737,7 @@ module.exports.getLeaveSummary = async (req, res, next) => {
             }
         ]);
 
-        let totalLeaveTakenByUser = [{ _id: "Sick", total: 0 }, { _id: "Casual", total: 0 }, { _id: "Special", total: 0 }]
+        // let totalLeaveTakenByUser = [{ _id: "Sick", total: 0 }, { _id: "Casual", total: 0 }, { _id: "Special", total: 0 }]
 
 
         return res.status(200).json({ "message": "success", "data": { "totalYearlyLeave": findUserLeave, "totalTaken": totalLeaveTaken } });
@@ -743,10 +754,11 @@ module.exports.getLeaveSummary = async (req, res, next) => {
 
 module.exports.updateALeave = async (req, res, next) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json(errors)
         const _id = req.body._id;
         const userId = req.body.userId;
 
-        console.log(req.body);
 
         const leaveDetails = await Leave.findOne({ _id, userId }).lean();
         if (!leaveDetails) return res.status(400).json({ "message": "Invalid leave" })
@@ -783,6 +795,7 @@ module.exports.updateALeave = async (req, res, next) => {
 module.exports.deleteALeave = async (req, res, next) => {
     try {
 
+
         const leaveId = req.query.leaveId;
         if (!leaveId) return res.status(400).json({ "message": "Invalid request" })
         const leaveDetails = await Leave.findOne({ _id: leaveId }).lean();
@@ -799,6 +812,8 @@ module.exports.deleteALeave = async (req, res, next) => {
 
 module.exports.leaveStatusChange = async (req, res, next) => {
     try {
+        const errors = validationMessages(validationResult(req).mapped());
+        if (isErrorFounds(errors)) return res.status(400).json({ "message": "Invalid request" })
         const leaveId = req.body.leaveId;
         const approverId = req.body.approverId || req.user._id;
         const role = req.user.role.name;
@@ -1028,6 +1043,8 @@ module.exports.searchLeave = async (req, res) => {
                     endDate: 1,
                     leaveReason: 1,
                     totalDay: 1,
+                    isAdminApproved: 1,
+
                 }
             },
             {

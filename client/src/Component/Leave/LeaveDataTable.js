@@ -15,6 +15,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { daysCount, totalHolidays } from '../functions/commonFunc';
+import userRole from '../Hook/userHook';
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -38,6 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const LeaveDataTable = (props) => {
     const jwt = Cookies.get("_token")
     const user = userInfo()
+    const role = userRole()
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [leaveRequest, setLeaveRequest] = useState({
@@ -53,7 +55,6 @@ const LeaveDataTable = (props) => {
     })
 
     let {data, dispatch} = props;
-
 
 
     // For Action icon open
@@ -223,7 +224,7 @@ const LeaveDataTable = (props) => {
                                     </Tooltip>
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {row?.isFullyApproved ? "Approved" : "Pending"}
+                                    {(row?.isFullyApproved && row?.isAllLeaderApproved && row?.isAllSuperVisorApproved )? "Approved" : "Pending"}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {/* {row?.} */}
@@ -231,14 +232,15 @@ const LeaveDataTable = (props) => {
                                     <Tooltip
                                       
                                         sx={{ whiteSpace: "pre-line" }}
-                                        title={[...row.leaderDetails, ...row.supervisorDetails].map(v => `${v.firstName}: ${v.isApproved} `).join(", ")}
+                                        title={[...row.leaderDetails, ...row.supervisorDetails].filter(v=> v?._id !== user?._id).map(v => `${v.firstName}: ${v.isApproved} `).join(", ")}
                                     >
                                         <VisibilityIcon sx={{ cursor: "pointer" }} />
                                     </Tooltip>
 
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {(row?.approvedByLeader?.filter(v=> v.isApproved === "Approved").length > 0 || row?.approvedBySuperVisor?.filter(v=> v.isApproved === "Approved").length > 0 )? null: (
+                                    {console.log(row.userId === userInfo()._id)}
+                                    {((row?.approvedByLeader?.filter(v=> (v.isApproved === "Approved" && v.tId !== userInfo()._id)).length > 0 || row?.approvedBySuperVisor?.filter(v=> (v.isApproved === "Approved" && v.sId !== userInfo()._id)).length > 0) || (row?.userId?.toString() === userInfo()._id?.toString() && role === "Admin" ) || (row.isFullyApproved) )? null: (
                                     <IconButton aria-label="settings" >
                                         <MoreVertIcon onClick={(e)=> {
                                             handleClick(e,row)
@@ -268,22 +270,19 @@ const LeaveDataTable = (props) => {
                                     >
                                         
                                         <MenuItem  onClick={handleEditFun}  >
+
                                             <Typography 
                                             textAlign="center">Edit</Typography>
                                         </MenuItem>
 
-                                        {row?.isFullyApproved ? null: (
                                             <MenuItem onClick={(e) => {
-                                                // handleClickOpen()
-                                                console.log("deleted");
                                                     handleClose()
-                                                    // deleteAleave(data.singleLeave._id)
+                                                    deleteAleave(data.singleLeave._id)
                                                 
                                                 
                                             }}>
                                                 <Typography textAlign="center">Delete</Typography>
                                             </MenuItem>
-                                        )}
 
 
                                         {/* ))} */}

@@ -380,20 +380,21 @@ const Profile = () => {
         const data = await res.json();
         // console.log("user Data", data);
         if (res.status === 200) {
-            setUserData(data);
-            setMainInfo({
-                firstName: data?.firstName,
-                lastName: data?.lastName,
-                email: data?.email,
-                designation: data?.designation,
-                empId: data?.empId,
-                birthDate: data?.birthDate || "",
-                joiningDate: data?.joiningDate
-            })
-            setSkills(data?.skills);
-            setGoals(data?.goals);
-            setEducations(data?.educations);
-            setExperiences(data?.experinces);
+            // setUserData(data);
+            // setMainInfo({
+            //     firstName: data?.firstName,
+            //     lastName: data?.lastName,
+            //     email: data?.email,
+            //     designation: data?.designation,
+            //     empId: data?.empId,
+            //     birthDate: data?.birthDate || "",
+            //     joiningDate: data?.joiningDate
+            // })
+            // setSkills(data?.skills);
+            // setGoals(data?.goals);
+            // setEducations(data?.educations);
+            // setExperiences(data?.experinces);
+            await getSingleUser()
 
             toast.success("Profile updated successfully", {
                 position: toast.POSITION.TOP_CENTER,
@@ -513,7 +514,7 @@ const Profile = () => {
                             </div>
                             {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) && (
                                 <div class="col-sm-4">
-                                    <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button>
+                                    {/* <Button variant="contained" sx={{ borderRadius: "50px" }} ocn >Change password</Button> */}
                                     {/* <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography> */}
                                     {<Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleModalOpen} >
                                         Add CV
@@ -566,7 +567,7 @@ const Profile = () => {
                                                                         autoClose: 2000,
                                                                         pauseOnHover: false,
                                                                     });
-                                                                }
+                                                            }
                                                             }).catch(err => {
                                                                 console.log(err.response.data.message);
                                                                 toast.warning(err?.response?.data?.message || "Something went wrong", {
@@ -656,7 +657,7 @@ const Profile = () => {
                                                                         label="Select Role"
                                                                         size="small"
                                                                         sx={{ width: .7 }}
-                                                                        // value={mainInfo?.designation}
+                                                                        value={mainInfo?.role}
                                                                         onChange={(e) => {
                                                                             setMainInfo({ ...mainInfo, role: e.target.value })
 
@@ -787,7 +788,7 @@ const Profile = () => {
                                             {/* <a data-bs-target="#profile_info" data-bs-toggle="modal"
                                             class="edit-icon" href="#"></a> */}
                                             {
-                                                userInfoData?.role.alias === "Admin" ? (
+                                                userInfoData?.role?.alias === "Admin" ? (
                                                     !cardEdit.main ? (
                                                         <Tooltip title="Edit">
                                                             <EditIcon
@@ -809,7 +810,7 @@ const Profile = () => {
                                                                             mainInfo.firstName &&
                                                                             mainInfo.lastName &&
                                                                             mainInfo.joiningDate
-                                                                        ) ? "block" : "none"
+                                                                        ) ? "block" : "block"
                                                                     }}
 
                                                                     className="edit-icon"

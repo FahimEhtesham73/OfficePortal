@@ -37,13 +37,14 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import userRole from '../Hook/userHook';
-import { totalHolidays } from '../functions/commonFunc';
+import { totalHolidays, totalHolidaysCustomize } from '../functions/commonFunc';
 import {  leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
 import LeaveDataTable from './LeaveDataTable';
+import { TextareaAutosize } from '@mui/material';
+import { getAllHoildaysApi } from '../../api/holidayApi';
 
 const daysCount = (date_1, date_2) => {
     if (date_1 && date_2) {
-        console.log("achi");
         let difference = date_1.getTime() - date_2.getTime();
         let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
         return TotalDays;
@@ -52,6 +53,58 @@ const daysCount = (date_1, date_2) => {
         return 0
     }
 }
+
+const blue = {
+    100: '#DAECFF',
+    200: '#b6daff',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E5',
+    900: '#003A75',
+  };
+
+  const grey = {
+    50: '#f6f8fa',
+    100: '#eaeef2',
+    200: '#d0d7de',
+    300: '#afb8c1',
+    400: '#8c959f',
+    500: '#6e7781',
+    600: '#57606a',
+    700: '#424a53',
+    800: '#32383f',
+    900: '#24292f',
+  };
+
+  const StyledTextarea = styled(TextareaAutosize)(
+    ({ theme }) => `
+    width: 320px;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+    // border-radius: 12px 12px 0 12px;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+  
+    &:hover {
+      border-color: ${blue[400]};
+    }
+  
+    &:focus {
+      border-color: ${blue[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+    }
+  
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+  );
 
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -112,7 +165,7 @@ function BootstrapDialogTitle(props) {
 function checkLeapYear(year) {
 
     //three conditions to find out the leap year
-    if ((0 === year % 4) && (0 !== year % 100) || (0 === year % 400)) {
+    if (((0 === year % 4) && (0 !== year % 100)) || (0 === year % 400)) {
         return true
     } 
     return false
@@ -141,6 +194,9 @@ const YEAR = new Date().getFullYear()
 const LeaveEmployee = () => {
     const jwt = Cookies.get('_token');
 
+    const [allHoliday, setAllHoliday] = useState([]) 
+    const [allHolidayDate, setAllHolidayDate] = useState([]) 
+
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [search, setSearch] = useState({
@@ -166,6 +222,13 @@ const LeaveEmployee = () => {
 
     const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
 
+    const getAllHoilday = async ()=> {
+        const respnse = await getAllHoildaysApi(jwt);
+        if(respnse.status === 200) {
+            setAllHolidayDate(respnse?.data?.map(v=> new Date(v.date).toISOString().split("T")[0]));
+            setAllHoliday(respnse.data)
+        }
+    }
     // For Action icon open
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -269,6 +332,8 @@ const LeaveEmployee = () => {
     //     createData('Casual Leave', "1 Mar 2023", '1 Mar 2023', '1 day', 'Personal Leave', 'Approved', 'Nahid'),
     // ];
 
+
+
     const getLeaveSummary = async ()=> {
         const response = await leaveSummeryApi({userId: userData._id, year: search.startDate.getFullYear()}, jwt);
         if(response.status === 200) {
@@ -280,6 +345,10 @@ const LeaveEmployee = () => {
         }
     }
 
+    const shouldDisableDate = (date) => {
+        const dateString = date.toISOString().split('T')[0];
+        return allHolidayDate.includes(dateString) || (new Date(date).getDay() === 6 ||  new Date(date).getDay() === 0);
+      };
     const getLeaveData = async () => {
         const response = await getLeaveApi({usersId: [], ...search}, jwt);
         if(response.status === 200){
@@ -295,6 +364,7 @@ const LeaveEmployee = () => {
     useEffect(()=> {
         getLeaveData()
         getLeaveSummary()
+        getAllHoilday()
     },[])
     const settings = ['Edit', 'Delete'];
     const menu = (
@@ -415,7 +485,9 @@ const LeaveEmployee = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker onChange={(e)=> {
+                                <DatePicker 
+                                
+                                onChange={(e)=> {
                                     if(e?.['$y']){
                                         console.log(e);
                                         setSearch({
@@ -456,7 +528,10 @@ const LeaveEmployee = () => {
                 <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
                     Apply Leave
                 </BootstrapDialogTitle>
-                <DialogContent sx={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
+                <DialogContent sx={{ display: "flex", justifyContent: "center", flexDirection: "column", 
+                  transition: 'all 03.s'
+
+            }}>
                     <Box sx={{ minWidth: 120 }}>
                         <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
                             <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
@@ -508,74 +583,97 @@ const LeaveEmployee = () => {
                             </Select>
                         </FormControl>
                     </Box>
-
-                    {leaveRequest.duration === "halfday" ? (
-                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                            <DemoContainer components={['DatePicker']} >
-                                <DatePicker
-                                    slotProps={{
-                                        textField: {
-                                            error: false,
-                                        },
-                                    }}
-                                    label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
-                                        setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
-                                    }} />
-                            </DemoContainer>
-                        </LocalizationProvider>
-
-
-                    ) : (
+                    {leaveRequest?.duration && leaveRequest.duration.length > 0 ? (
                         <>
-                            <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                <DemoContainer components={['DatePicker']} >
+                        {leaveRequest?.duration === "halfday" ? (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                <DemoContainer components={['DatePicker']}  >
                                     <DatePicker
+                                        shouldDisableDate={ userInfo().role.name === "admin"? null: shouldDisableDate}
+
                                         slotProps={{
                                             textField: {
                                                 error: false,
                                             },
                                         }}
-                                        label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
-                                        onChange={(e) => {
+                                        label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
+                                            if(e?.['$d']){
+                                                setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
 
-                                            setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
-                                        }}
-                                    />
+                                            }
+                                        }} />
                                 </DemoContainer>
                             </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                <DemoContainer components={['DateTimePicker']}  >
-                                    <DatePicker
+    
+    
+                        ) : (
+                            <>
+                            
 
-                                        slotProps={{
-                                            textField: {
-                                                error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
-                                            },
-                                        }}
-                                        label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
-                                        onChange={(e) => {
-                                            let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
-                                            let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
-                                            let holidaysCount = totalHolidays(startDate, endDate)
-                                            let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount;
+                                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                    <DemoContainer components={['DatePicker']} >
+                                        <DatePicker
+    
+                                            shouldDisableDate={shouldDisableDate}
+                                            
+                                            slotProps={{
+                                                textField: {
+                                                    error: false,
+                                                },
+                                            }}
+                                            label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
+                                            onChange={(e) => {
+                                                if(e?.['$d']){
+                                                    setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+
+                                                }
 
 
-                                            setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === "NaN" ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+                                            }}
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                                
+                                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                    <DemoContainer components={['DateTimePicker']}  >
+                                        <DatePicker
+                                        disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0  )? false: true}
+                                        shouldDisableDate={shouldDisableDate}
+                                            slotProps={{
+                                                textField: {
+                                                    error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
+                                                },
+                                            }}
+                                            label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
+                                            onChange={(e) => {
+                                                if(e?.['$d']){
+                                                    let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
+                                                    let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
+                                                    let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
+                                                    let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount;
+    
+                                                    setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
 
-                                        }}
-                                    />
-                                </DemoContainer>
-                            </LocalizationProvider>
+                                                }
+                                                
+                                            }}
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </>
+                        )
+                        }
+                        
                         </>
-                    )
-                    }
+                    ): null}
+
                     <TextField id="outlined-search" label="Number of Days *"
                         error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
                         value={leaveRequest.duration === "halfday" ? 0.5 : (leaveRequest.startDate && leaveRequest.endDate) && leaveRequest.totalDay}
                         readOnly
                         type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px" }} />
-                    {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with hoilday</span>}
-                    <TextField id="outlined-search" label="Reason *"
+                    {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with holiday or weekend</span>}
+                    <StyledTextarea id="outlined-search" label="Reason *" minRows={3}
                         onChange={(e) => {
                             setLeaveRequest({ ...leaveRequest, leaveReason: e.target.value })
                         }}
