@@ -8,7 +8,7 @@ router.route("/create").post(Authorize, createAttendenceValidation, createAttend
 router.route("/getall").post(Authorize, getAttendenceValidation,  getAttendences) //get all attendeces
 router.route("/update").put(Authorize, updateAttendenceValidation, updateAttendece) //update a attendece
 router.route("/today").post(Authorize, getTodaysAttendenceValidation, getTodayAttendence)
-router.route("/alluseratendance").post(Authorize, getAllUserAttendenceSheet)
+router.route("/alluseratendance").post(Authorize,getAllUserAttendenceSheet)
 router.route("/todayspunch").get(Authorize,todaysPunchInUsers)
 router.route("/modify").post(Authorize, modifyAttendenceValidation, modifiedORCreateAttendence);
 

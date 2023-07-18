@@ -37,7 +37,7 @@ module.exports.createUser = async (req, res) => {
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);
-        return res.status(500).json("Something went wrong");
+        return res.status(500).json("Something went wrong"); 
     }
 }
 
@@ -190,9 +190,8 @@ module.exports.searchUser = async (req, res) => {
         if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
         const desgntn = req.body.desgId
         const userId = req.body.userId
-        const empName = req.body.empName
+        const empName = req.body.empName.trim()
         const roles = req.body.roles
-
 
         const matchQuery = {};
         if (userId) {
@@ -202,11 +201,9 @@ module.exports.searchUser = async (req, res) => {
           matchQuery['designation._id'] = new monngoose.Types.ObjectId(desgntn);
         }
         if (empName) {
-          matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } } ];
+          matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } },{ $expr: { $regexMatch: { input: { $concat: ['$firstName',' ','$lastName'] }, regex: empName, options: 'i' } } } ];
         }
-        
-        
-
+      
         const result = await User.aggregate([
             {
                 $lookup: {
