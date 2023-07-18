@@ -218,6 +218,9 @@ module.exports.searchUser = async (req, res) => {
             },
             { $unwind: '$designation' },
             { $match: matchQuery },
+        
+            
+
         ])
         console.log(matchQuery);
 

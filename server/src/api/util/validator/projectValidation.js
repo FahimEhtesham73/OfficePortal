@@ -1,6 +1,7 @@
 const { query } = require("express")
 const { check, body } = require("express-validator")
 const mongoose = require('mongoose')
+const {isDateString} = require("../../util/validator/commonValidation")
 
 
 var is_date = function (input) {
@@ -42,11 +43,15 @@ module.exports.createProjectValidation = [
     body('leadTime').isNumeric().withMessage("Invalid Time Format"),
     body('memberTime').isNumeric().withMessage("Invalid Time Format"),
     body("projectStartTime").custom((val) => {
-        if (!is_date(val)) return false
+        if(val){
+            return isDateString(val)
+        }
         return true;
     }),
     body("projectEndTime").custom((val) => {
-        if (!is_date(val)) return false
+        if(val){
+            return isDateString(val)
+        }
         return true;
     }),
     body("projectSuperVisor").custom((val) => {
@@ -135,18 +140,16 @@ module.exports.upateProjectValidation = [
     }),
 
     body("projectStartTime").custom((val) => {
-        if(!val) return true
-        else{
-            if (!is_date(val)) return false
-            return true;
+        if(val){
+            return isDateString(val)
         }
+        return true;
     }),
     body("projectEndTime").custom((val) => {
-        if(!val) return true
-        else{
-            if (!is_date(val)) return false
-            return true;
+        if(val){
+            return isDateString(val)
         }
+        return true;
     }),
     body("projectSuperVisor").custom((val) => {
         if(!val) return true
