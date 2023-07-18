@@ -386,13 +386,19 @@ const Holidays = () => {
                                 </StyledTableCell>
                                 
                                 <StyledTableCell component="th" scope="row">
-                                    <IconButton aria-label="settings" >
-                                        <MoreVertIcon onClick={(e) => {
-                                            handleClick(e)
-                                            setEditId(row._id)
-                                        }} />
-                                    </IconButton>
-                                    {menu}
+                                    {userInformaiton.role.alias === "Admin"? (
+                                        <>
+                                        <IconButton aria-label="settings" >
+                                            <MoreVertIcon onClick={(e) => {
+                                                handleClick(e)
+                                                setEditId(row._id)
+                                            }} />
+                                        </IconButton>
+                                        {menu}
+                                        
+                                        </>
+
+                                    ): null}
                                 </StyledTableCell>
                             </StyledTableRow>
                         ))}

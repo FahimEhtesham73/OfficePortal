@@ -75,8 +75,20 @@ module.exports.taskUpdateValidation = [
         }
         return true;
     }),
-    body("startTime").custom(v=> isDateString(v)),
-    body("endTime").custom(v=> isDateString(v)),
+    body("startTime").custom(v=> {
+        if(v){
+
+            return isDateString(v)
+        }
+        return true
+    
+        }),
+    body("endTime").custom(v=> {
+        if(v){
+            return isDateString(v)
+        }
+        return true
+    }),
     body("updatedData.taskType").custom(v=> {
         if(v){
             let list = ["feature", "bug", "test", "reasearch", "meeting", "design", "others"];
@@ -86,10 +98,7 @@ module.exports.taskUpdateValidation = [
         return true;
 
     }),
-    body("updatedData.progress").custom(v=> {
-        if(v) return !Number.isNaN(v)
-        return true
-    }),
+  
     body("updatedData.priority").custom(v=> {
         if(v){
             let list = ["high", "medium", "low"];
@@ -147,13 +156,13 @@ module.exports.filterTaskValidation = [
         }
         return true;
     }),
-    body("query.taskType").custom(v=>{
-        let list = ["feature", "bug", "test", "research", "meeting", "design", "others"]
-        if(v.length>0){
-            return v.every(i=> list.includes(i))
-        }
-        return true;
-    }),
+    // body("query.taskType").custom(v=>{
+    //     let list = ["feature", "bug", "test", "research", "meeting", "design", "others"]
+    //     if(v.length>0){
+    //         return v.every(i=> list.includes(i))
+    //     }
+    //     return true;
+    // }),
     // body("sortBy"),
 
 

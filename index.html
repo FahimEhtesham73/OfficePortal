@@ -34,30 +34,26 @@ body {
     <button id="addScreenBtn">Add Screen</button>
 </body>
 <script>
-const container = document.getElementById('container');
-const addScreenBtn = document.getElementById('addScreenBtn');
-let screenCount = 0;
+const latitude = 37.7749; // Example latitude value
+const longitude = -122.4194; // Example longitude value
 
-addScreenBtn.addEventListener('click', addScreen);
-
-function addScreen() {
-  screenCount++;
-  const screen = document.createElement('div');
-  screen.classList.add('screen');
-  screen.textContent = `Screen ${screenCount}`;
-  container.appendChild(screen);
-  adjustScreenSizes();
-}
-
-function adjustScreenSizes() {
-  const screens = Array.from(container.getElementsByClassName('screen'));
-  const numScreens = screens.length;
-
-  screens.forEach(screen => {
-    screen.style.flex = `1 0 ${100 / numScreens}%`;
+fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'OK') {
+      const results = data.results;
+      if (results.length > 0) {
+        const location = results[0].formatted_address;
+        console.log(location);
+        // Use the location for further processing
+      }
+    } else {
+      // Handle errors or no results
+    }
+  })
+  .catch(error => {
+    // Handle errors in fetching geolocation data
   });
-}
-
 
 
 

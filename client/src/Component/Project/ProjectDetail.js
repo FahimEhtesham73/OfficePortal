@@ -740,7 +740,7 @@ const ProjectDetail = () => {
                             overflowY: "auto"
                         }}>
 
-                            {userRole() === "admin" ? (
+                            {userRole() === "Admin" ? (
                                 <Box sx={{ m: ".5rem 0", ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100% !important" } }}>
                                     <FormControl fullWidth >
                                         <InputLabel id="demo-multiple-chip-label">Select Supervisor*</InputLabel>

@@ -225,6 +225,7 @@ module.exports.getTodayAttendence = async (req, res) => {
 
 module.exports.getAllUserAttendenceSheet = async (req, res) => {
   try{
+    const timeZone = "Asia/Dhaka"
     let firstDate = ""
     let lastDate = ""
     let range = []
@@ -252,6 +253,10 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
       range = [1, daysInMonth + 1]
     }
 
+   console.log("first", new Date(firstDate));
+   console.log("last", new Date(lastDate));
+
+
     const result = await Attendence.aggregate([
       {
         $match: {
@@ -276,7 +281,7 @@ module.exports.getAllUserAttendenceSheet = async (req, res) => {
         $group: {
           _id: {
             userId: "$userId",
-            day: { $dayOfMonth: {date:"$checkInTime",timezone:"Asia/Dhaka" }},
+            day: { $dayOfMonth: {date: "$checkInTime", timezone: timeZone} },
             aID:"$status",
             checkIn:"$checkInTime",
             modifiedCheckIn:"$modifiedCheckInTime"
