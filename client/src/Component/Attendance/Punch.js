@@ -657,7 +657,7 @@ const Punch = () => {
                         </Box>
                         <Box className={classes.button}>
                             {
-                                isPunchedIn ? <Button variant="contained" onClick={() => { punchOut() }}>Punch Out</Button> : <Button variant="contained" onClick={handleClickOpen}>Punch In</Button>
+                                isPunchedIn ? <Button variant="contained" onClick={() => { punchOut() }}>Punch Out</Button> : <Button variant="contained" disabled={punchedInfo? true: false} onClick={handleClickOpen}>Punch In</Button>
                             }
 
                         </Box>

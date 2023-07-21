@@ -181,9 +181,9 @@ const Attendancesheet = () => {
                             <Button variant="contained" sx={{ minWidth: 200, height: 55, margin: {md: "0", lg:"10px 20px 40px 20px"}, marginTop: { xs: "10px", md: "10px"} }} onClick={getAttendanceSheet}>Search</Button>
 
                             </Box>
-                            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
-                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                    <TableHead>
+                            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw", height:"100vh", overflowY: "scroll" }}>
+                                <Table sx={{ minWidth: 650,  height:"100vh", overflowY: "scroll" }} aria-label="simple table">
+                                    <TableHead sx={{position: "sticky", top: 0}}>
                                         <TableRow>
                                             <StyledTableCell sx={{ fontWeight: "bold" }}>Employee</StyledTableCell>
                                             {
@@ -196,7 +196,7 @@ const Attendancesheet = () => {
                                             }
                                         </TableRow>
                                     </TableHead>
-                                    <TableBody>
+                                    <TableBody >
                                         {
                                             attendanceData && attendanceData.map((row, ind) => (
                                                 <StyledTableRow
