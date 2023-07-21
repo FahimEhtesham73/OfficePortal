@@ -475,9 +475,9 @@ const LeaveStatusLead = () => {
                         </FormControl>
                     </Grid>
                     {/* Leave Status */}
-                    <Grid item xs={12} sm={4} md={2} >
+                    {/* <Grid item xs={12} sm={4} md={2} >
 
-                        <FormControl sx={{ maxHeight: 345, width: '100%' }}>
+                        <FormControl sx={{ maxHeight: 345, width: '100%', display:"none" }}>
                             <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -500,7 +500,7 @@ const LeaveStatusLead = () => {
                                 <MenuItem value={"declined"}>Not Accepted</MenuItem>
                             </Select>
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
                     {/* Date From */}
                     <Grid item xs={12} sm={4} md={2} >
 
@@ -582,7 +582,7 @@ const LeaveStatusLead = () => {
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row" >
                                     <div style={{ border: '1px solid', width: '100px', height: '20px', borderRadius: "50px", display: "flex", justifyContent: 'center', alignItems: "center", cursor: "pointer",
-                                    color: ((userRole()!=="Admin" && row?.isApproved[0] === "Approved") || (userRole()==="Admin" && row?.isAdminApproved === "Approved") ) ? "green": ((userRole()!=="Admin" && row?.isApproved[0] === "Declined") || (userRole()==="Admin" && row?.isAdminApproved === "Declined") )  ? "red": "auto"
+                                    color: ((userRole()!=="Admin" && row?.isApproved[0] === "Approved") || (userRole()==="Admin" && row?.isAdminApproved === "Approved") ) ? "green": ((userRole()!=="Admin" && row?.isApproved[0] === "Declined") || (userRole()==="Admin" && row?.isAdminApproved === "Declined") )  ? "red": "black"
                                     ,
                                      
                                 

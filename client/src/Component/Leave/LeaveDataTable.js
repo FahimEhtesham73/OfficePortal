@@ -196,7 +196,10 @@ const LeaveDataTable = (props) => {
                             <StyledTableCell sx={{ fontWeight: "bold" }}>No of Days</StyledTableCell>
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Reason</StyledTableCell>
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Status</StyledTableCell>
-                            <StyledTableCell sx={{ fontWeight: "bold" }}>Approved By</StyledTableCell>
+                            {(role === "Admin" || role === "Project Lead") ? null : (
+                                <StyledTableCell sx={{ fontWeight: "bold" }}>Approved By</StyledTableCell>
+
+                            )}
                             <StyledTableCell sx={{ fontWeight: "bold" }}>Actions</StyledTableCell>
                         </TableRow>
                     </TableHead>
@@ -229,6 +232,7 @@ const LeaveDataTable = (props) => {
                                 <StyledTableCell component="th" scope="row">
                                     {row?.isDeclined?'Declined':(row?.isFullyApproved && row?.isAllLeaderApproved && row?.isAllSuperVisorApproved )? "Approved" : "Pending"}
                                 </StyledTableCell>
+                                {(role === "Admin" || role === "Project Lead")? null: (
                                 <StyledTableCell component="th" scope="row">
                                     {/* {row?.} */}
 
@@ -241,9 +245,11 @@ const LeaveDataTable = (props) => {
                                     </Tooltip>
 
                                 </StyledTableCell>
+
+                                )}
                                 <StyledTableCell component="th" scope="row">
                                     {console.log(row.userId === userInfo()._id)}
-                                    {((row?.approvedByLeader?.filter(v=> (v.isApproved === "Approved" && v.tId !== userInfo()._id)).length > 0 || row?.approvedBySuperVisor?.filter(v=> (v.isApproved === "Approved" && v.sId !== userInfo()._id)).length > 0) || (row?.userId?.toString() === userInfo()._id?.toString() && role === "Admin" ) || (row.isFullyApproved) )? null: (
+                                    {((row?.approvedByLeader?.filter(v=> (v.isApproved === "Approved" && v.tId !== userInfo()._id)).length > 0 || row?.approvedBySuperVisor?.filter(v=> (v.isApproved === "Approved" && v.sId !== userInfo()._id)).length > 0) || (row?.userId?.toString() === userInfo()._id?.toString() && role === "Admin" ) || (row.isFullyApproved || row.isDeclined) )? null: (
                                     <IconButton aria-label="settings" >
                                         <MoreVertIcon onClick={(e)=> {
                                             handleClick(e,row)
