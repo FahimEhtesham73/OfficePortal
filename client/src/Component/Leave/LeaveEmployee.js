@@ -38,7 +38,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import userRole from '../Hook/userHook';
 import { totalHolidays, totalHolidaysCustomize } from '../functions/commonFunc';
-import {  leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
+import { leaveReducer, leaveReducerInitialState, leaveReducerState } from './leaveReducer';
 import LeaveDataTable from './LeaveDataTable';
 import { TextareaAutosize } from '@mui/material';
 import { getAllHoildaysApi } from '../../api/holidayApi';
@@ -61,9 +61,9 @@ const blue = {
     500: '#007FFF',
     600: '#0072E5',
     900: '#003A75',
-  };
+};
 
-  const grey = {
+const grey = {
     50: '#f6f8fa',
     100: '#eaeef2',
     200: '#d0d7de',
@@ -74,9 +74,9 @@ const blue = {
     700: '#424a53',
     800: '#32383f',
     900: '#24292f',
-  };
+};
 
-  const StyledTextarea = styled(TextareaAutosize)(
+const StyledTextarea = styled(TextareaAutosize)(
     ({ theme }) => `
     width: 320px;
     font-family: IBM Plex Sans, sans-serif;
@@ -104,7 +104,7 @@ const blue = {
       outline: 0;
     }
   `,
-  );
+);
 
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -167,11 +167,11 @@ function checkLeapYear(year) {
     //three conditions to find out the leap year
     if (((0 === year % 4) && (0 !== year % 100)) || (0 === year % 400)) {
         return true
-    } 
+    }
     return false
 }
 const leaveStat = [
-   
+
     {
         _id: "Casual",
         name: 'Casual Leave taken',
@@ -184,7 +184,7 @@ const leaveStat = [
         _id: "Special",
         name: 'Special Leave Taken',
     },
-    
+
 
 ]
 const YEAR = new Date().getFullYear()
@@ -194,8 +194,8 @@ const YEAR = new Date().getFullYear()
 const LeaveEmployee = () => {
     const jwt = Cookies.get('_token');
 
-    const [allHoliday, setAllHoliday] = useState([]) 
-    const [allHolidayDate, setAllHolidayDate] = useState([]) 
+    const [allHoliday, setAllHoliday] = useState([])
+    const [allHolidayDate, setAllHolidayDate] = useState([])
 
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -203,7 +203,7 @@ const LeaveEmployee = () => {
         leaveType: "",
         leaveStatus: "",
         startDate: new Date(`03/01/${YEAR}`),
-        endDate: checkLeapYear(YEAR+1) ? new Date(`02/29/${YEAR+1}`) : new Date(`02/28/${YEAR+1}`)
+        endDate: checkLeapYear(YEAR + 1) ? new Date(`02/29/${YEAR + 1}`) : new Date(`02/28/${YEAR + 1}`)
     })
     const [leaveSummery, setLeaveSummery] = useState({});
     const userData = userInfo();
@@ -222,10 +222,10 @@ const LeaveEmployee = () => {
 
     const [state, dispatch] = useReducer(leaveReducer, leaveReducerInitialState)
 
-    const getAllHoilday = async ()=> {
+    const getAllHoilday = async () => {
         const respnse = await getAllHoildaysApi(jwt);
-        if(respnse.status === 200) {
-            setAllHolidayDate(respnse?.data?.map(v=> new Date(v.date).toISOString().split("T")[0]));
+        if (respnse.status === 200) {
+            setAllHolidayDate(respnse?.data?.map(v => new Date(v.date).toISOString().split("T")[0]));
             setAllHoliday(respnse.data)
         }
     }
@@ -233,7 +233,7 @@ const LeaveEmployee = () => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    
+
     // For Action icon close
     const handleClose = () => {
         setLeaveRequest({
@@ -305,17 +305,19 @@ const LeaveEmployee = () => {
 
                 if (response.status === 200) {
                     setOpen(false)
-                    setLeaveRequest({...leaveRequest, duration: "",
-                    leaveType: "",
-                    startDate: "",
-                    endDate: "",
-                    totalDay: "",
-                    leaveReason: "", isHoliday: false})
+                    setLeaveRequest({
+                        ...leaveRequest, duration: "",
+                        leaveType: "",
+                        startDate: "",
+                        endDate: "",
+                        totalDay: "",
+                        leaveReason: "", isHoliday: false
+                    })
                     toast.success("Successfully requested", {
                         position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
                     })
                     getLeaveData()
-                    
+
                 }
 
             }
@@ -341,24 +343,24 @@ const LeaveEmployee = () => {
 
 
 
-    const getLeaveSummary = async ()=> {
-        const response = await leaveSummeryApi({userId: userData._id, year: search.startDate.getFullYear()}, jwt);
-        if(response.status === 200) {
+    const getLeaveSummary = async () => {
+        const response = await leaveSummeryApi({ userId: userData._id, year: search.startDate.getFullYear() }, jwt);
+        if (response.status === 200) {
             const responseData = await response.json();
             console.log(responseData.data);
             setLeaveSummery(responseData.data)
-        }else{
+        } else {
             console.log("nothing");
         }
     }
 
     const shouldDisableDate = (date) => {
         const dateString = date.toISOString().split('T')[0];
-        return allHolidayDate.includes(dateString) || (new Date(date).getDay() === 6 ||  new Date(date).getDay() === 0);
-      };
+        return allHolidayDate.includes(dateString) || (new Date(date).getDay() === 6 || new Date(date).getDay() === 0);
+    };
     const getLeaveData = async () => {
-        const response = await getLeaveApi({usersId: [], ...search}, jwt);
-        if(response.status === 200){
+        const response = await getLeaveApi({ usersId: [], ...search }, jwt);
+        if (response.status === 200) {
             let responseData = await response.json()
             console.log(responseData);
             dispatch({
@@ -368,11 +370,11 @@ const LeaveEmployee = () => {
         }
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         getLeaveData()
         getLeaveSummary()
         getAllHoilday()
-    },[])
+    }, [])
     const settings = ['Edit', 'Delete'];
     const menu = (
         <Menu
@@ -437,7 +439,7 @@ const LeaveEmployee = () => {
                                 <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
                                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                                         <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.name}</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{leaveSummery?.totalTaken?.find(v=> v._id === val._id)?.total || 0}</Typography>
+                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{leaveSummery?.totalTaken?.find(v => v._id === val._id)?.total || 0}</Typography>
                                     </Box>
                                 </Card>
                             </Grid>
@@ -448,10 +450,10 @@ const LeaveEmployee = () => {
 
             </Box>
 
-             {/* Searching Div */}
-             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+            {/* Searching Div */}
+            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
                 <Grid container spacing={3}>
-                
+
                     {/* Leave type */}
                     <Grid item xs={12} sm={4} md={2} >
                         <FormControl sx={{ width: '100%' }}>
@@ -461,8 +463,8 @@ const LeaveEmployee = () => {
                                 id="demo-simple-select"
                                 // value={age}
                                 label="Select leave type"
-                                onChange={(e)=> setSearch({...search, leaveType: e.target.value})}
-                                >
+                                onChange={(e) => setSearch({ ...search, leaveType: e.target.value })}
+                            >
                                 <MenuItem value={"Casual"}>Casual</MenuItem>
                                 <MenuItem value={"Sick"}>Sick</MenuItem>
                                 <MenuItem value={"Special"}>Special Leave</MenuItem>
@@ -478,9 +480,9 @@ const LeaveEmployee = () => {
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
                                 // value={age}
-                                
+
                                 label="Select leave type"
-                            onChange={(e)=> setSearch({...search, leaveStatus: e.target.value})}
+                                onChange={(e) => setSearch({ ...search, leaveStatus: e.target.value })}
                             >
                                 <MenuItem value={"pending"}>Pending</MenuItem>
                                 <MenuItem value={"approved"}>Accepted</MenuItem>
@@ -493,18 +495,18 @@ const LeaveEmployee = () => {
 
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker 
-                                
-                                onChange={(e)=> {
-                                    if(e?.['$y']){
-                                        console.log(e);
-                                        setSearch({
-                                            ...search,
-                                            startDate: new Date(`03/01/${e?.['$y']}`),
-                                            endDate: checkLeapYear(e?.['$y']+1)? new Date(`02/29/${e?.['$y'] + 1}`) :new Date(`02/28/${e?.['$y'] + 1}`)
-                                        })
-                                    }
-                                }} label="Year" views={['year']} sx={{ width: '100%', maxHeight: 345 }} />
+                                <DatePicker
+
+                                    onChange={(e) => {
+                                        if (e?.['$y']) {
+                                            console.log(e);
+                                            setSearch({
+                                                ...search,
+                                                startDate: new Date(`03/01/${e?.['$y']}`),
+                                                endDate: checkLeapYear(e?.['$y'] + 1) ? new Date(`02/29/${e?.['$y'] + 1}`) : new Date(`02/28/${e?.['$y'] + 1}`)
+                                            })
+                                        }
+                                    }} label="Year" views={['year']} sx={{ width: '100%', maxHeight: 345 }} />
                             </DemoContainer>
                         </LocalizationProvider>
                     </Grid>
@@ -519,13 +521,13 @@ const LeaveEmployee = () => {
 
                     </Grid> */}
                     <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={()=> {getLeaveData(); getLeaveSummary()}}>Search</Button>
+                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={() => { getLeaveData(); getLeaveSummary() }}>Search</Button>
                     </Grid>
                 </Grid>
             </Box>
-        
-        <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
-                 
+
+            <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
+
 
             {/* Modal */}
             <BootstrapDialog
@@ -536,10 +538,11 @@ const LeaveEmployee = () => {
                 <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
                     Apply Leave
                 </BootstrapDialogTitle>
-                <DialogContent sx={{ display: "flex", justifyContent: "center", flexDirection: "column", 
-                  transition: 'all 03.s'
+                <DialogContent sx={{
+                    display: "flex", justifyContent: "center", flexDirection: "column",
+                    transition: 'all 03.s'
 
-            }}>
+                }}>
                     <Box sx={{ minWidth: 120 }}>
                         <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
                             <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
@@ -551,9 +554,7 @@ const LeaveEmployee = () => {
                                 onChange={(e) => {
                                     setLeaveRequest({ ...leaveRequest, leaveType: e.target.value, })
 
-
                                 }
-
                                 }
                             >
                                 <MenuItem value={"Casual"}>Casual</MenuItem>
@@ -593,87 +594,87 @@ const LeaveEmployee = () => {
                     </Box>
                     {leaveRequest?.duration && leaveRequest.duration.length > 0 ? (
                         <>
-                        {leaveRequest?.duration === "halfday" ? (
-                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                <DemoContainer components={['DatePicker']}  >
-                                    <DatePicker
-                                        shouldDisableDate={ userInfo().role.name === "admin"? null: shouldDisableDate}
-
-                                        slotProps={{
-                                            textField: {
-                                                error: false,
-                                            },
-                                        }}
-                                        label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
-                                            if(e?.['$d']){
-                                                setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
-
-                                            }
-                                        }} />
-                                </DemoContainer>
-                            </LocalizationProvider>
-    
-    
-                        ) : (
-                            <>
-                            
-
-                                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                    <DemoContainer components={['DatePicker']} >
+                            {leaveRequest?.duration === "halfday" ? (
+                                <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                    <DemoContainer components={['DatePicker']}  >
                                         <DatePicker
-    
-                                            shouldDisableDate={shouldDisableDate}
-                                            
+                                            shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
+
                                             slotProps={{
                                                 textField: {
                                                     error: false,
                                                 },
                                             }}
-                                            label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
-                                            onChange={(e) => {
-                                                if(e?.['$d']){
-                                                    setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+                                            label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
+                                                if (e?.['$d']) {
+                                                    setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
 
                                                 }
-
-
-                                            }}
-                                        />
+                                            }} />
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                
-                                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                    <DemoContainer components={['DateTimePicker']}  >
-                                        <DatePicker
-                                        disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0  )? false: true}
-                                        shouldDisableDate={shouldDisableDate}
-                                            slotProps={{
-                                                textField: {
-                                                    error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
-                                                },
-                                            }}
-                                            label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
-                                            onChange={(e) => {
-                                                if(e?.['$d']){
-                                                    let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
-                                                    let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
-                                                    let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
-                                                    let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
-    
-                                                    setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total , isHoliday: holidaysCount > 0 ? true : false })
 
-                                                }
-                                                
-                                            }}
-                                        />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            </>
-                        )
-                        }
-                        
+
+                            ) : (
+                                <>
+
+
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                        <DemoContainer components={['DatePicker']} >
+                                            <DatePicker
+
+                                                shouldDisableDate={shouldDisableDate}
+
+                                                slotProps={{
+                                                    textField: {
+                                                        error: false,
+                                                    },
+                                                }}
+                                                label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                onChange={(e) => {
+                                                    if (e?.['$d']) {
+                                                        setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+
+                                                    }
+
+
+                                                }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                        <DemoContainer components={['DateTimePicker']}  >
+                                            <DatePicker
+                                                disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0) ? false : true}
+                                                shouldDisableDate={shouldDisableDate}
+                                                slotProps={{
+                                                    textField: {
+                                                        error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
+                                                    },
+                                                }}
+                                                label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                onChange={(e) => {
+                                                    if (e?.['$d']) {
+                                                        let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
+                                                        let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
+                                                        let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
+                                                        let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
+
+                                                        setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+
+                                                    }
+
+                                                }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </>
+                            )
+                            }
+
                         </>
-                    ): null}
+                    ) : null}
 
                     <TextField id="outlined-search" label="Number of Days *"
                         error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
