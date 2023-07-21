@@ -305,10 +305,17 @@ const LeaveEmployee = () => {
 
                 if (response.status === 200) {
                     setOpen(false)
+                    setLeaveRequest({...leaveRequest, duration: "",
+                    leaveType: "",
+                    startDate: "",
+                    endDate: "",
+                    totalDay: "",
+                    leaveReason: "", isHoliday: false})
                     toast.success("Successfully requested", {
                         position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
                     })
                     getLeaveData()
+                    
                 }
 
             }
@@ -650,9 +657,9 @@ const LeaveEmployee = () => {
                                                     let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
                                                     let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
                                                     let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
-                                                    let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount;
+                                                    let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
     
-                                                    setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+                                                    setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total , isHoliday: holidaysCount > 0 ? true : false })
 
                                                 }
                                                 

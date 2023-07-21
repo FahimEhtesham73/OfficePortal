@@ -421,8 +421,11 @@ const Holidays = () => {
                         <DemoContainer components={['DatePicker']} >
                             <DatePicker label="Add Date *" value={selectedDate} sx={{ width: 365, maxHeight: 345, }} onChange={(e) => {
                                 // console.log(e);
-                                setHolidayInput({ ...holidayInput, holidayDate: e.$d })
-                                setSelectedDate(e)
+                                if(e?.['$d']){
+                                    setHolidayInput({ ...holidayInput, holidayDate: e.$d })
+                                    setSelectedDate(e)
+
+                                }
                             }} />
                         </DemoContainer>
                     </LocalizationProvider>

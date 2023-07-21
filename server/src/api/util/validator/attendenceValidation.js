@@ -26,11 +26,11 @@ module.exports.updateAttendenceValidation = [
         return true;
     }),
     body("userId").isMongoId().withMessage("Not valid"),
-    body("updateDate").custom(v=> {
-        if(v.checkOutTime && n){
+    // body("updateDate").custom(v=> {
+    //     if(v.checkOutTime && n){
             
-        }
-    })
+    //     }
+    // })
 ]
 
 module.exports.getAttendenceValidation = [

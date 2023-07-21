@@ -1,7 +1,7 @@
 const {check, body, query} = require("express-validator")
 const mongoose = require("mongoose");
 const User = require("../../models/userModel");
-
+const Holiday = require("../../models/holidaySchema")
 
 module.exports.createOrUpdateValidation = [
     body("userId").isMongoId().custom(async(v)=>{
@@ -45,7 +45,14 @@ module.exports.createLeaveValidation = [
     body("leaveType").custom(v=> typeof v === 'string'),
     body("startDate").notEmpty().custom(v=> isDateString(v)),
     body("endDate").notEmpty().custom(v=> isDateString(v) ),
-    body("totalDay").notEmpty().custom(v=> typeof v === 'number').customSanitizer(v=> Number(v)),
+
+    body("totalDay").notEmpty().custom(async(v, {req})=> {
+        let totalHolidays = await Holiday.find().lean();
+        let customize = totalHolidays.map((v)=> new Date(v.date).toISOString().split("T")[0])
+        let totalHolidayInRange = totalHolidaysCustomize(req.body.startDate, req.body.endDate, customize);
+        let total = daysCount(new Date(req.body.startDate), new Date(req.body.endDate)) - totalHolidayInRange;
+        return parseInt(total) === parseInt(v);
+    }).customSanitizer(v=> Number(v)),
     body("leaveReason").notEmpty().custom(v=> typeof v === 'string').customSanitizer(v=> v.trim()),
 
 ]
@@ -102,3 +109,36 @@ function isDateString(value){
             return false;
     }
 }
+
+const totalHolidaysCustomize = (startDate, endDate, customHolidays = []) => {
+    if (new Date(startDate) < new Date(endDate)) {
+      endDate = new Date(endDate).setHours(23, 59, 59, 999);
+      startDate = new Date(new Date(startDate).setHours(0, 0, 0, 0));
+      let count = 0;
+      while (startDate <= endDate) {
+        const dayOfWeek = startDate.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // 0 represents Sunday, 6 represents Saturday
+          count++;
+        } else if (customHolidays.includes(startDate.toISOString().split('T')[0])) {
+          count++;
+        }
+  
+        startDate.setDate(startDate.getDate() + 1);
+      }
+  
+      return count;
+    } else {
+      return 0;
+    }
+  };
+
+  const daysCount = (date_1, date_2) => {
+    if (date_1 && date_2) {
+        let difference = date_1.getTime() - date_2.getTime();
+        let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+        return TotalDays;
+  
+    } else {
+        return 0
+    }
+  }

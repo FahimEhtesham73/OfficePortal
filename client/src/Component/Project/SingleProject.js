@@ -225,7 +225,7 @@ const menu = (
       </CardContent>
       <Stack spacing={{ xs: 1, sm: 2 }} direction="row" justifyContent={"space-between"} useFlexGap flexWrap="wrap">
         <div className='p-2'>
-          <Typography color={"CaptionText"}>Started</Typography>
+          <Typography color={""}>Started</Typography>
           <Typography color={"GrayText"}>{new Date(project.projectStartTime).toDateString()}</Typography>
         </div>
         <div className='p-2'>

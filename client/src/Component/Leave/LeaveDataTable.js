@@ -427,6 +427,7 @@ const LeaveDataTable = (props) => {
                         error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
                         value={leaveRequest?.duration === "halfday" ? 0.5 : (leaveRequest?.startDate && leaveRequest?.endDate) && leaveRequest?.totalDay}
                         readOnly
+                        
                         type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px", pointerEvents:"none" }} />
                     {/* {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with hoilday</span>} */}
                     <TextField id="outlined-search" label="Reason *"

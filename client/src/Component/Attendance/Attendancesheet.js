@@ -22,6 +22,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
 
 import Cookies from 'js-cookie';
+import { TextField } from '@mui/material';
+import dayjs from 'dayjs';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -54,6 +56,8 @@ const Attendancesheet = () => {
     const [searchingDate, setSearchinDate] = useState('')
     const [attendanceData, setAttendanceData] = useState('')
     const [loading, setLoading] = useState(false)
+    const [empName, setEmpName] = useState("")
+    const [allData, setAllData] = useState([])
 
     // Finding total number of days in this current Month
     function daysInMonth(month, year) {
@@ -79,6 +83,7 @@ const Attendancesheet = () => {
         console.log("attendence date", data);
         if (res.status === 200) {
             setAttendanceData(data)
+            setAllData(data)
             setLoading(false)
         }
         else {
@@ -117,6 +122,19 @@ const Attendancesheet = () => {
         return strTime;
     }
 
+    function filterAttendenceData(text){
+        if(text.length <= 0){
+            setAttendanceData(allData)
+            return;
+        }
+        let re = new RegExp(`${text}`, "i")
+        const filterData = allData?.filter((d,i)=> re.test(d?.user));
+        setAttendanceData(filterData)
+    }
+
+    useEffect(()=> {
+
+    })
     useLayoutEffect(() => {
         getAttendanceSheet()
     }, [])
@@ -131,22 +149,38 @@ const Attendancesheet = () => {
                         </Box>
 
                         <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
+                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
+                            <TextField id="outlined-search" label="Employee Name" value={empName} type="search" sx={{maxWidth: 365, width: 365, height: 55, margin: {md:"0", lg:"10px 20px 40px 20px"}}} 
+                            onChange={(e)=> {
+                                setEmpName(e.target.value)    
+                                filterAttendenceData(e.target.value)}
+                            }
+                            name='empName' />
 
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-                                    <DatePicker label={'Select Date'} views={['month', 'year']} onChange={(e) => {
-                                        console.log(e);
-                                        if (e.$y === year && e.$M + 1 === month) {
-                                            setSearchinDate('')
-                                        } else {
-                                            setSearchinDate(e.$d)
-                                            setMonth(e.$M + 1)
-                                            setYear(e.$y)
+                                    <DatePicker sx={{maxWidth: 365, width: 365}} label={'Select Date'} 
+                                    value={dayjs(searchingDate)}
+                                    slotProps={{textField: {error: false}}}
+                                    views={['month', 'year']} onChange={(e) => {
+                                        if(e?.['$d']){
+
+                                            if (e.$y === year && e.$M + 1 === month) {
+                                                setSearchinDate('')
+                                            } else {
+                                                setSearchinDate(e.$d)
+                                                setMonth(e.$M + 1)
+                                                setYear(e.$y)
+                                            }
                                         }
                                     }} />
                                 </DemoContainer>
                             </LocalizationProvider>
-                            <Button variant="contained" sx={{ minWidth: 365, height: 55, margin: "10px 20px 40px 20px" }} onClick={getAttendanceSheet}>Search</Button>
+                            {/* <Typography></Typography> */}
+
+                            <Button variant="contained" sx={{ minWidth: 200, height: 55, margin: {md: "0", lg:"10px 20px 40px 20px"}, marginTop: { xs: "10px", md: "10px"} }} onClick={getAttendanceSheet}>Search</Button>
+
+                            </Box>
                             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw" }}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                     <TableHead>

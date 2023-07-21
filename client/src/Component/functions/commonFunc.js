@@ -112,7 +112,6 @@ export const taskDataPrepration = (data) =>
 
 export const daysCount = (date_1, date_2) => {
   if (date_1 && date_2) {
-      console.log("achi");
       let difference = date_1.getTime() - date_2.getTime();
       let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
       return TotalDays;

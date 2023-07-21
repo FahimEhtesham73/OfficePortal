@@ -54,7 +54,19 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
             const response = await createProjectTaskApi(data, jwt);
             const newTask = await response.json();
             if (response.status === 200) {
-                console.log("stat", newTask.data[0]);
+                setTask({...task, 
+                    taskName: "",
+                    startTime: "",
+                    endTime: "",
+                    status: "",
+                    totalHour: "",
+                    additionalNotes: "",
+                    assignedMembers: [],
+                    assignedMembersNameId: [],
+                    priority: "",
+                    progress: "",
+                    taskType: ""
+                })
                 setNewTask(newTask.data[0])
                 handleCardAdd(status, newTask.data[0])
                 toast.success("Task Added", {
@@ -97,6 +109,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                                 id="demo-simple-select"
                                 // size="small"
                                 label="Select Type"
+                                value={task?.taskType}
                                 onChange={(e) => {
                                     setTask({ ...task, taskType: e.target.value })
                                 }}
@@ -121,8 +134,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                                 // sx={{ width: "100%" }}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-
-
+                                value={task?.priority}
                                 label="Select Priority*"
                                 onChange={(e) => {
                                     setTask({

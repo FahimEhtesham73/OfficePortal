@@ -703,7 +703,7 @@ const Punch = () => {
                         {/* Select Month And Year*/}
                         <Grid item xs={12} sm={6} md={4} >
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
+                                <DatePicker label={'Select Month and Year'} views={['month', 'year']} onChange={(e) => { if(e?.['$d']) searchedDate(e['$d']) }} sx={{ maxHeight: 200, width: '100%' }} />
                             </LocalizationProvider>
                         </Grid>
 

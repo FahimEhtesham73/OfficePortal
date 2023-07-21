@@ -780,7 +780,7 @@ const ProjectDetail = () => {
 
                             <Box sx={{ m: ".5rem 0", ".css-1t1j96h-MuiPaper-root-MuiDialog-paper": { width: "100% !important" } }}>
                                 <FormControl fullWidth >
-                                    <InputLabel id="demo-multiple-chip-label">Select Members*</InputLabel>
+                                    <InputLabel id="demo-multiple-chip-label">Select Team leads*</InputLabel>
                                     <Select
                                         sx={{ minWidth: "100%", width: "100%" }}
                                         labelId="demo-multiple-chip-label"
@@ -789,7 +789,7 @@ const ProjectDetail = () => {
                                         multiple
                                         value={projectTeamLead.teamLeadName}
                                         onChange={(e) => handelChange(e, "teamlead")}
-                                        placeholder="Select Team lead"
+                                        placeholder="Select Team leads"
                                         renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                             {selected.map((value) => (
                                                 <Chip key={value} label={value.split("_")[0]} />
