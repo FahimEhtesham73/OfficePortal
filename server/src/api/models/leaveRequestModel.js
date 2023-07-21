@@ -35,6 +35,10 @@ const leaveRequestSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isDeclined:{
+        type: Boolean,
+        default: false
+    },
     startDate: Date,
     endDate: Date,
     isFullyApproved: {type: Boolean, default: false},

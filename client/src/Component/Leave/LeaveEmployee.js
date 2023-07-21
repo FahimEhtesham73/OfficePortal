@@ -484,6 +484,7 @@ const LeaveEmployee = () => {
                             >
                                 <MenuItem value={"pending"}>Pending</MenuItem>
                                 <MenuItem value={"approved"}>Accepted</MenuItem>
+                                <MenuItem value={"declined"}>Declined</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>

@@ -201,7 +201,10 @@ const LeaveDataTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {data.leaves.map((row, ind) => (
+                        {data.leaves.map((row, ind) => {
+                            console.log(row);
+                            return (
+                            
                             <StyledTableRow
                                 key={ind}
                             >
@@ -224,7 +227,7 @@ const LeaveDataTable = (props) => {
                                     </Tooltip>
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
-                                    {(row?.isFullyApproved && row?.isAllLeaderApproved && row?.isAllSuperVisorApproved )? "Approved" : "Pending"}
+                                    {row?.isDeclined?'Declined':(row?.isFullyApproved && row?.isAllLeaderApproved && row?.isAllSuperVisorApproved )? "Approved" : "Pending"}
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {/* {row?.} */}
@@ -289,7 +292,7 @@ const LeaveDataTable = (props) => {
                                     </Menu>
                                 </StyledTableCell>
                             </StyledTableRow>
-                        ))}
+                        )})}
                     </TableBody>
                 </Table>
             </TableContainer>
