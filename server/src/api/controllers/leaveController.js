@@ -581,6 +581,7 @@ module.exports.getAllLeave = async (req, res, next) => {
                     "approvedBySuperVisor": 1,
                     "isAdminApproved": 1,
                     "isFullyApproved": 1,
+                    "isDeclined":1,
                     "isAllLeaderApproved":1,
                     "isAllSuperVisorApproved": 1,
                     "startDate": 1,
@@ -828,6 +829,13 @@ module.exports.leaveStatusChange = async (req, res, next) => {
         let leaveDetails = await isLeaveAvailabe(leaveId, approverId, role);
         if (!leaveDetails.length) return res.status(400).json({ "message": "Data not found" })
         leaveDetails = leaveDetails[0]
+        if(status === 'Declined'){
+            await Leave.findOneAndUpdate({ _id: leaveId }, {
+                $set: {
+                    isDeclined:true
+                }
+            })
+        }
         if (role === "admin") {
             await Leave.findOneAndUpdate({ _id: leaveId }, {
                 $set: {
