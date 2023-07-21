@@ -507,7 +507,13 @@ module.exports.getAllLeave = async (req, res, next) => {
 
         for (let query in body) {
             if (body.leaveStatus.length) {
-                status.isFullyApproved = body?.leaveStatus === "approved" ? true : false
+                if(body.leaveStatus === "declined") {
+                    status.isDeclined = true;
+                }else{
+                    status.isFullyApproved = body?.leaveStatus === "approved" ? true : false
+                    status.isDeclined = false;
+
+                }
             }
             if (body.leaveType.length) {
                 status.leaveType = body?.leaveType
@@ -527,7 +533,7 @@ module.exports.getAllLeave = async (req, res, next) => {
 
         }
 
-        // console.log(args);
+        console.log(status);
         let data = await Leave.aggregate([
             {
                 $match: {
