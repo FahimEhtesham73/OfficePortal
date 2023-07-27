@@ -249,17 +249,18 @@ module.exports.filterTask = async (req, res)=> {
         const LIMIT = query.limit || 10;
         const Page = query.page || 1;
         if(isUserIn.length) {
-            
+
             matchQuery['assignedMembers'] = {$in: [new mongoose.Types.ObjectId(req.user._id)]}
         }
+        console.log("matched", matchQuery);
         if (isUserIn.length > 0 || req.user.role.name === "admin") {
             if(!query?.startTime?.length && !query?.endTime?.length){
                 let {firstday,lastday} = getFirstAndLastDay(new Date())
     
-                 matchQuery = {
+                //  matchQuery = {
                     // startTime: {$gte: new Date(new Date(firstday).setHours(0,0,0,0))},
                     // endTime: {$lte: new Date(new Date(lastday).setHours(23,59,59,59))}
-                }
+                // }
 
             }
             
@@ -305,7 +306,7 @@ module.exports.filterTask = async (req, res)=> {
           
 
 
-        // console.log("final",matchQuery);
+        console.log("final",matchQuery);
             const allTask = await ProjectTask.aggregate([
                 {
                     $match: {
