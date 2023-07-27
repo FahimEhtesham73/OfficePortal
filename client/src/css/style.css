@@ -1,4 +1,4 @@
-body{
+body {
     font-family: 'Mulish', sans-serif !important;
     overflow-y: scroll !important;
     overflow-x: scroll !important;
@@ -9135,9 +9135,10 @@ button.close {
     white-space: nowrap
 }
 
-.profile-img img{
+.profile-img img {
     object-fit: cover;
 }
+
 .middle {
     transition: .5s ease;
     opacity: 0;
@@ -9147,18 +9148,19 @@ button.close {
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     text-align: center;
-  }
+}
 
 .profile-img:hover .image {
     opacity: 0.3;
-  }
+}
 
-  .profile-img:hover .middle {
+.profile-img:hover .middle {
     opacity: 1;
-  }
+}
 
 
-  .task-div label, .task-div span{
+.task-div label,
+.task-div span {
     padding: .5rem;
     font-size: 1.2rem;
     font-weight: 500;

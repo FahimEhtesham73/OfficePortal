@@ -321,11 +321,11 @@ module.exports.filterTask = async (req, res)=> {
                     $sort: {endTime: sortBy}
                 },
                 {
-                    $limit: LIMIT
+                    $skip: parseInt(Page - 1) * LIMIT
                 },
                 {
-                    $skip: parseInt(Page - 1) * LIMIT
-                }
+                    $limit: LIMIT
+                },
             ]);
 
             return res.status(200).json({ "message": "success", data: allTask });

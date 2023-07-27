@@ -37,9 +37,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
+    // '&:nth-of-type(odd)': {
+    //     backgroundColor: theme.palette.action.hover,
+    // },
     // hide last border
     '&:last-child td, &:last-child th': {
         border: 0,
@@ -129,6 +129,7 @@ const Attendancesheet = () => {
         }
         let re = new RegExp(`${text}`, "i")
         const filterData = allData?.filter((d,i)=> re.test(d?.user));
+        console.log(filterData);
         setAttendanceData(filterData)
     }
 
@@ -148,21 +149,19 @@ const Attendancesheet = () => {
                             <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
                         </Box>
 
-                        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px" }}>
-                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
-                            <TextField id="outlined-search" label="Employee Name" value={empName} type="search" sx={{maxWidth: 365, width: 365, height: 55, margin: {md:"0", lg:"10px 20px 40px 20px"}}} 
-                            onChange={(e)=> {
-                                setEmpName(e.target.value)    
-                                filterAttendenceData(e.target.value)}
-                            }
-                            name='empName' />
+                        <Box sx={{ display: "flex", justifyContent: "space-between",marginTop:"25px" }}>
+                            <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Filter By Date</Typography>
+                        </Box>
 
+                        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "20px",flexDirection:"column" }}>
+                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
                                     <DatePicker sx={{maxWidth: 365, width: 365}} label={'Select Date'} 
                                     value={dayjs(searchingDate)}
                                     slotProps={{textField: {error: false}}}
-                                    views={['month', 'year']} onChange={(e) => {
+                                    placeHolder='MM YYYY'
+                                    views={['year', 'month']} onChange={(e) => {
                                         if(e?.['$d']){
 
                                             if (e.$y === year && e.$M + 1 === month) {
@@ -181,9 +180,28 @@ const Attendancesheet = () => {
                             <Button variant="contained" sx={{ minWidth: 200, height: 55, margin: {md: "0", lg:"10px 20px 40px 20px"}, marginTop: { xs: "10px", md: "10px"} }} onClick={getAttendanceSheet}>Search</Button>
 
                             </Box>
+                            
+
+                            {/* Employee Filter */}
+                            <Box sx={{ display: "flex", justifyContent: "space-between",marginTop:"0px" }}>
+                            <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Filter By Name</Typography>
+                        </Box>
+                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
+                                
+                            <TextField id="outlined-search" label="Employee Name" value={empName} type="search" sx={{maxWidth: 365, width: 365, height: 55, margin: {md:"0", lg:"10px 20px 40px 0px"}}} 
+                            onChange={(e)=> {
+                                setEmpName(e.target.value)    
+                                filterAttendenceData(e.target.value)}
+                            }
+                            name='empName' />
+
+
+                            </Box>
+
+
                             <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw", height:"100vh", overflowY: "scroll" }}>
-                                <Table sx={{ minWidth: 650,  height:"100vh", overflowY: "scroll" }} aria-label="simple table">
-                                    <TableHead sx={{position: "sticky", top: 0}}>
+                                <Table sx={{ minWidth: 650,  height:"auto", overflowY: "scroll" }} aria-label="simple table">
+                                    <TableHead sx={{position: "sticky", top: 0,zIndex: 2}}>
                                         <TableRow>
                                             <StyledTableCell sx={{ fontWeight: "bold" }}>Employee</StyledTableCell>
                                             {
@@ -202,14 +220,15 @@ const Attendancesheet = () => {
                                                 <StyledTableRow
                                                     key={row.user}
                                                 >
-                                                    <StyledTableCell component="th" scope="row">
+                                                    <StyledTableCell component="th" scope="row"
+                                                    sx={{position: "sticky", left: 0,padding: "0 10px",zIndex: 1,background: "#fff"}}>
                                                         {row.user}
                                                     </StyledTableCell>
                                                     {
                                                         row?.attendance.map((val) => {
                                                             return (
 
-                                                                <StyledTableCell>{val.present === true ? (
+                                                                <StyledTableCell  >{val.present === true ? (
                                                                     <>
                                                                         <CheckIcon style={{ color: 'green' }} />
                                                                         {

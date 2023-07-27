@@ -99,6 +99,7 @@ export const taskTypes = ["feature", "bug", "test", "meeting", "research", "desi
 const ProjectTaskBoard = ({ membersNameId }) => {
     const jwt = Cookies.get("_token");
     const user = userInfo();
+    const [allTask, setAllTask] = useState([]);
 
 
     const [tasks, setTasks] = useState([]);
@@ -119,6 +120,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         taskType: ""
 
     })
+    const limit = 10
+    const [pageNumber,setPageNumber] = useState(1)
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -168,7 +171,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         }
     }
 
-    const filterTask = async () => {
+    useEffect(()=>{
+        setAllTask(allTask)
+        
+    }, [allTask])
+
+    console.log("all task",allTask);
+
+    const filterTask = async (pageNum) => {
         const data = {
             pcd: projectCode,
             query: {
@@ -177,10 +187,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 endTime: query.endTime,
                 priority: query.priority,
                 taskType: query.taskType,
-                sortBy: query.sortBy
-            }
+                sortBy: query.sortBy,
+                limit: limit,
+                page: pageNum
+            },
+
         }
 
+    
         try {
             if (data.query.startTime && data.query.endTime && data.query.startTime > data.query.endTime) {
                 toast.warning("Invalid date range", {
@@ -193,7 +207,9 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             const response = await filterProjectTask(data, jwt);
             if (response.status === 200) {
                 const responseData = await response.json();
-                setBoard(taskDataPrepration(responseData.data))
+                setAllTask((prev)=> [...prev, ...responseData.data])
+                // setAllTask([...allTask,...responseData.data])
+                setBoard(taskDataPrepration([...allTask, ...responseData.data]))
                 console.log(responseData.data);
             } else {
                 toast.warning("Fetching error", {
@@ -275,7 +291,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     // }, [projectCode])
 
     useEffect(() => {
-        filterTask()
+        filterTask(1)
     }, [projectCode])
 
 
@@ -391,6 +407,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         setOpen(newOpen);
     };
     return (
+        <>
         <div className="board-container" id="board-container" style={{ position: "relative", }}>
 
             <span>Task Board</span>
@@ -606,7 +623,9 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                 </Box>
 
                             </Box>
-                            <Button variant="contained" onClick={filterTask}>Search</Button>
+                            <Button variant="contained" onClick={()=>{ 
+                                setAllTask((prev)=> [])
+                                filterTask(1)}}>Search</Button>
                         </TaskFilter>
                     </AccordionDetails>
                 </Accordion>
@@ -756,6 +775,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             >
                 {board}
             </Board>
+
+            
 
             < >
                 {/* <Button onClick={toggleDrawer(true)}>Add</Button> */}
@@ -1249,6 +1270,12 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 ) : null}
             </BootstrapDialog>
         </div>
+        <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}} onClick={()=>{
+            setPageNumber((prev)=> prev + 1)
+            filterTask(pageNumber + 1)
+        }
+            }>See More</Box>
+        </>
     )
 }
 
