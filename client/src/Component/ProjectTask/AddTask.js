@@ -16,7 +16,7 @@ import { toast } from 'react-toastify';
 export const taskStatus = ['open', 'doing', 'pause', 'done'];
 export const priorityStat = ['high', 'medium', 'low']
 
-const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask }) => {
+const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask, setAllTask, allTask, pageNumber,filterTask }) => {
     const jwt = Cookies.get("_token")
     const customStyles = {
         // background: "rgb(58 58 58)",
@@ -70,7 +70,9 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                     taskType: ""
                 })
                 setNewTask(newTask.data[0])
-                handleCardAdd(status, newTask.data[0])
+
+                filterTask(pageNumber,[])
+                // handleCardAdd(status, newTask.data[0])
                 toast.success("Task Added", {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 1000,

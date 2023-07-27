@@ -172,13 +172,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     useEffect(()=>{
+        console.log("ALL Task changed");
         setAllTask(allTask)
         
     }, [allTask])
 
     console.log("all task",allTask);
 
-    const filterTask = async (pageNum) => {
+    const filterTask = async (pageNum,taskList) => {
         const data = {
             pcd: projectCode,
             query: {
@@ -206,11 +207,13 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             }
             const response = await filterProjectTask(data, jwt);
             if (response.status === 200) {
+                console.log("After API Call all task",allTask);
+                // console.log("After API Call response data",responseData.data);
                 const responseData = await response.json();
-                setAllTask((prev)=> [...prev, ...responseData.data])
-                // setAllTask([...allTask,...responseData.data])
-                setBoard(taskDataPrepration([...allTask, ...responseData.data]))
-                console.log(responseData.data);
+                // setAllTask((prev)=> [...prev, ...responseData.data])
+                setAllTask([...taskList,...responseData.data])
+                setBoard(taskDataPrepration([...taskList, ...responseData.data]))
+                console.log("After API Call response data",responseData.data);
             } else {
                 toast.warning("Fetching error", {
                     position: toast.POSITION.TOP_CENTER,
@@ -291,7 +294,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     // }, [projectCode])
 
     useEffect(() => {
-        filterTask(1)
+        filterTask(1,allTask)
     }, [projectCode])
 
 
@@ -311,7 +314,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             const responseData = await response.json();
         } else {
             // setLoading(false)
-            await filterTask()
+            await filterTask(pageNumber,allTask)
             throw new Error("Error occured")
         }
 
@@ -356,7 +359,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
         let response = await updateATaskApi({ pcd: projectCode, taskid: taskId, updatedData: updatedData }, jwt)
         if (response.status === 200) {
-            await filterTask()
+            await filterTask(pageNumber,allTask)
             const data = await response.json();
             const temp = data.data[0];
             setSingleTask({
@@ -379,6 +382,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const deleateATask = async (data) => {
+   
         const response = await deleteSingleTaskApi(data, jwt);
         let responseData = await response.json();
         if (response.status === 200) {
@@ -387,7 +391,9 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 autoClose: 1000,
                 pauseOnHover: false,
             })
-            await filterTask()
+            const filteredData = allTask.filter((data)=>data._id !== data._id)
+
+            await filterTask(pageNumber,filteredData)
         } else {
             toast.warning(response?.data?.message || "Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
@@ -624,8 +630,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
                             </Box>
                             <Button variant="contained" onClick={()=>{ 
-                                setAllTask((prev)=> [])
-                                filterTask(1)}}>Search</Button>
+                                setAllTask([])
+                                setBoard(taskDataPrepration([]))
+                                filterTask(1,[])
+                            }}
+                                >Search</Button>
                         </TaskFilter>
                     </AccordionDetails>
                 </Accordion>
@@ -749,6 +758,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                 }
                             />
                             <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
+                            setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
                                 task={task} setTask={setTask}
                                 onClose={() => {
 
@@ -1272,7 +1282,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         </div>
         <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}} onClick={()=>{
             setPageNumber((prev)=> prev + 1)
-            filterTask(pageNumber + 1)
+            filterTask(pageNumber + 1,allTask)
         }
             }>See More</Box>
         </>
