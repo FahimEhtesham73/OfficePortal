@@ -22,10 +22,12 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
         // background: "rgb(58 58 58)",
         padding: "20px",
         width: "50%",
-        top: "-3rem",
+        top: "5rem",
         height: "fit-content",
         maxWidth: "40rem",
-
+        maxHeight: "38rem",
+        overflowY: "scroll",
+        
     }
 
     const user = userInfo();
@@ -89,9 +91,9 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
     }
 
     return (
-        <Rodal customStyles={customStyles} visible={visible} onClose={onClose}>
-            <div className={styles.container} style={{ margin: "1rem 0" }}>
-                <TextField sx={{ width: "100%", m: "1", ".MuiOutlinedInput-root ": { width: "100%" } }} type="text" label="Task Name" placeholder="Task" className={styles.input} value={task.taskName} onChange={(e) => setTask({
+        <Rodal customStyles={customStyles}  visible={visible} onClose={onClose}>
+            <div className={styles.container} style={{ margin: "1rem 0",  }}>
+                <TextField sx={{ width: "100%", m: "1",  ".MuiOutlinedInput-root ": { width: "100%" } }} type="text" label="Task Name" placeholder="Task" className={styles.input} value={task.taskName} onChange={(e) => setTask({
                     ...task,
                     taskName: e.target.value
                 })} />
@@ -159,7 +161,9 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
 
                 {/* start - end time */}
-                <Box sx={{ minWidth: 120, m: ".5rem 0", display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between" }}>
+                <Box sx={{ minWidth: 120, m: ".5rem 0", display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between", flexDirection: {
+                    sm: "column", md: "row"
+                } }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}  >
                         <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
                             <DatePicker label="Start Time *" slotProps={{
@@ -207,7 +211,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                 </Box>
 
                 {/* approx hour  & assigned members*/}
-                <Box sx={{ display: { xs: "block", md: "flex" }, alignItems: "end", justifyContent: "space-between", }}>
+                <Box sx={{ display: { xs: "block", md: "flex" }, alignItems: "end", justifyContent: "space-between", margin: {gap: {sm: "10px"}}}}>
                     <Box sx={{ width: { xs: "100%", md: "45%" } }}>
                         <TextField label="Total hour" type="text" placeholder="Total hour" className={styles.input} value={task.totalHour} onChange={(e) => {
 
@@ -223,7 +227,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
                     </Box>
 
-                    <Box sx={{ width: { xs: "100%", md: "45%" } }}>
+                    <Box sx={{ width: { xs: "100%", md: "45%" }, marginTop: {xs: "10px", md: "0"} }}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Assign To</InputLabel>
 

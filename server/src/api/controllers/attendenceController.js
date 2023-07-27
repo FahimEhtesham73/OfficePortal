@@ -172,7 +172,7 @@ module.exports.updateAttendece = async (req, res) => {
         $set: {
           ...data,
           updatedBy: req.user._id,
-          isModified: true,
+          // isModified: true,
         }
       }, { new: true })
         .select({ userId: 1, status: 1, checkInTime: 1, checkOutTime: 1 }).lean()

@@ -32,11 +32,14 @@ import ProjectTask from "../ProjectTask/ProjectTask";
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
-        padding: theme.spacing(3)
+        padding: theme.spacing(3),
+        overflowY: 'revert',
+    marginTop: '20px'
     },
     '& .MuiDialogActions-root': {
         padding: theme.spacing(1),
-
+        overflowY: 'revert',
+        marginTop: '20px'
     },
 }));
 

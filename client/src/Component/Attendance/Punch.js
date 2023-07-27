@@ -183,7 +183,7 @@ const Punch = () => {
     
     const [punchoutUpdate, setPunchutUpdate] = useState(false);
     const [endtimeChange, setEndDateTimeChanged] = useState(false);
-
+    const [halfDayWarning, setHalfDayWarning]=  useState(false);
     
     // For Modal open
     // console.log("position", updateAttendence);
@@ -596,6 +596,21 @@ const Punch = () => {
         }
     }
 
+    function checkinHalfDay (startDate, endDate, halfday, endateTimechange){
+        // console.log("hello", startDate, endDate, halfday);
+        // console.log("start", startDateTime);
+        // console.log("end", endDateTime);
+
+        // console.log("is greater than 4.5hr",new Date(endDateTime).getTime() - new Date(startDateTime).getTime() > 16200000);
+        let greaterThenMax = new Date(endDate).getTime() - new Date(startDateTime).getTime()
+        console.log(greaterThenMax);
+        if(startDateTime && endDateTime && halfday &&  greaterThenMax > 16200000){
+            console.log("yeee");
+            setHalfDayWarning(true)
+        }else{
+            setHalfDayWarning(false)
+        }
+    }
     useEffect(() => {
         if (punchedInfo?.checkInTime && !punchedInfo?.checkOutTime) {
             // console.log("punched UseEffect",punchedInfo.checkInTime);
@@ -621,7 +636,7 @@ const Punch = () => {
         }
     }, [])
 
-
+   
     useLayoutEffect(() => {
         // if (localStorage.getItem('punchedInTime')) {
         //     document.getElementById("time").innerText = `${hours?.toString()?.padStart(2, "0")} : ${minutes?.toString()?.padStart(2, "0")}`
@@ -889,6 +904,7 @@ const Punch = () => {
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={["TimePicker"]} >
                             <TimePicker 
+                            disableFuture
                                 sx={{
                                     width: .9,
                                     // flex: "4",
@@ -914,7 +930,8 @@ const Punch = () => {
                                         customizeDateTime.setMinutes(splitinngTime[1])
     
                                         setEndDateTime(customizeDateTime)
-
+                                        
+                                        checkinHalfDay(startDateTime, customizeDateTime, checkBoxHD )
                                     }
 
                                     
@@ -928,12 +945,18 @@ const Punch = () => {
                     {(!updateAttendence?.checkOutTime) && (
 
                     !punchoutUpdate ? (
-                    <span onClick={(e)=> setPunchutUpdate(!punchoutUpdate) } style={{textDecoration: "underline", cursor: "pointer", color: "black"}} >Want to update punch out time?</span>
+                    <span onClick={(e)=>{ setPunchutUpdate(!punchoutUpdate) 
+                        checkinHalfDay(startDateTime, endDateTime, checkBoxHD, true)
+                        
+                    
+                    }} style={{textDecoration: "underline", cursor: "pointer", color: "black"}} >Want to update punch out time?</span>
 
                     ) : (
                     <span onClick={(e)=> {
                         setPunchutUpdate(!punchoutUpdate)
                         setEndDateTimeChanged(false)
+                        // checkinHalfDay(startDateTime, endDateTime, checkBoxHD, false)
+                        setHalfDayWarning(false)
                 
                     }} style={{textDecoration: "underline", cursor: "pointer", color: "rebeccapurple"}} >Not want to update punch out time?</span>
 
@@ -951,12 +974,22 @@ const Punch = () => {
                     {/* </Box> */}
                     {/* <TextField id="outlined-search" label="Holiday Name *" type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} /> */}
                     {/* { handlePosition(e) } */}
+                    {halfDayWarning?<>
+                        <br/>
+                        <span title='you are selecting more than 4.5 hours' style={{color: "orange"}}>Half day !</span> 
+                    
+                    </> 
+                    : null}
                     <FormGroup sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} onClick={(e) => { handlePosition(e) }}>
                         <FormControlLabel control={<Checkbox />} value='WFH' checked={checkBoxDisableHome} label="Work From Home" />
                         <FormControlLabel control={<Checkbox />} value='WAO' checked={checkBoxDisableOffice} label="Work At Office" />
                         <FormControlLabel control={<Checkbox />} value='WOH'  checked= {checkBoxWOH} onChange={(e)=> setCheckBoxWOH(e.target.checked)} label="Work On Holiday" />
                         
-                        <FormControlLabel control={<Checkbox />} checked={checkBoxHD} onChange={(e)=> setCheckBoxHD(e.target.checked)}  value='HD' label="Half day" />
+                        <FormControlLabel control={<Checkbox />} checked={checkBoxHD} onChange={(e)=> {
+                            setCheckBoxHD(e.target.checked)
+                            checkinHalfDay(startDateTime, endDateTime, e.target.checked)
+                        }
+                            }  value='HD' label="Half day" />
                         
                     </FormGroup>
 

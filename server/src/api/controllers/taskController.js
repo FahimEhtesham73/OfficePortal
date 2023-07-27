@@ -245,7 +245,9 @@ module.exports.filterTask = async (req, res)=> {
         const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
         let args ={}
         let matchQuery = {}
-        let sortBy =  query.sortBy === "desc" ?  -1: 1 ;
+        let sortBy =  query.sortBy === "asc" ?  1: -1 ;
+        const LIMIT = query.limit || 10;
+        const Page = query.page || 1;
         if(isUserIn.length) {
             
             matchQuery['assignedMembers'] = {$in: [new mongoose.Types.ObjectId(req.user._id)]}
@@ -255,8 +257,8 @@ module.exports.filterTask = async (req, res)=> {
                 let {firstday,lastday} = getFirstAndLastDay(new Date())
     
                  matchQuery = {
-                    startTime: {$gte: new Date(new Date(firstday).setHours(0,0,0,0))},
-                    endTime: {$lte: new Date(new Date(lastday).setHours(23,59,59,59))}
+                    // startTime: {$gte: new Date(new Date(firstday).setHours(0,0,0,0))},
+                    // endTime: {$lte: new Date(new Date(lastday).setHours(23,59,59,59))}
                 }
 
             }
@@ -317,6 +319,12 @@ module.exports.filterTask = async (req, res)=> {
                 taskProjectStage,
                 {
                     $sort: {endTime: sortBy}
+                },
+                {
+                    $limit: LIMIT
+                },
+                {
+                    $skip: parseInt(Page - 1) * LIMIT
                 }
             ]);
 

@@ -132,7 +132,7 @@ const Topnavbar = (props) => {
 
   useEffect(()=> {
     loginUser()
-  })
+  },[])
 
   const drawer = (
     <div>

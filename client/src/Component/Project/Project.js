@@ -50,11 +50,14 @@ const MenuProps = {
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    overflowY: 'revert',
+    marginTop: '20px'
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
-
+    overflowY: 'revert',
+    marginTop: '20px'
   },
   
 }));
@@ -389,7 +392,7 @@ const Project = () => {
           
         }}>
           {/* Project Name */}
-          <TextField id="projectName" label="Project Name " name='projectName' type="search" sx={{ width: "100%", margin: ".5rem 0", marginTop: {xs:"5rem", sm: "1rem"}}}
+          <TextField id="projectName" label="Project Name " name='projectName' type="search" sx={{ width: "100%", }}
             onChange={(e) => setProjectAdd({ ...projectAdd, projectName: e.target.value })}
             required />
             <TextField id="outlined-search" label="Project Owner " name='projectOwner' type="search" sx={{ width: "100%", margin: ".5rem 0",}}

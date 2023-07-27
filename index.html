@@ -34,26 +34,6 @@ body {
     <button id="addScreenBtn">Add Screen</button>
 </body>
 <script>
-const latitude = 37.7749; // Example latitude value
-const longitude = -122.4194; // Example longitude value
-
-fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`)
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === 'OK') {
-      const results = data.results;
-      if (results.length > 0) {
-        const location = results[0].formatted_address;
-        console.log(location);
-        // Use the location for further processing
-      }
-    } else {
-      // Handle errors or no results
-    }
-  })
-  .catch(error => {
-    // Handle errors in fetching geolocation data
-  });
 
 
 

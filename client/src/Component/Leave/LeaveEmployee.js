@@ -131,9 +131,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
+        overflowY: 'revert',
+        marginTop: '20px'
     },
     '& .MuiDialogActions-root': {
         padding: theme.spacing(1),
+        overflowY: 'revert',
+    marginTop: '20px'
     },
 }));
 
@@ -595,80 +599,87 @@ const LeaveEmployee = () => {
                     {leaveRequest?.duration && leaveRequest.duration.length > 0 ? (
                         <>
                             {leaveRequest?.duration === "halfday" ? (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                    <DemoContainer components={['DatePicker']}  >
-                                        <DatePicker
-                                            shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
+                                <Box sx={{ minWidth: 120 }}>
 
-                                            slotProps={{
-                                                textField: {
-                                                    error: false,
-                                                },
-                                            }}
-                                            label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
-                                                if (e?.['$d']) {
-                                                    setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
-
-                                                }
-                                            }} />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-
-
-                            ) : (
-                                <>
-
-
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DemoContainer components={['DatePicker']} >
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                        <DemoContainer components={['DatePicker']}  >
                                             <DatePicker
-
-                                                shouldDisableDate={shouldDisableDate}
+                                                shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
 
                                                 slotProps={{
                                                     textField: {
                                                         error: false,
                                                     },
                                                 }}
-                                                label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
-                                                onChange={(e) => {
+                                                label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
                                                     if (e?.['$d']) {
-                                                        setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+                                                        setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
 
                                                     }
-
-
-                                                }}
-                                            />
+                                                }} />
                                         </DemoContainer>
                                     </LocalizationProvider>
+                                </Box>
 
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DemoContainer components={['DateTimePicker']}  >
-                                            <DatePicker
-                                                disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0) ? false : true}
-                                                shouldDisableDate={shouldDisableDate}
-                                                slotProps={{
-                                                    textField: {
-                                                        error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
-                                                    },
-                                                }}
-                                                label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
-                                                onChange={(e) => {
-                                                    if (e?.['$d']) {
-                                                        let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
-                                                        let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
-                                                        let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
-                                                        let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
+                            ) : (
+                                <>
 
-                                                        setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+                                    <Box sx={{ minWidth: 120 }}>
 
-                                                    }
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DemoContainer components={['DatePicker']} >
+                                                <DatePicker
 
-                                                }}
-                                            />
-                                        </DemoContainer>
-                                    </LocalizationProvider>
+                                                    shouldDisableDate={shouldDisableDate}
+
+                                                    slotProps={{
+                                                        textField: {
+                                                            error: false,
+                                                        },
+                                                    }}
+                                                    label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                    onChange={(e) => {
+                                                        if (e?.['$d']) {
+                                                            setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+
+                                                        }
+
+
+                                                    }}
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+                                    </Box>
+                                    <Box sx={{ minWidth: 120 }}>
+
+
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DemoContainer components={['DateTimePicker']}  >
+                                                <DatePicker
+                                                    disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0) ? false : true}
+                                                    shouldDisableDate={shouldDisableDate}
+                                                    slotProps={{
+                                                        textField: {
+                                                            error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
+                                                        },
+                                                    }}
+                                                    label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                    onChange={(e) => {
+                                                        if (e?.['$d']) {
+                                                            let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
+                                                            let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
+                                                            let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
+                                                            let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
+
+                                                            setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+
+                                                        }
+
+                                                    }}
+                                                />
+                                            </DemoContainer>
+                                        </LocalizationProvider>
+                                    </Box>
                                 </>
                             )
                             }
@@ -682,11 +693,14 @@ const LeaveEmployee = () => {
                         readOnly
                         type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px" }} />
                     {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with holiday or weekend</span>}
-                    <StyledTextarea id="outlined-search" label="Reason *" minRows={3}
+                    <Box sx={{ minWidth: 120 }}>
+
+                    <StyledTextarea  id="outlined-search" label="Reason *" minRows={3}
                         onChange={(e) => {
                             setLeaveRequest({ ...leaveRequest, leaveReason: e.target.value })
                         }}
                         type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
+                        </Box>
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
                     <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={createALeaveRequest}>

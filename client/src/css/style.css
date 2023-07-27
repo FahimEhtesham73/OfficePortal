@@ -9165,3 +9165,16 @@ button.close {
     align-items: center;
     
   }
+
+  .MuiDialogTitle-root+.css-70d6e0-MuiDialogContent-root {
+    padding-top: 0;
+    overflow-y: revert;
+    margin-top: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+   
+    .rodal-dialog{
+        width: 70% !important;
+    }
+  }
