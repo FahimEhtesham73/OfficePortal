@@ -4,14 +4,14 @@ import { create } from "zustand";
   columns: [
     {
       id: 1,
-      title: "Open",
+      title: "Todo",
       cards: [
        
       ],
     },
     {
       id: 2,
-      title: "Doing",
+      title: "In Progress",
       cards: [
         
       ],

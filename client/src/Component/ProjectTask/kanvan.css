@@ -37,7 +37,7 @@
     gap: 1.5rem;
     margin-top: 1.2rem;
     border-radius: 5px;
-    overflow-wrap: break-word;
+    /* overflow-wrap: break-word; */
   }
   
   .kanban-card > :nth-child(1) {
@@ -127,11 +127,11 @@
     cursor: pointer;
   }
 
-  .column-header.Open{
+  .column-header.Todo{
     background-color: rgb(27, 187, 27);
   }
 
-  .column-header.Doing{
+  .column-header.Progress{
     background-color: rgb(190, 226, 26);
   }
 

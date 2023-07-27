@@ -1,4 +1,5 @@
-const {Schema, model} = require("mongoose")
+const {Schema, model} = require("mongoose");
+const { TASKTYPES } = require("../util/commonValues");
 const taskSchema = new Schema({
     taskName: String,
     projectId: Schema.Types.ObjectId,
@@ -9,10 +10,10 @@ const taskSchema = new Schema({
     endTime: Date,
     totalHour: Number,
     progess: Number,
-    taskType: {type: String, enum: ["feature", "bug", "test", "research", "meeting", "design", "others"], default: "others"},
+    taskType: {type: String, enum: ["feature", "bug", "test", "reasearch", "meeting", "design", "others"], default: "others"},
     priority: {type: String, enum:["high", "medium", "low"], default: "low"},
     status: {type: String,
-         enum:["open", "doing", "done", "pause"],
+         enum:TASKTYPES,
         default: "open"
         },
     additionalNotes: String, //details about the task or anything 

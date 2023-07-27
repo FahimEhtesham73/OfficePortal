@@ -260,13 +260,13 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const getGradient = (card) => {
         const column = getColumn(card)
         const title = column.title
-        if (title === "Open") {
+        if (title === "Todo") {
             return {
                 backgroundColor: "#F4D03F",
                 backgroundImage: "linear-gradient(132deg, #F4D03F 0%, #16A085 100%)"
 
             };
-        } else if (title === "Doing") {
+        } else if (title === "In Progress") {
             return {
 
                 // backgroundColor: "#FBAB7E",

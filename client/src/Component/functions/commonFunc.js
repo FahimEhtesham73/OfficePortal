@@ -58,14 +58,14 @@ export const taskDataPrepration = (data) =>
    const columns = [
         {
           id: 1,
-          title: "Open",
+          title: "Todo",
           cards: [
             
           ],
         },
         {
           id: 2,
-          title: "Doing",
+          title: "In Progress",
           cards: [
             
           ],
@@ -87,10 +87,10 @@ export const taskDataPrepration = (data) =>
       ]
       if(data.length){
         for(let item of data){
-          if(item.status === "open"){
+          if(item.status === "todo"){
               columns[0].cards.push({...item, id: item._id})
           }
-          if(item.status === "doing"){
+          if(item.status === "in progress"){
               columns[1].cards.push({...item,id: item._id})
           }
           if(item.status === "pause"){
@@ -132,4 +132,10 @@ export const _debounce = (cb, timeout)=> {
     }, timeout)
 
   }
+}
+
+
+const mapStatusData = {
+  "Open": "Todo",
+  "Doing": "In Progress"
 }

@@ -13,7 +13,7 @@ import { createProjectTaskApi } from '../../api/projectApi';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 
-export const taskStatus = ['open', 'doing', 'pause', 'done'];
+export const taskStatus = ['todo', 'in progress', 'pause', 'done'];
 export const priorityStat = ['high', 'medium', 'low']
 
 const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask, setAllTask, allTask, pageNumber,filterTask }) => {

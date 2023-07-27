@@ -1,7 +1,7 @@
 const {body, check} = require("express-validator");
 const { isObjectIdOrHexString, default: mongoose } = require("mongoose");
 const { isDateString } = require("./commonValidation");
-
+const TASKSTATUS = ["todo", "in progress", "done", "pause"]
 module.exports.taskCreationValidation = [
     body("taskName").notEmpty().isString(),
     // body("projectCode").notEmpty().isString(),
@@ -36,7 +36,7 @@ module.exports.taskCreationValidation = [
     }),
     body("status").custom(v=> {
         if(v){
-            let list = ["open", "doing", "done", "pause"];
+            let list = TASKSTATUS;
             return list.includes(v)
 
         }
@@ -111,7 +111,7 @@ module.exports.taskUpdateValidation = [
     body("updatedData.status").custom(v=> {
         if(v){
             console.log(v);
-            let list = ["open", "doing", "done", "pause"];
+            let list = TASKSTATUS;
             return list.includes(v)
 
         }
