@@ -116,6 +116,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         taskType: ""
 
     })
+    const limit = 10
+    const [pageNumber,setPageNumber] = useState(1)
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -174,8 +176,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 endTime: query.endTime,
                 priority: query.priority,
                 taskType: query.taskType,
-                sortBy: query.sortBy
-            }
+                sortBy: query.sortBy,
+                limit: limit,
+                page: pageNumber
+            },
+
         }
 
         try {
@@ -388,6 +393,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         setOpen(newOpen);
     };
     return (
+        <>
         <div className="board-container" id="board-container" style={{ position: "relative", }}>
 
             <span>Task Board</span>
@@ -753,6 +759,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             >
                 {board}
             </Board>
+
+            
 
             < >
                 {/* <Button onClick={toggleDrawer(true)}>Add</Button> */}
@@ -1246,6 +1254,12 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 ) : null}
             </BootstrapDialog>
         </div>
+        <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}} onClick={()=>{
+            setPageNumber((prev)=> prev + 1)
+            filterTask()
+        }
+            }>See More</Box>
+        </>
     )
 }
 
