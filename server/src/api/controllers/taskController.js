@@ -34,7 +34,7 @@ module.exports.createATask = async (req, res) => {
 
         // const memberPresentInthisProject
         let body = req.body;
-        let args = { taskName, progress, status, totalHour, taskType,priority, additionalNotes, assignedMembers, projectId: isPojectAvialable._id, projectCode: isPojectAvialable.projectCode, createdBy: req.user._id, updatedBy: req.user._id };
+        let args = { taskName, progress, status, totalHour, taskType, priority, additionalNotes, assignedMembers, projectId: isPojectAvialable._id, projectCode: isPojectAvialable.projectCode, createdBy: req.user._id, updatedBy: req.user._id };
         for (let arg in body) {
             if (arg === "startTime") {
                 args['startTime'] = body['startTime']
@@ -71,11 +71,11 @@ module.exports.getAllTaskForAProject = async (req, res) => {
     try {
 
         let projectCode = req.query.pid;
-        if(!projectCode) return res.status(400).json({'message': 'invalid request'})
-        const isProjectAvialable = await Project.findOne({projectCode: projectCode}).lean();
-        if(!isProjectAvialable) return res.status(400).json({'message': 'no data'})
+        if (!projectCode) return res.status(400).json({ 'message': 'invalid request' })
+        const isProjectAvialable = await Project.findOne({ projectCode: projectCode }).lean();
+        if (!isProjectAvialable) return res.status(400).json({ 'message': 'no data' })
         projectCode = projectCode.trim().toUpperCase()
-        const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
 
         if (isUserIn.length > 0 || req.user.role.name === "admin") {
 
@@ -85,11 +85,11 @@ module.exports.getAllTaskForAProject = async (req, res) => {
                         projectId: new mongoose.Types.ObjectId(isProjectAvialable._id),
                     }
                 },
-                
-                
+
+
                 taskLookupStage,
                 taskProjectStage,
-                
+
             ]);
 
             return res.status(200).json({ "message": "success", data: allTask });
@@ -109,11 +109,11 @@ module.exports.getSingleTask = async (req, res) => {
     try {
         const taskid = req.query.taskId;
         const projectCode = req.query.pcd;
-        if(!taskid || !projectCode) return res.status(400).json({'message': 'invalid request'})
-        const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
-        if(isUserIn.length || req.user.role.name === 'admin'){
-            const isTask = await ProjectTask.findOne({_id: taskid, projectCode: projectCode}).lean();
-            if(!isTask) return res.status(400).json({"message": "data not found"});
+        if (!taskid || !projectCode) return res.status(400).json({ 'message': 'invalid request' })
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
+        if (isUserIn.length || req.user.role.name === 'admin') {
+            const isTask = await ProjectTask.findOne({ _id: taskid, projectCode: projectCode }).lean();
+            if (!isTask) return res.status(400).json({ "message": "data not found" });
 
             const data = await ProjectTask.aggregate([
                 {
@@ -125,10 +125,10 @@ module.exports.getSingleTask = async (req, res) => {
                 taskLookupStage,
                 taskProjectStage,
             ])
-            return res.status(200).json({"message": "success", data: data})
-        } 
-        return res.status(403).json({"message": "Access denied"})
-        
+            return res.status(200).json({ "message": "success", data: data })
+        }
+        return res.status(403).json({ "message": "Access denied" })
+
     } catch (err) {
         console.log(err);
         return res.status(500).json({ "message": "server error" })
@@ -147,7 +147,7 @@ module.exports.updateATask = async (req, res) => {
         const task = await ProjectTask.findOne({ _id: taskId, projectCode }).lean();
         if (!task) return res.status(400).json({ "message": "data not found" });
 
-        const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
 
 
         if (isUserIn.length > 0 || req.user.role.name === "admin") {
@@ -187,10 +187,10 @@ module.exports.updateATask = async (req, res) => {
                 }
             }
 
-        let isTaskNameAvliable = await ProjectTask.findOne({projectCode: args.projectCode,taskName: args.taskName}).lean();
-        if (isTaskNameAvliable) return res.status(400).json({"message": "Task name already in task list"})
-          let u =  await ProjectTask.updateOne({ _id: taskId, projectCode }, { $set: { ...args } });
-          // if(updatedTask)
+            let isTaskNameAvliable = await ProjectTask.findOne({ projectCode: args.projectCode, taskName: args.taskName }).lean();
+            if (isTaskNameAvliable) return res.status(400).json({ "message": "Task name already in task list" })
+            let u = await ProjectTask.updateOne({ _id: taskId, projectCode }, { $set: { ...args } });
+            // if(updatedTask)
             let updatedTaskData = await ProjectTask.aggregate([
                 {
                     $match: {
@@ -201,7 +201,7 @@ module.exports.updateATask = async (req, res) => {
                 taskLookupStage,
                 taskProjectStage,
             ])
-            return res.status(200).json({"message": "success", data: updatedTaskData})
+            return res.status(200).json({ "message": "success", data: updatedTaskData })
         }
 
         return res.status(403).json({ "message": "Access denied" })
@@ -218,95 +218,95 @@ module.exports.deleteATask = async (req, res) => {
     try {
         const taskid = req.query.taskId;
         const projectCode = req.query.pcd;
-        if(!taskid || !projectCode) return res.status(400).json({'message': 'invalid request'})
+        if (!taskid || !projectCode) return res.status(400).json({ 'message': 'invalid request' })
 
-        const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
-        if(isUserIn.length || req.user.role.name === 'admin'){
-            const isTask = await ProjectTask.findOne({_id: taskid, projectCode: projectCode}).lean();
-            if(!isTask) return res.status(400).json({"message": "data not found"});
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
+        if (isUserIn.length || req.user.role.name === 'admin') {
+            const isTask = await ProjectTask.findOne({ _id: taskid, projectCode: projectCode }).lean();
+            if (!isTask) return res.status(400).json({ "message": "data not found" });
 
-            await ProjectTask.findOneAndDelete({_id: taskid, projectCode: projectCode})
-            return res.status(200).json({"message": "deleted successfully"})
-        } 
-        return res.status(403).json({"message": "Access denied"})
-        
+            await ProjectTask.findOneAndDelete({ _id: taskid, projectCode: projectCode })
+            return res.status(200).json({ "message": "deleted successfully" })
+        }
+        return res.status(403).json({ "message": "Access denied" })
+
     } catch (err) {
         return res.status(500).json({ "message": "server error" })
     }
 }
 
 
-module.exports.filterTask = async (req, res)=> {
-    try{
+module.exports.filterTask = async (req, res) => {
+    try {
         const erros = validationMessages(validationResult(req).mapped());
-        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros });     
+        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros });
         const query = req.body.query;
         const projectCode = req.body.pcd;
-        const isUserIn = await isUserInthisProject(projectCode, req.user._id) ;
-        let args ={}
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
+        let args = {}
         let matchQuery = {}
-        let sortBy =  query.sortBy === "asc" ?  1: -1 ;
+        let sortBy = query.sortBy === "asc" ? 1 : -1;
         const LIMIT = query.limit || 10;
         const Page = query.page || 1;
-        if(isUserIn.length) {
+        if (isUserIn.length) {
 
-            matchQuery['assignedMembers'] = {$in: [new mongoose.Types.ObjectId(req.user._id)]}
+            matchQuery['assignedMembers'] = { $in: [new mongoose.Types.ObjectId(req.user._id)] }
         }
         console.log("matched", matchQuery);
         if (isUserIn.length > 0 || req.user.role.name === "admin") {
-            if(!query?.startTime?.length && !query?.endTime?.length){
-                let {firstday,lastday} = getFirstAndLastDay(new Date())
-    
+            if (!query?.startTime?.length && !query?.endTime?.length) {
+                let { firstday, lastday } = getFirstAndLastDay(new Date())
+
                 //  matchQuery = {
                 //     // startTime: {$gte: new Date(new Date(firstday).setHours(0,0,0,0))},
                 //     // endTime: {$lte: new Date(new Date(lastday).setHours(23,59,59,59))}
                 // }
 
             }
-            
-            for(let q in query){
-                if(q === "userId" && query['userId'].length){
-                    args.assignedMembers = query.userId.map(v=> new mongoose.Types.ObjectId(v))
+
+            for (let q in query) {
+                if (q === "userId" && query['userId'].length) {
+                    args.assignedMembers = query.userId.map(v => new mongoose.Types.ObjectId(v))
                 }
-                if(q === 'startTime'){
-                    args.startTime = query['startTime']; 
+                if (q === 'startTime') {
+                    args.startTime = query['startTime'];
                 }
-                if(q === 'endTime'){
-                    args.endTime = query['endTime']; 
+                if (q === 'endTime') {
+                    args.endTime = query['endTime'];
                 }
-                if(q === 'priority'){
+                if (q === 'priority') {
                     args.priority = query['priority']
                 }
-                if(q === 'taskType'){
+                if (q === 'taskType') {
                     args.taskType = query['taskType']
 
                 }
-                
+
             }
             // console.log("args",args);
-    
-            if(args.assignedMembers) {
-                matchQuery['assignedMembers'] = {$in: args.assignedMembers}
+
+            if (args.assignedMembers) {
+                matchQuery['assignedMembers'] = { $in: args.assignedMembers }
             }
-            if(args?.startTime?.length){
-                matchQuery['startTime'] = {$gte: new Date(new Date(args.startTime).setHours(0,0,0,0))}
+            if (args?.startTime?.length) {
+                matchQuery['startTime'] = { $gte: new Date(new Date(args.startTime).setHours(0, 0, 0, 0)) }
             }
-            if(args?.endTime?.length){
-                matchQuery['endTime'] = {$lte: new Date(new Date(args.endTime).setHours(23,59,59,999))}
-    
-            }
-            if(args?.priority?.length){
-                matchQuery['priority'] = {$in: args.priority}
-    
-            }
-            if(args?.taskType?.length){
-                matchQuery['taskType'] = {$in: args.taskType};
+            if (args?.endTime?.length) {
+                matchQuery['endTime'] = { $lte: new Date(new Date(args.endTime).setHours(23, 59, 59, 999)) }
 
             }
-          
+            if (args?.priority?.length) {
+                matchQuery['priority'] = { $in: args.priority }
+
+            }
+            if (args?.taskType?.length) {
+                matchQuery['taskType'] = { $in: args.taskType };
+
+            }
 
 
-        console.log("final",matchQuery);
+
+            console.log("final", matchQuery);
             const allTask = await ProjectTask.aggregate([
                 {
                     $match: {
@@ -314,12 +314,12 @@ module.exports.filterTask = async (req, res)=> {
                         ...matchQuery
                     }
                 },
-                
-                
+
+
                 taskLookupStage,
                 taskProjectStage,
                 {
-                    $sort: {endTime: sortBy}
+                    $sort: { endTime: sortBy, _id: sortBy }
                 },
                 {
                     $skip: parseInt(Page - 1) * LIMIT
@@ -333,8 +333,8 @@ module.exports.filterTask = async (req, res)=> {
         }
 
         return res.status(400).json({ "message": "Data not found" })
-         
-    }catch(err){
+
+    } catch (err) {
         console.log(err);
         return res.status(500).json({ "message": "server error" });
     }
@@ -343,7 +343,7 @@ module.exports.filterTask = async (req, res)=> {
 
 /************ helper function */
 
-const isUserInthisProject = async(projectCode, userId) => {
+const isUserInthisProject = async (projectCode, userId) => {
     return await Project.aggregate([
         {
             $match: {
@@ -366,12 +366,12 @@ const isUserInthisProject = async(projectCode, userId) => {
 
 }
 
-const getFirstAndLastDay = (currentDate)=>{
+const getFirstAndLastDay = (currentDate) => {
     let curr = new Date(currentDate); // get current date
     let first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     let last = first + 6; // last day is the first day + 6
 
     let firstday = new Date(curr.setDate(first)).toUTCString();
     let lastday = new Date(curr.setDate(last)).toUTCString();
-    return {firstday, lastday}
+    return { firstday, lastday }
 } 

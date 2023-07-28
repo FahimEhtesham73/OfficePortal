@@ -209,7 +209,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             if (response.status === 200) {
                 const responseData = await response.json();
 
-                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber(pageNumber)
+                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber((prev)=>prev)
                 setAllTask([...taskList,...responseData.data])
                 setBoard(taskDataPrepration([...taskList, ...responseData.data]))
             } else {
@@ -376,7 +376,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 ...temp, membersNameId: membersNameId,
                 selectedMembers: temp.assignedMembersData?.map(v => v._id + "_" + v.firstName) || []
             });
+            let tempTasks = replaceKeyValue(allTask, "_id", taskId, temp);
+            setBoard(taskDataPrepration(tempTasks))
+            setAllTask(tempTasks)
             setEdit(false)
+            setOpenModal(false)
         } else {
             toast.warning("Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
@@ -394,6 +398,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const deleateATask = async (data) => {
    
         const response = await deleteSingleTaskApi(data, jwt);
+        // console.log("Delete Task",data);
         let responseData = await response.json();
         if (response.status === 200) {
             toast.success("Task deleted", {
@@ -401,7 +406,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 autoClose: 1000,
                 pauseOnHover: false,
             })
-            const filteredData = allTask.filter((data)=>data._id !== data._id)
+            const filteredData = allTask.filter((val)=>val._id !== data.taskId)
 
             await filterTask(pageNumber,filteredData)
         } else {

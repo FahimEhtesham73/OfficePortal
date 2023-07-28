@@ -55,6 +55,15 @@ export const totalHolidaysCustomize = (startDate, endDate, customHolidays = []) 
 export const taskDataPrepration = (data) => 
 {
 
+  let tempData = data?.reduce((acc, curr) => {
+    // Check if the _id is already present in the accumulator array
+    if (!acc.some((item) => item._id === curr._id)) {
+      // If not present, add the current object to the accumulator array
+      acc.push(curr);
+    }
+    return acc;
+  }, []);
+
    const columns = [
         {
           id: 1,
@@ -85,8 +94,8 @@ export const taskDataPrepration = (data) =>
           ],
         },
       ]
-      if(data.length){
-        for(let item of data){
+      if(tempData.length){
+        for(let item of tempData){
           if(item.status === "todo"){
               columns[0].cards.push({...item, id: item._id})
           }
