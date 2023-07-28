@@ -172,7 +172,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     useEffect(()=>{
-        console.log("ALL Task changed");
+        // console.log("ALL Task changed");
         setAllTask(allTask)
         
     }, [allTask])
@@ -207,13 +207,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             }
             const response = await filterProjectTask(data, jwt);
             if (response.status === 200) {
-                console.log("After API Call all task",allTask);
-                // console.log("After API Call response data",responseData.data);
                 const responseData = await response.json();
-                // setAllTask((prev)=> [...prev, ...responseData.data])
+
+                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber(pageNumber)
                 setAllTask([...taskList,...responseData.data])
                 setBoard(taskDataPrepration([...taskList, ...responseData.data]))
-                console.log("After API Call response data",responseData.data);
             } else {
                 toast.warning("Fetching error", {
                     position: toast.POSITION.TOP_CENTER,
@@ -297,6 +295,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         filterTask(1,allTask)
     }, [projectCode])
 
+    function replaceKeyValue(array, key, searchValue, replaceValue) {
+        for (let i = 0; i < array.length; i++) {
+            if (array[i][key] === searchValue) {
+                array[i] = replaceValue;
+            }
+        }
+        return array
+    }
 
     const statusChangeOnDrag = async (card, status, cb) => {
         // setLoading(true)
@@ -312,7 +318,10 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         if (response.status === 200) {
             // setLoading(false)
             const responseData = await response.json();
-            console.log(responseData);
+            const modifiedArray = replaceKeyValue(allTask,'_id',responseData.data[0]._id,responseData.data[0])
+            setAllTask(modifiedArray)
+            // console.log("Modified array",modifiedArray);
+            console.log("after change status",responseData);
         } else {
             // setLoading(false)
             await filterTask(pageNumber,allTask)
