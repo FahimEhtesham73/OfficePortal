@@ -120,7 +120,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         taskType: ""
 
     })
-    const limit = 10
+    const limit = 3
     const [pageNumber,setPageNumber] = useState(1)
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -312,6 +312,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         if (response.status === 200) {
             // setLoading(false)
             const responseData = await response.json();
+            console.log(responseData);
         } else {
             // setLoading(false)
             await filterTask(pageNumber,allTask)
@@ -759,7 +760,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                             />
                             <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
                             setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
-                                task={task} setTask={setTask}
+                                task={task} setTask={setTask} setPageNumber={setPageNumber}
                                 onClose={() => {
 
                                     setModalOpened(false)
