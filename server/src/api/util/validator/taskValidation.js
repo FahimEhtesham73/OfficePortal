@@ -91,7 +91,7 @@ module.exports.taskUpdateValidation = [
     }),
     body("updatedData.taskType").custom(v=> {
         if(v){
-            let list = ["feature", "bug", "test", "reasearch", "meeting", "design", "others"];
+            let list = ["feature", "bug", "test", "research", "meeting", "design", "others"];
             return list.includes(v)
 
         }

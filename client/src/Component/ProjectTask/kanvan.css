@@ -128,18 +128,25 @@
   }
 
   .column-header.Todo{
-    background-color: rgb(27, 187, 27);
+    /* background-color: rgb(27, 187, 27); */
+    background-color: #5F97EB;
+
   }
 
   .column-header.Progress{
-    background-color: rgb(190, 226, 26);
+    /* background-color: rgb(190, 226, 26); */
+    background-color: #D9DB6C;
+
   }
 
-  .column-header.Done{
-    background-color: rgb(163, 160, 160);
-  }
   .column-header.Pause{
-    background-color: rgb(241, 146, 122);
+    /* background-color: rgb(163, 160, 160); */
+    background-color:rgb(204 71 71 / 82%)
+  }
+  .column-header.Done{
+    /* background-color: rgb(241, 146, 122); */
+    background-color: rgb(27, 187, 27);
+
   }
 
   .task-tag{

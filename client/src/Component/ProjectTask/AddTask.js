@@ -70,8 +70,8 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                     taskType: ""
                 })
                 setNewTask(newTask.data[0])
-                setPageNumber(1)
-                filterTask(1,[])
+                // setPageNumber(1)
+                // filterTask(1,[])
                 // handleCardAdd(status, newTask.data[0])
                 toast.success("Task Added", {
                     position: toast.POSITION.TOP_CENTER,

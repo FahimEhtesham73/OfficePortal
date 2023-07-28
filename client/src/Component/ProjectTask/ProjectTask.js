@@ -218,18 +218,10 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             const response = await filterProjectTask(data, jwt);
             if (response.status === 200) {
                 const responseData = await response.json();
-                console.log();
-                
-                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber((prev)=> prev)
 
-                const tempArray = [...taskList,...responseData.data];
-                // setAllTask([...taskList,...responseData.data])
-                // console.log("all task from 231", taskList);
-                const uniqueData = uniqueObj(tempArray);
-                console.log("unique data" , uniqueData);
-                setAllTask([...uniqueData])
-
-                setBoard(taskDataPrepration([...uniqueData]))
+                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber((prev)=>prev)
+                setAllTask([...taskList,...responseData.data])
+                setBoard(taskDataPrepration([...taskList, ...responseData.data]))
             } else {
                 toast.warning("Fetching error", {
                     position: toast.POSITION.TOP_CENTER,
@@ -278,28 +270,28 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         const title = column.title
         if (title === "Todo") {
             return {
-                backgroundColor: "#F4D03F",
-                backgroundImage: "linear-gradient(132deg, #F4D03F 0%, #16A085 100%)"
+                backgroundColor: "#5F97EB",
+                // backgroundImage: "linear-gradient(132deg, #F4D03F 0%, #16A085 100%)"
 
             };
         } else if (title === "In Progress") {
             return {
 
-                // backgroundColor: "#FBAB7E",
-                backgroundImage: "linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)"
+                backgroundColor: "#D9DB6C",
+                // backgroundImage: "linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%)"
 
 
             };
         } else if (title === "Pause") {
             return {
-                // background:
+                background:"rgb(204 71 71 / 85%)"
                 // "linear-gradient(65.35deg, rgba(65, 65, 65, 0.67) -1.72%, rgba(48, 220, 86) 163.54%)",
-                backgroundImage: " linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)"
+                // backgroundImage: " linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)"
             };
         } else if (title === "Done") {
             return {
-                background:
-                    "linear-gradient(to right, #859398 100%, #283048)",
+                background: "rgb(27, 187, 27)"
+                // background:"linear-gradient(to right, #859398 100%, #283048)",
             };
         }
     }
@@ -396,7 +388,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 ...temp, membersNameId: membersNameId,
                 selectedMembers: temp.assignedMembersData?.map(v => v._id + "_" + v.firstName) || []
             });
-            let tempTasks = replaceKeyValue(allTask, "_id", taskId, temp)
+            let tempTasks = replaceKeyValue(allTask, "_id", taskId, temp);
+            setBoard(taskDataPrepration(tempTasks))
             setAllTask(tempTasks)
             setEdit(false)
             setOpenModal(false)
@@ -417,6 +410,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const deleateATask = async (data) => {
    
         const response = await deleteSingleTaskApi(data, jwt);
+        // console.log("Delete Task",data);
         let responseData = await response.json();
         if (response.status === 200) {
             toast.success("Task deleted", {
@@ -424,7 +418,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 autoClose: 1000,
                 pauseOnHover: false,
             })
-            const filteredData = allTask.filter((data)=>data._id !== data._id)
+            const filteredData = allTask.filter((val)=>val._id !== data.taskId)
 
             await filterTask(pageNumber,filteredData)
         } else {
@@ -665,6 +659,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                             <Button variant="contained" onClick={()=>{ 
                                 setAllTask([])
                                 setBoard(taskDataPrepration([]))
+                                setPageNumber((prev)=> ( prev * 0) + 1)
                                 filterTask(1,[])
                             }}
                                 >Search</Button>
@@ -763,6 +758,10 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                         setBoard(updatedBoard)
                         setModalOpened(false)
 
+                    }
+
+                    const removeCard = (title, detail) => {
+                        console.log("remove card",title, detail);
                     }
 
                     return (
@@ -1219,7 +1218,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
                                         <Select
                                             // sx={{ width: "100%" }}
-                                            //  disabled={(user?.role?.name === "admin" || user?.role?.name === "projectLead" || user?.role?.name === "teamlead" ) ? false : true }
+                                             disabled={(user?.role?.name === "admin" || user?.role?.name === "projectLead" || user?.role?.name === "teamlead" ) ? false : true }
 
 
                                             value={singleTask?.selectedMembers}
