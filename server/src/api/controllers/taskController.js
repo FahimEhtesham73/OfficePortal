@@ -246,8 +246,8 @@ module.exports.filterTask = async (req, res)=> {
         let args ={}
         let matchQuery = {}
         let sortBy =  query.sortBy === "asc" ?  1: -1 ;
-        const LIMIT = query.limit || 10;
-        const Page = query.page || 1;
+        const LIMIT = parseInt(query.limit) || 10;
+        const Page = parseInt(query.page) || 1;
         if(isUserIn.length) {
 
             matchQuery['assignedMembers'] = {$in: [new mongoose.Types.ObjectId(req.user._id)]}
@@ -319,14 +319,15 @@ module.exports.filterTask = async (req, res)=> {
                 taskLookupStage,
                 taskProjectStage,
                 {
-                    $sort: {endTime: sortBy}
+                    $sort: {endTime: -1, _id: -1}
                 },
                 {
                     $skip: parseInt(Page - 1) * LIMIT
                 },
                 {
                     $limit: LIMIT
-                },
+                }
+               
             ]);
 
             return res.status(200).json({ "message": "success", data: allTask });

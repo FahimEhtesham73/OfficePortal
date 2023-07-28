@@ -91,7 +91,17 @@ function BootstrapDialogTitle(props) {
     );
 }
 
-
+function uniqueObj(data){
+    return data?.reduce((acc, curr) => {
+        // Check if the _id is already present in the accumulator array
+        if (!acc.some((item) => item._id === curr._id)) {
+          // If not present, add the current object to the accumulator array
+          acc.push(curr);
+        }
+        return acc;
+      }, []);
+      
+}
 // feature", "bug", "test", "meeting", "design", "others"
 // const taskStatus = ['open', 'doing', 'pause', 'done'];
 // const priorityStat = ['high', 'medium', 'low']
@@ -177,7 +187,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         
     }, [allTask])
 
-    console.log("all task",allTask);
+    // console.log("all task",allTask);
 
     const filterTask = async (pageNum,taskList) => {
         const data = {
@@ -208,10 +218,18 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             const response = await filterProjectTask(data, jwt);
             if (response.status === 200) {
                 const responseData = await response.json();
+                console.log();
+                
+                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber((prev)=> prev)
 
-                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber(pageNumber)
-                setAllTask([...taskList,...responseData.data])
-                setBoard(taskDataPrepration([...taskList, ...responseData.data]))
+                const tempArray = [...taskList,...responseData.data];
+                // setAllTask([...taskList,...responseData.data])
+                // console.log("all task from 231", taskList);
+                const uniqueData = uniqueObj(tempArray);
+                console.log("unique data" , uniqueData);
+                setAllTask([...uniqueData])
+
+                setBoard(taskDataPrepration([...uniqueData]))
             } else {
                 toast.warning("Fetching error", {
                     position: toast.POSITION.TOP_CENTER,
@@ -369,14 +387,19 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
         let response = await updateATaskApi({ pcd: projectCode, taskid: taskId, updatedData: updatedData }, jwt)
         if (response.status === 200) {
+            console.log("update response page no", pageNumber);
             await filterTask(pageNumber,allTask)
             const data = await response.json();
             const temp = data.data[0];
+            console.log(" update response data", temp);
             setSingleTask({
                 ...temp, membersNameId: membersNameId,
                 selectedMembers: temp.assignedMembersData?.map(v => v._id + "_" + v.firstName) || []
             });
+            let tempTasks = replaceKeyValue(allTask, "_id", taskId, temp)
+            setAllTask(tempTasks)
             setEdit(false)
+            setOpenModal(false)
         } else {
             toast.warning("Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
