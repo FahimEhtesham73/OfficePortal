@@ -252,7 +252,6 @@ module.exports.filterTask = async (req, res) => {
 
             matchQuery['assignedMembers'] = { $in: [new mongoose.Types.ObjectId(req.user._id)] }
         }
-        console.log("matched", matchQuery);
         if (isUserIn.length > 0 || req.user.role.name === "admin") {
             if (!query?.startTime?.length && !query?.endTime?.length) {
                 let { firstday, lastday } = getFirstAndLastDay(new Date())
@@ -338,6 +337,129 @@ module.exports.filterTask = async (req, res) => {
     } catch (err) {
         console.log(err);
         return res.status(500).json({ "message": "server error" });
+    }
+}
+
+
+module.exports.projectTaskSummery = async(req, res, next) => {
+    try{
+        const projectCode = req.query.projectCode;
+        const query = req.body.query;
+        const args = {};
+        const matchQuery = {};
+        if(!projectCode) return res.status(400).json({"message": "Invalid query"});
+        
+        const isUserIn = await isUserInthisProject(projectCode, req.user._id);
+
+        if(isUserIn.length) {
+            matchQuery['assignedMembers'] = { $in: [new mongoose.Types.ObjectId(req.user._id)] }
+        }
+        if(isUserIn.length || req.user.role.name === "admin"){
+            for (let q in query) {
+                if (q === "userId" && query['userId'].length) {
+                    args.assignedMembers = query.userId.map(v => new mongoose.Types.ObjectId(v))
+                }
+                if (q === 'startTime') {
+                    args.startTime = query['startTime'];
+                }
+                if (q === 'endTime') {
+                    args.endTime = query['endTime'];
+                }
+                if (q === 'priority') {
+                    args.priority = query['priority']
+                }
+                if (q === 'taskType') {
+                    args.taskType = query['taskType']
+
+                }
+
+            }
+
+            if (args.assignedMembers) {
+                matchQuery['assignedMembers'] = { $in: args.assignedMembers }
+            }
+            if (args?.startTime?.length) {
+                matchQuery['startTime'] = { $gte: new Date(new Date(args.startTime).setHours(0, 0, 0, 0)) }
+            }
+            if (args?.endTime?.length) {
+                matchQuery['endTime'] = { $lte: new Date(new Date(args.endTime).setHours(23, 59, 59, 999)) }
+
+            }
+            if (args?.priority?.length) {
+                matchQuery['priority'] = { $in: args.priority }
+
+            }
+            if (args?.taskType?.length) {
+                matchQuery['taskType'] = { $in: args.taskType };
+
+            }
+
+            
+            console.log("match", matchQuery);
+
+
+
+            const taskSummery = await ProjectTask.aggregate([
+                {
+                    $match: {
+                        projectCode: projectCode,
+                        ...matchQuery
+                    }
+                },
+                {
+
+                    $facet: {
+                        "totalCount": [ {$count: "total" }, ],
+                        "totalDeadelineToday": [
+                            {
+                                $match: {
+                            endTime: {
+                              $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
+                              $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
+                            }
+                          }
+                        }
+                        , 
+                        {
+                          $count: "total"
+                        }
+                    ],
+                        "totalTodo": [{$match: {status: "todo"}}, {$count: "total"}],
+                        "totalInProgress": [{$match: {status: "in progress"}}, {$count: "total"}],
+                        "totalInPause": [{$match: {status: "pause"}}, {$count: "total"}],
+                        "totalDone": [{$match: {status: "done"}}, {$count: "total"}],
+                        "deadline": [
+                            {
+                                $match: {
+                                    endTime: {$lt: new Date()  },
+                                     status: {$nin: ["done", "pause"]}
+                                }
+                            }, 
+                            {
+                                $count: "total"
+                            }
+                        ]
+                    }
+                },
+              
+                {$project:  {
+                    "totalDeadelineToday": { $ifNull: [{ $arrayElemAt: ["$totalDeadelineToday.total", 0] }, 0] },
+                    "totalTasks": { $ifNull: [{ $arrayElemAt: ["$totalCount.total", 0] }, 0] },
+                    "summary.totalTodoTasks": { $ifNull: [{ $arrayElemAt: ["$totalTodo.total", 0] }, 0] },
+                    "summary.totalInProgressTasks": { $ifNull: [{ $arrayElemAt: ["$totalInProgress.total", 0] }, 0] },
+                    "summary.totalPasueTask": { $ifNull: [{ $arrayElemAt: ["$totalInPause.total", 0] }, 0] },
+                    "summary.totalDoneTasks": { $ifNull: [{ $arrayElemAt: ["$totalDone.total", 0] }, 0] },
+                    "summary.totalDeadlineMissedTasks": { $ifNull: [{ $arrayElemAt: ["$deadline.total", 0] }, 0] },
+                  }}
+            ]);
+            return res.status(200).json({"message": "Success" , "data":taskSummery})
+        }
+
+        return res.status(404).json({"message": "Invalid Request"})
+
+    }catch(err){
+        console.log(err);
+        next(err)
     }
 }
 

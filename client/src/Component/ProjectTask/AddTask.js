@@ -202,7 +202,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
                                         setTask({
                                             ...task,
-                                            endTime: new Date(e?.['$d'])
+                                            endTime: new Date(new Date(e?.['$d']).setHours(23,59,59,999))
                                         })
                                     }
                                 }}
