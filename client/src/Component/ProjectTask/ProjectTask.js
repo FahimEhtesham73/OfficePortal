@@ -57,7 +57,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(3),
         overflowY: 'revert',
-    marginTop: '20px'
+        marginTop: '20px'
     },
     '& .MuiDialogActions-root': {
         padding: theme.spacing(1),
@@ -92,16 +92,16 @@ function BootstrapDialogTitle(props) {
     );
 }
 
-function uniqueObj(data){
+function uniqueObj(data) {
     return data?.reduce((acc, curr) => {
         // Check if the _id is already present in the accumulator array
         if (!acc.some((item) => item._id === curr._id)) {
-          // If not present, add the current object to the accumulator array
-          acc.push(curr);
+            // If not present, add the current object to the accumulator array
+            acc.push(curr);
         }
         return acc;
-      }, []);
-      
+    }, []);
+
 }
 // feature", "bug", "test", "meeting", "design", "others"
 // const taskStatus = ['open', 'doing', 'pause', 'done'];
@@ -132,7 +132,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
     })
     const limit = 3
-    const [pageNumber,setPageNumber] = useState(1)
+    const [pageNumber, setPageNumber] = useState(1)
     const [loading, setLoading] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [edit, setEdit] = useState(false);
@@ -157,12 +157,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         startTime: "",
         endTime: "",
         taskType: [],
-        sortBy: ""
+        sortBy: "",
+        status:""
     })
+
     const [data, setData] = useState([])
     const [othersData, setOthersData] = useState({
-      totalData: "",
-      totalTodaysDeadline: ""
+        totalData: "",
+        totalTodaysDeadline: ""
     })
     // For Modal open
     const handleModalOpen = () => {
@@ -187,15 +189,15 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         // console.log("ALL Task changed");
         setAllTask(allTask)
-        
+
     }, [allTask])
 
     // console.log("all task",allTask);
 
-    const filterTask = async (pageNum,taskList) => {
+    const filterTask = async (pageNum, taskList) => {
         const data = {
             pcd: projectCode,
             query: {
@@ -211,7 +213,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
         }
 
-    
+
         try {
             if (data.query.startTime && data.query.endTime && data.query.startTime > data.query.endTime) {
                 toast.warning("Invalid date range", {
@@ -225,8 +227,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             if (response.status === 200) {
                 const responseData = await response.json();
 
-                responseData.data.length <=0 ? setPageNumber((prev)=>prev - 1) : setPageNumber((prev)=>prev)
-                setAllTask([...taskList,...responseData.data])
+                responseData.data.length <= 0 ? setPageNumber((prev) => prev - 1) : setPageNumber((prev) => prev)
+                setAllTask([...taskList, ...responseData.data])
                 setBoard(taskDataPrepration([...taskList, ...responseData.data]))
             } else {
                 toast.warning("Fetching error", {
@@ -290,7 +292,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             };
         } else if (title === "Pause") {
             return {
-                background:"rgb(204 71 71 / 85%)"
+                background: "rgb(204 71 71 / 85%)"
                 // "linear-gradient(65.35deg, rgba(65, 65, 65, 0.67) -1.72%, rgba(48, 220, 86) 163.54%)",
                 // backgroundImage: " linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)"
             };
@@ -303,21 +305,21 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const fetchSummary = async () => {
-    const response = await taskSummaryApi(projectCode, query, jwt);
-    if (response.status === 200) {
-      const responseData = await response.json();
-      console.log(responseData.data[0]);
-      setData(Object.values(responseData.data[0].summary))
-      setOthersData({
-        ...othersData, 
-        totalData: responseData.data[0].totalTasks,
-        totalTodaysDeadline: responseData.data[0].totalDeadelineToday
-      })
+        const response = await taskSummaryApi(projectCode, query, jwt);
+        if (response.status === 200) {
+            const responseData = await response.json();
+            console.log(responseData.data[0]);
+            setData(Object.values(responseData.data[0].summary))
+            setOthersData({
+                ...othersData,
+                totalData: responseData.data[0].totalTasks,
+                totalTodaysDeadline: responseData.data[0].totalDeadelineToday
+            })
+        }
     }
-  }
-  useEffect(() => {
-    fetchSummary()
-  }, [projectCode])
+    useEffect(() => {
+        fetchSummary()
+    }, [projectCode])
 
 
     // useEffect(() => {
@@ -325,7 +327,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     // }, [projectCode])
 
     useEffect(() => {
-        filterTask(1,allTask)
+        filterTask(1, allTask)
     }, [projectCode])
 
     function replaceKeyValue(array, key, searchValue, replaceValue) {
@@ -351,13 +353,13 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         if (response.status === 200) {
             // setLoading(false)
             const responseData = await response.json();
-            const modifiedArray = replaceKeyValue(allTask,'_id',responseData.data[0]._id,responseData.data[0])
+            const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
             setAllTask(modifiedArray)
             // console.log("Modified array",modifiedArray);
-            console.log("after change status",responseData);
+            console.log("after change status", responseData);
         } else {
             // setLoading(false)
-            await filterTask(pageNumber,allTask)
+            await filterTask(pageNumber, allTask)
             throw new Error("Error occured")
         }
 
@@ -403,7 +405,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         let response = await updateATaskApi({ pcd: projectCode, taskid: taskId, updatedData: updatedData }, jwt)
         if (response.status === 200) {
             console.log("update response page no", pageNumber);
-            await filterTask(pageNumber,allTask)
+            await filterTask(pageNumber, allTask)
             const data = await response.json();
             const temp = data.data[0];
             console.log(" update response data", temp);
@@ -431,7 +433,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const deleateATask = async (data) => {
-   
+
         const response = await deleteSingleTaskApi(data, jwt);
         // console.log("Delete Task",data);
         let responseData = await response.json();
@@ -441,9 +443,9 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 autoClose: 1000,
                 pauseOnHover: false,
             })
-            const filteredData = allTask.filter((val)=>val._id !== data.taskId)
+            const filteredData = allTask.filter((val) => val._id !== data.taskId)
 
-            await filterTask(pageNumber,filteredData)
+            await filterTask(pageNumber, filteredData)
         } else {
             toast.warning(response?.data?.message || "Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
@@ -462,907 +464,938 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
+
     return (
         <>
-        <div className="board-container" id="board-container" style={{ position: "relative", }}>
+            <div className="board-container" id="board-container" style={{ position: "relative", }}>
 
-            <span>Task Board</span>
+                <span>Task Board</span>
 
-            <div>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
-                        <Typography>Filter</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <TaskFilter >
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: ".4rem", marginBottom: ".4rem" }}>
+                <div>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>Filter</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <TaskFilter >
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: ".4rem", marginBottom: ".4rem" }}>
 
-                                <Box sx={{ display: "flex", justifyContent: "start", gap: ".2rem", flexFlow: { xs: "column wrap", md: "row wrap" } }}>
-                                    {/* <Typography>Search By Date</Typography> */}
+                                    <Box sx={{ display: "flex", justifyContent: "start", gap: ".2rem", flexFlow: { xs: "column wrap", md: "row wrap" } }}>
+                                        {/* <Typography>Search By Date</Typography> */}
 
-                                    {/* starttime  */}
-                                    <Box sx={{}} className="task-div" >
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                            <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "29px", } }} >
-                                                <DatePicker label="Start Time *" slotProps={{
-                                                    textField: {
-                                                        error: false,
-                                                    },
-                                                }}
-                                                    value={dayjs(query.startTime)}
-
-                                                    onChange={(e) => {
-                                                        if (e?.['$d']) {
-                                                            setQuery({ ...query, startTime: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
-
-                                                        }
+                                        {/* starttime  */}
+                                        <Box sx={{}} className="task-div" >
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                                <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "29px", } }} >
+                                                    <DatePicker label="Start Time *" slotProps={{
+                                                        textField: {
+                                                            error: false,
+                                                        },
                                                     }}
-                                                />
-                                            </DemoContainer>
-                                        </LocalizationProvider>
+                                                        value={dayjs(query.startTime)}
+
+                                                        onChange={(e) => {
+                                                            if (e?.['$d']) {
+                                                                setQuery({ ...query, startTime: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+
+                                                            }
+                                                        }}
+                                                    />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
 
 
-                                    </Box>
+                                        </Box>
 
-                                    {/* - end time */}
-                                    <Box sx={{}} className="task-div" >
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                            <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "29px", } }} >
-                                                <DatePicker label="End Time *" slotProps={{
-                                                    textField: {
-                                                        error: false,
-                                                    },
-
-                                                }}
-                                                    value={dayjs(query.endTime)}
-
-                                                    onChange={(e) => {
-                                                        if (e?.['$d']) {
-                                                            setQuery({ ...query, endTime: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)) })
-                                                        }
+                                        {/* - end time */}
+                                        <Box sx={{}} className="task-div" >
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                                <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "29px", } }} >
+                                                    <DatePicker label="End Time *" slotProps={{
+                                                        textField: {
+                                                            error: false,
+                                                        },
 
                                                     }}
-                                                />
-                                            </DemoContainer>
-                                        </LocalizationProvider>
+                                                        value={dayjs(query.endTime)}
 
+                                                        onChange={(e) => {
+                                                            if (e?.['$d']) {
+                                                                setQuery({ ...query, endTime: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)) })
+                                                            }
+
+                                                        }}
+                                                    />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
+
+
+                                        </Box>
+                                        {/* sortby end time or dead line */}
+                                        <Box sx={{ marginTop: "10px" }} className="task-div">
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">Sort</InputLabel>
+                                                <Select
+
+                                                    sx={{ width: "150px" }}
+                                                    label="Sort"
+                                                    labelId="demo-simple-select-label"
+                                                    onChange={(e) => {
+                                                        setQuery({ ...query, sortBy: e.target.value })
+                                                    }}
+                                                >
+                                                    <MenuItem value={"asc"}>ASC</MenuItem>
+                                                    <MenuItem value={"desc"}>DESC</MenuItem>
+
+                                                </Select>
+                                            </FormControl>
+
+                                        </Box>
 
                                     </Box>
-                                    {/* sortby end time or dead line */}
-                                    <Box sx={{ marginTop: "10px" }} className="task-div">
+                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", }}>
+                                        {/* <Typography>Search By User</Typography> */}
                                         <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Sort</InputLabel>
+                                            <InputLabel id="demo-simple-select-label">Users</InputLabel>
+
                                             <Select
-
-                                                sx={{ width: "150px" }}
-                                                label="Sort"
+                                                sx={{ width: "50%" }}
+                                                label="User"
                                                 labelId="demo-simple-select-label"
+                                                value={query.userIdName}
+                                                multiple
                                                 onChange={(e) => {
-                                                    setQuery({ ...query, sortBy: e.target.value })
+                                                    let mappEdValue = e.target.value?.map(v => v.split("_")[0])
+                                                    setQuery({ ...query, userId: mappEdValue, userIdName: e.target.value })
                                                 }}
-                                            >
-                                                <MenuItem value={"asc"}>ASC</MenuItem>
-                                                <MenuItem value={"desc"}>DESC</MenuItem>
+                                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value.split("_")[1]}
 
+
+                                                        />
+                                                    ))}
+
+
+                                                </Box>}
+                                            >
+                                                {membersNameId.length && membersNameId.map((option, i) => {
+                                                    return (
+
+                                                        <MenuItem key={i} value={option._id + "_" + option.firstName} data-name={option._id} >
+                                                            <ListItemIcon>
+                                                                <Checkbox checked={query?.userId?.indexOf(option._id) > -1} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={option.firstName} />
+                                                        </MenuItem>
+                                                    )
+                                                })}
                                             </Select>
                                         </FormControl>
+                                    </Box>
 
+                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+                                        {/* <Typography>Search By Priority</Typography> */}
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+
+                                            <Select
+                                                label="Priority"
+                                                multiple
+                                                value={query?.priority}
+                                                labelId="demo-simple-select-label"
+                                                sx={{ width: "50%" }}
+                                                onChange={(e) => {
+                                                    setQuery({ ...query, priority: e.target.value })
+                                                }}
+                                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value}
+
+
+                                                        />
+                                                    ))}
+
+
+                                                </Box>}
+                                            >
+                                                {priorityStat.length && priorityStat.map((option, i) => {
+
+                                                    return (
+
+                                                        <MenuItem key={i} value={option}  >
+                                                            <ListItemIcon>
+                                                                <Checkbox checked={query?.priority?.indexOf(option) > -1} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={option} />
+                                                        </MenuItem>
+                                                    )
+                                                })}
+                                            </Select>
+
+                                        </FormControl>
+                                    </Box>
+
+
+                                    {/* Search by status */}
+                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }} >
+
+                                            <FormControl fullWidth>  
+                                            <InputLabel id="demo-simple-select-label">Status</InputLabel>                                        
+                                                <Select
+                                                    sx={{ width: "50%" }}
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    // size="small"
+                                                    label="Select Type"
+                                                    value={query.status}
+                                                    onChange={(e) => {
+                                                         setQuery({ ...query, status: e.target.value })
+                                                    }}
+                                                >
+                                                    {taskStatus?.map((v, i) => (
+                                                        <MenuItem key={i} value={v} >{v}</MenuItem>
+                                                    ))
+
+                                                    }
+
+                                                </Select>
+                                            </FormControl>
+
+                                      
+                                    </Box>
+
+                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
+                                        {/* <Typography>Search By Priority</Typography> */}
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+
+                                            <Select
+                                                label="Type"
+                                                labelId="demo-simple-select-label"
+                                                sx={{ width: "50%" }}
+                                                multiple
+                                                value={query?.taskType}
+                                                onChange={(e) => {
+                                                    setQuery({ ...query, taskType: e.target.value })
+                                                }}
+                                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value}
+
+
+                                                        />
+                                                    ))}
+
+
+                                                </Box>}
+                                            >
+                                                {taskTypes.length && taskTypes.map((option, i) => {
+
+                                                    return (
+
+                                                        <MenuItem key={i} value={option}  >
+                                                            <ListItemIcon>
+                                                                <Checkbox checked={query?.taskType?.indexOf(option) > -1} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={option} />
+                                                        </MenuItem>
+                                                    )
+                                                })}
+                                            </Select>
+
+                                        </FormControl>
                                     </Box>
 
                                 </Box>
-                                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", }}>
-                                    {/* <Typography>Search By User</Typography> */}
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Users</InputLabel>
+                                <Button variant="contained" onClick={() => {
+                                    if (query?.startTime && query.endTime && (query.startTime > query.endTime)) {
+                                        toast.warning("Invalid Date Range", {
+                                            position: toast.POSITION.TOP_CENTER,
+                                            autoClose: 1000,
+                                            pauseOnHover: false,
+                                        })
+                                        return
+                                    }
+                                    setAllTask([])
+                                    setBoard(taskDataPrepration([]))
+                                    setPageNumber((prev) => (prev * 0) + 1)
+                                    filterTask(1, [])
+                                    fetchSummary()
 
-                                        <Select
-                                            sx={{ width: "50%" }}
-                                            label="User"
-                                            labelId="demo-simple-select-label"
-                                            value={query.userIdName}
-                                            multiple
-                                            onChange={(e) => {
-                                                let mappEdValue = e.target.value?.map(v => v.split("_")[0])
-                                                setQuery({ ...query, userId: mappEdValue, userIdName: e.target.value })
-                                            }}
-                                            renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                {selected.map((value) => (
-                                                    <Chip key={value} label={value.split("_")[1]}
+                                }}
+                                >Search</Button>
+                            </TaskFilter>
+                        </AccordionDetails>
+                    </Accordion>
 
+                </div>
+                <div>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>Summary</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <TaskSummary data={data} othersData={othersData} />
+                        </AccordionDetails>
+                    </Accordion>
 
-                                                    />
-                                                ))}
+                </div>
 
+                <Board
+                    allowAddColumn
+                    // allowRenameColumn
+                    allowRemoveCard
+                    onCardDragEnd={handleCardMove}
+                    disableColumnDrag
 
-                                            </Box>}
-                                        >
-                                            {membersNameId.length && membersNameId.map((option, i) => {
-                                                return (
+                    renderCard={(props) => (
+                        <div
 
-                                                    <MenuItem key={i} value={option._id + "_" + option.firstName} data-name={option._id} >
-                                                        <ListItemIcon>
-                                                            <Checkbox checked={query?.userId?.indexOf(option._id) > -1} />
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={option.firstName} />
-                                                    </MenuItem>
-                                                )
-                                            })}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-
-                                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
-                                    {/* <Typography>Search By Priority</Typography> */}
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-
-                                        <Select
-                                            label="Priority"
-                                            multiple
-                                            value={query?.priority}
-                                            labelId="demo-simple-select-label"
-                                            sx={{ width: "50%" }}
-                                            onChange={(e) => {
-                                                setQuery({ ...query, priority: e.target.value })
-                                            }}
-                                            renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                {selected.map((value) => (
-                                                    <Chip key={value} label={value}
-
-
-                                                    />
-                                                ))}
-
-
-                                            </Box>}
-                                        >
-                                            {priorityStat.length && priorityStat.map((option, i) => {
-
-                                                return (
-
-                                                    <MenuItem key={i} value={option}  >
-                                                        <ListItemIcon>
-                                                            <Checkbox checked={query?.priority?.indexOf(option) > -1} />
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={option} />
-                                                    </MenuItem>
-                                                )
-                                            })}
-                                        </Select>
-
-                                    </FormControl>
-                                </Box>
-                                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
-                                    {/* <Typography>Search By Priority</Typography> */}
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Type</InputLabel>
-
-                                        <Select
-                                            label="Type"
-                                            labelId="demo-simple-select-label"
-                                            sx={{ width: "50%" }}
-                                            multiple
-                                            value={query?.taskType}
-                                            onChange={(e) => {
-                                                setQuery({ ...query, taskType: e.target.value })
-                                            }}
-                                            renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                {selected.map((value) => (
-                                                    <Chip key={value} label={value}
-
-
-                                                    />
-                                                ))}
-
-
-                                            </Box>}
-                                        >
-                                            {taskTypes.length && taskTypes.map((option, i) => {
-
-                                                return (
-
-                                                    <MenuItem key={i} value={option}  >
-                                                        <ListItemIcon>
-                                                            <Checkbox checked={query?.taskType?.indexOf(option) > -1} />
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={option} />
-                                                    </MenuItem>
-                                                )
-                                            })}
-                                        </Select>
-
-                                    </FormControl>
-                                </Box>
-
-                            </Box>
-                            <Button variant="contained" onClick={()=>{ 
-                                if(query?.startTime && query.endTime && (query.startTime > query.endTime)){
-                                    toast.warning("Invalid Date Range", {
-                                        position: toast.POSITION.TOP_CENTER,
-                autoClose: 1000,
-                pauseOnHover: false,
-                                    })
-                                    return
-                                }
-                                setAllTask([])
-                                setBoard(taskDataPrepration([]))
-                                setPageNumber((prev)=> ( prev * 0) + 1)
-                                filterTask(1,[])
-                                fetchSummary()
+                            onClick={(e) => {
+                                // console.log(e.currentTarget);
 
                             }}
-                                >Search</Button>
-                        </TaskFilter>
-                    </AccordionDetails>
-                </Accordion>
 
-            </div>
-            <div>
-                <Accordion>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
-                        <Typography>Summary</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <TaskSummary data={data} othersData={othersData} />
-                    </AccordionDetails>
-                </Accordion>
-
-            </div>
-
-            <Board
-                allowAddColumn
-                // allowRenameColumn
-                allowRemoveCard
-                onCardDragEnd={handleCardMove}
-                disableColumnDrag
-
-                renderCard={(props) => (
-                    <div
-
-                        onClick={(e) => {
-                            // console.log(e.currentTarget);
-
-                        }}
-
-                        data-id={props?.assignedMembers?.join(",")} onDoubleClick={(e) => {
-                            getSingleTask({ taskId: props._id, projectCode: props.projectCode });
-                            setOpenModal(true);
+                            data-id={props?.assignedMembers?.join(",")} onDoubleClick={(e) => {
+                                getSingleTask({ taskId: props._id, projectCode: props.projectCode });
+                                setOpenModal(true);
 
 
-                        }} className='kanban-card' style={getGradient(props)}>
+                            }} className='kanban-card' style={getGradient(props)}>
 
 
-                        {/* drwaer */}
-                        <div style={{ position: "relative" }}>
-                            {/* <span>{props?.type}</span> */}
-                            <span style={{ fontWeight: "700" }}>
-                                {props?.taskName?.slice(0, 20)}
-                                {props?.taskName?.length > 20 ? "..." : null}
-                            </span>
-                            {(props?.assignedMembers.includes(user?._id) || (user.role?.name === "admin" || user.role?.name === "teamlead" || user.role?.name === "projectlead")) ? (
-                                <button className='remove-button' style={{ position: "absolute", right: -15, top: -15 }} type='button'
-                                    onClick={() => {
+                            {/* drwaer */}
+                            <div style={{ position: "relative" }}>
+                                {/* <span>{props?.type}</span> */}
+                                <span style={{ fontWeight: "700" }}>
+                                    {props?.taskName?.slice(0, 20)}
+                                    {props?.taskName?.length > 20 ? "..." : null}
+                                </span>
+                                {(props?.assignedMembers.includes(user?._id) || (user.role?.name === "admin" || user.role?.name === "teamlead" || user.role?.name === "projectlead")) ? (
+                                    <button className='remove-button' style={{ position: "absolute", right: -15, top: -15 }} type='button'
+                                        onClick={() => {
 
-                                        deleateATask({ taskId: props._id, projectCode: props.projectCode })
-                                    }}
-                                >
-                                    <CloseIcon color="white" size={15} />
-                                </button>
+                                            deleateATask({ taskId: props._id, projectCode: props.projectCode })
+                                        }}
+                                    >
+                                        <CloseIcon color="white" size={15} />
+                                    </button>
 
-                            ) : null}
+                                ) : null}
 
+                            </div>
+                            <div className="task-tag">
+                                {props?.priority ? <span className="priority">{props?.priority}</span> : null}
+                                {props?.taskType ? <span className="task-type">{props?.taskType}</span> : null}
+
+                            </div>
+                            <div >
+                                {/* <span className="kanban-card-starttime">{new Date(props?.startTime).toLocaleDateString()}</span> */}
+                                <span> <EventIcon sx={{ color: "" }} /> </span>
+                                {props?.endTime ? (<span style={{ color: "Black", fontWeight: "600" }} className="kanban-card-endtime">{new Date(props?.endTime).toLocaleDateString()}</span>) : "N/A"}
+
+                            </div>
+                            <div>
+                                <AvatarGroup sx={{ justifyContent: "start", flexWrap: "wrap" }}>
+                                    {props?.assignedMembersData?.map((v) => (
+                                        <Tooltip title={`${v?.firstName}`}>
+                                            <Avatar imgProps={{ crossOrigin: "false" }} src={profileImg(v?.imagePath)} />
+                                        </Tooltip>
+
+                                    ))}
+                                </AvatarGroup>
+                            </div>
+                            {/* <span style={{ fontSize: "15px" }}>{props.description}</span> */}
                         </div>
-                        <div className="task-tag">
-                            {props?.priority ? <span className="priority">{props?.priority}</span> : null}
-                            {props?.taskType ? <span className="task-type">{props?.taskType}</span> : null}
+                    )}
+                    renderColumnHeader={(props) => {
 
-                        </div>
-                        <div >
-                            {/* <span className="kanban-card-starttime">{new Date(props?.startTime).toLocaleDateString()}</span> */}
-                            <span> <EventIcon sx={{ color: "" }} /> </span>
-                            {props?.endTime ? (<span style={{ color: "Black", fontWeight: "600" }} className="kanban-card-endtime">{new Date(props?.endTime).toLocaleDateString()}</span>) : "N/A"}
+                        // eslint-disable-next-line react-hooks/rules-of-hooks
+                        const [modalOpened, setModalOpened] = useState(false)
 
-                        </div>
-                        <div>
-                            <AvatarGroup sx={{ justifyContent: "start", flexWrap: "wrap" }}>
-                                {props?.assignedMembersData?.map((v) => (
-                                    <Tooltip title={`${v?.firstName}`}>
-                                        <Avatar imgProps={{ crossOrigin: "false" }} src={profileImg(v?.imagePath)} />
-                                    </Tooltip>
+                        const handleCardAdd = (title, detail) => {
+                            console.log("title", title);
+                            console.log("detail", detail);
 
-                                ))}
-                            </AvatarGroup>
-                        </div>
-                        {/* <span style={{ fontSize: "15px" }}>{props.description}</span> */}
-                    </div>
-                )}
-                renderColumnHeader={(props) => {
+                            const card = {
+                                id: detail._id,
+                                ...detail
+                                // description: {...detail}
+                            };
 
-                    // eslint-disable-next-line react-hooks/rules-of-hooks
-                    const [modalOpened, setModalOpened] = useState(false)
+                            console.log("card", card);
 
-                    const handleCardAdd = (title, detail) => {
-                        console.log("title", title);
-                        console.log("detail", detail);
-
-                        const card = {
-                            id: detail._id,
-                            ...detail
-                            // description: {...detail}
-                        };
-
-                        console.log("card", card);
-
-                        const updatedBoard = addCard(board, props, card)
-                        setBoard(updatedBoard)
-                        setModalOpened(false)
-
-                    }
-
-                    const removeCard = (title, detail) => {
-                        console.log("remove card",title, detail);
-                    }
-
-                    return (
-                        <div className={`column-header ${props.title}`} style={{ padding: '.7rem', borderRadius: "10px", fontWeight: "bolder", }}>
-                            <span>{props.title}</span>
-
-                            <AddIcon
-                                color="white"
-                                size={25} title="Add task"
-                                onClick={(e) => {
-                                    setModalOpened(true)
-
-                                    if (user?.role?.name !== "admin") {
-                                        setTask({
-
-
-                                            ...task,
-                                            status: props.title.toLowerCase(),
-                                            assignedMembers: [user._id],
-                                            assignedMembersNameId: [user._id + "_" + user.firstName]
-                                        })
-
-                                    }
-
-                                }
-                                }
-                            />
-                            <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
-                            setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
-                                task={task} setTask={setTask} setPageNumber={setPageNumber}
-                                onClose={() => {
-
-                                    setModalOpened(false)
-                                    setTask({
-                                        taskName: "",
-                                        startTime: "",
-                                        endTime: "",
-                                        status: "",
-                                        totalHour: "",
-                                        additionalNotes: "",
-                                        assignedMembers: [],
-                                        assignedMembersNameId: [],
-                                        priority: "",
-                                        progress: "",
-                                        taskType: ""
-                                    })
-
-                                }} />
-                        </div>
-                    )
-                }}
-
-            >
-                {board}
-            </Board>
-
-            
-
-            < >
-                {/* <Button onClick={toggleDrawer(true)}>Add</Button> */}
-                <Drawer
-                    PaperProps={{ style: { position: 'absolute', backgroundColor: "white", width: "500px", opacity: "0.8", padding: "1rem" } }}
-                    BackdropProps={{ style: { position: 'absolute' } }}
-                    sx={{
-
-                    }}
-                    slots={{
-                    }}
-                    slotProps={
-                        {
-                            root: {
-                                style: {
-                                    position: "absolute"
-                                }
-                            },
+                            const updatedBoard = addCard(board, props, card)
+                            setBoard(updatedBoard)
+                            setModalOpened(false)
 
                         }
-                    }
-                    ModalProps={{
-                        container: document.getElementById('board-container'),
-                        style: { position: 'relative' }
+
+                        const removeCard = (title, detail) => {
+                            console.log("remove card", title, detail);
+                        }
+
+                        return (
+                            <div className={`column-header ${props.title}`} style={{ padding: '.7rem', borderRadius: "10px", fontWeight: "bolder", }}>
+                                <span>{props.title}</span>
+
+                                <AddIcon
+                                    color="white"
+                                    size={25} title="Add task"
+                                    onClick={(e) => {
+                                        setModalOpened(true)
+
+                                        if (user?.role?.name !== "admin") {
+                                            setTask({
+
+
+                                                ...task,
+                                                status: props.title.toLowerCase(),
+                                                assignedMembers: [user._id],
+                                                assignedMembersNameId: [user._id + "_" + user.firstName]
+                                            })
+
+                                        }
+
+                                    }
+                                    }
+                                />
+                                <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
+                                    setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
+                                    task={task} setTask={setTask} setPageNumber={setPageNumber}
+                                    onClose={() => {
+
+                                        setModalOpened(false)
+                                        setTask({
+                                            taskName: "",
+                                            startTime: "",
+                                            endTime: "",
+                                            status: "",
+                                            totalHour: "",
+                                            additionalNotes: "",
+                                            assignedMembers: [],
+                                            assignedMembersNameId: [],
+                                            priority: "",
+                                            progress: "",
+                                            taskType: ""
+                                        })
+
+                                    }} />
+                            </div>
+                        )
                     }}
-                    variant="temporary"
-                    anchor={"left"}
-                    open={open}
-                    onClose={toggleDrawer(false)}
+
                 >
+                    {board}
+                </Board>
 
-                    <Box sx={{ display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between" }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                            <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
-                                <DatePicker label="Start Time *" slotProps={{
-                                    textField: {
-                                        error: false,
-                                    },
-                                }} />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                            <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem" } }} >
-                                <DatePicker label="End Time *" slotProps={{
-                                    textField: {
-                                        error: false,
-                                    },
-                                }} />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                    </Box>
 
-                    <Box sx={{ m: 1, }}>
-                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
-                            <span>Priority</span>
-                            <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox name="high" />
-                                    }
-                                    label="high"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox name="medium" />
-                                    }
-                                    label="medium"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox name="low" />
-                                    }
-                                    label="low"
-                                />
-                            </FormGroup>
 
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
-                            <span>Task Types</span>
+                < >
+                    {/* <Button onClick={toggleDrawer(true)}>Add</Button> */}
+                    <Drawer
+                        PaperProps={{ style: { position: 'absolute', backgroundColor: "white", width: "500px", opacity: "0.8", padding: "1rem" } }}
+                        BackdropProps={{ style: { position: 'absolute' } }}
+                        sx={{
+
+                        }}
+                        slots={{
+                        }}
+                        slotProps={
+                            {
+                                root: {
+                                    style: {
+                                        position: "absolute"
+                                    }
+                                },
+
+                            }
+                        }
+                        ModalProps={{
+                            container: document.getElementById('board-container'),
+                            style: { position: 'relative' }
+                        }}
+                        variant="temporary"
+                        anchor={"left"}
+                        open={open}
+                        onClose={toggleDrawer(false)}
+                    >
+
+                        <Box sx={{ display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between" }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
+                                    <DatePicker label="Start Time *" slotProps={{
+                                        textField: {
+                                            error: false,
+                                        },
+                                    }} />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem" } }} >
+                                    <DatePicker label="End Time *" slotProps={{
+                                        textField: {
+                                            error: false,
+                                        },
+                                    }} />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Box>
+
+                        <Box sx={{ m: 1, }}>
+                            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
+                                <span>Priority</span>
+                                <FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox name="high" />
+                                        }
+                                        label="high"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox name="medium" />
+                                        }
+                                        label="medium"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox name="low" />
+                                        }
+                                        label="low"
+                                    />
+                                </FormGroup>
+
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
+                                <span>Task Types</span>
+                                <FormControl sx={{ width: "60%" }}>
+
+                                    <Select
+                                        labelId="demo-multiple-chip-label"
+                                        id="demo-multiple-chip"
+                                        size="small"
+                                    // renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
+                                    // MenuProps={MenuProps}
+
+                                    >
+                                        {taskTypes.map((option, ind) => {
+                                            return (
+                                                // value={{id:option._id,name:option.userName}}
+
+                                                <MenuItem key={ind} value={option}  >
+                                                    {option}
+                                                </MenuItem>
+                                            )
+                                        })}
+                                    </Select>
+                                </FormControl>
+
+
+                            </div>
+                        </Box>
+                        <Box sx={{ m: 1, display: "flex", justifyContent: "space-around", alignItems: "center" }}>
+
+                            <span>Sort by</span>
                             <FormControl sx={{ width: "60%" }}>
 
                                 <Select
-                                    labelId="demo-multiple-chip-label"
-                                    id="demo-multiple-chip"
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
                                     size="small"
                                 // renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
                                 // MenuProps={MenuProps}
 
-                                >
-                                    {taskTypes.map((option, ind) => {
-                                        return (
-                                            // value={{id:option._id,name:option.userName}}
 
-                                            <MenuItem key={ind} value={option}  >
-                                                {option}
-                                            </MenuItem>
-                                        )
-                                    })}
+                                >
+
+                                    <MenuItem value={"asc"}  >
+                                        ASC
+                                    </MenuItem>
+                                    <MenuItem value={"desc"}  >
+                                        Desc
+                                    </MenuItem>
                                 </Select>
                             </FormControl>
 
-
-                        </div>
-                    </Box>
-                    <Box sx={{ m: 1, display: "flex", justifyContent: "space-around", alignItems: "center" }}>
-
-                        <span>Sort by</span>
-                        <FormControl sx={{ width: "60%" }}>
-
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                size="small"
-                            // renderValue={(selected) => selected.map(v=> v.split("_")[0]).join(", ")}
-                            // MenuProps={MenuProps}
-
-
-                            >
-
-                                <MenuItem value={"asc"}  >
-                                    ASC
-                                </MenuItem>
-                                <MenuItem value={"desc"}  >
-                                    Desc
-                                </MenuItem>
-                            </Select>
-                        </FormControl>
-
-                    </Box>
-
-                    <Button variant="contained" sx={{ width: "50%", margin: "auto" }}  >Filter</Button>
-
-                </Drawer>
-            </>
-
-
-
-            {/* modal  */}
-
-            <BootstrapDialog
-                onClose={handleModalClose}
-                aria-labelledby="customized-dialog-title"
-                open={openModal}
-
-                sx={{ ".MuiPaper-root": { width: "800px", }, "label input": { padding: ".5rem", } }}
-
-            >
-                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
-                    Task
-                </BootstrapDialogTitle>
-                <DialogContent sx={{
-                    display: "flex", justifyContent: "center", flexDirection: "column",
-                    overflowY: "auto",
-                    marginTop: "1rem"
-
-
-
-                }}>
-
-                    <div className={styles.container} style={{ margin: "1rem 0" }}>
-
-                        {/* taskName */}
-                        <Box className="task-div" sx={{ marginTop: { xs: "9rem !important", sm: "7rem !important", md: "6rem !important", lg: "1rem !important" }, }}  >
-                            <label htmlFor="taskName">Task Name: </label>
-                            {edit ? <TextField value={singleTask.taskName} onChange={(e) => {
-                                setSingleTask({
-                                    ...singleTask,
-                                    taskName: e.target.value,
-                                })
-
-                            }
-                            } /> : (
-                                // <TextField  value={singleTask.taskName} />
-                                <span>{singleTask?.taskName}</span>
-
-                            )}
-                            {/* <input type="text" name="taskName" id="taskName" /> */}
                         </Box>
 
-                        {/* priority  & types */}
-                        {/* <Box> */}
+                        <Button variant="contained" sx={{ width: "50%", margin: "auto" }}  >Filter</Button>
 
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label htmlFor="taskName">Priority: </label>
-                            {edit ? (
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Select Priority</InputLabel>
-
-                                    <Select
-                                        // sx={{ width: "100%" }}
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-
-                                        value={singleTask?.priority}
-                                        label="Select Priority*"
-                                        onChange={(e) => {
-                                            setSingleTask({
-                                                ...singleTask,
-                                                priority: e.target.value
-                                            })
-                                        }}
-                                    >
-                                        {priorityStat.length && priorityStat.map((v, i) => (
-                                            <MenuItem key={i} value={v} >{v}</MenuItem>
-                                        ))
-
-                                        }
-
-                                    </Select>
-                                </FormControl>
-                            )
+                    </Drawer>
+                </>
 
 
-                                : (
+
+                {/* modal  */}
+
+                <BootstrapDialog
+                    onClose={handleModalClose}
+                    aria-labelledby="customized-dialog-title"
+                    open={openModal}
+
+                    sx={{ ".MuiPaper-root": { width: "800px", }, "label input": { padding: ".5rem", } }}
+
+                >
+                    <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose}>
+                        Task
+                    </BootstrapDialogTitle>
+                    <DialogContent sx={{
+                        display: "flex", justifyContent: "center", flexDirection: "column",
+                        overflowY: "auto",
+                        marginTop: "1rem"
+
+
+
+                    }}>
+
+                        <div className={styles.container} style={{ margin: "1rem 0" }}>
+
+                            {/* taskName */}
+                            <Box className="task-div" sx={{ marginTop: { xs: "9rem !important", sm: "7rem !important", md: "6rem !important", lg: "1rem !important" }, }}  >
+                                <label htmlFor="taskName">Task Name: </label>
+                                {edit ? <TextField value={singleTask.taskName} onChange={(e) => {
+                                    setSingleTask({
+                                        ...singleTask,
+                                        taskName: e.target.value,
+                                    })
+
+                                }
+                                } /> : (
                                     // <TextField  value={singleTask.taskName} />
-                                    <span>{singleTask?.priority}</span>
+                                    <span>{singleTask?.taskName}</span>
 
                                 )}
-                        </Box>
+                                {/* <input type="text" name="taskName" id="taskName" /> */}
+                            </Box>
 
-                        {/* {task type} */}
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label htmlFor="taskName">Types: </label>
-                            {edit ? (
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Select Types*</InputLabel>
+                            {/* priority  & types */}
+                            {/* <Box> */}
 
-                                    <Select
-                                        // sx={{ width: "100%" }}
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-
-                                        value={singleTask?.taskType}
-                                        label="Select Types*"
-                                        onChange={(e) => {
-                                            setSingleTask({
-                                                ...singleTask,
-                                                taskType: e.target.value
-                                            })
-                                        }}
-                                    >
-                                        {taskTypes.length && taskTypes.map((v, i) => (
-                                            <MenuItem key={i} value={v} >{v}</MenuItem>
-                                        ))
-
-                                        }
-
-                                    </Select>
-                                </FormControl>
-                            )
-
-
-                                : (
-                                    // <TextField  value={singleTask.taskName} />
-                                    <span>{singleTask?.taskType}</span>
-
-                                )}
-                        </Box>
-
-
-                        {/* </Box> */}
-
-
-
-
-                        {/* status selection */}
-
-                        <Box style={{ display: "flex", }} className="task-div" >
-                            {/* <span className={styles.label}>Type</span> */}
-                            <label htmlFor="taskName">Status: </label>
-
-                            {edit ? (
-
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Select status*</InputLabel>
-
-                                    <Select
-                                        // sx={{ width: "100%" }}
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        // size="small"
-                                        label="Select Type"
-                                        value={singleTask.status}
-                                        onChange={(e) => {
-                                            setSingleTask({ ...singleTask, status: e.target.value })
-                                        }}
-                                    >
-                                        {taskStatus?.map((v, i) => (
-                                            <MenuItem key={i} value={v} >{v}</MenuItem>
-                                        ))
-
-                                        }
-
-                                    </Select>
-                                </FormControl>
-
-                            ) : (
-                                <span>{singleTask?.status}</span>
-
-                            )
-                            }
-                        </Box>
-
-
-                        {/* approx hour */}
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label>Total Time(hour): </label>
-                            {edit ? <TextField value={singleTask?.totalHour} onChange={(e) => {
-                                let val = e.target.value.replace(/[^0-9]/g, '');
-
-                                setSingleTask({
-                                    ...singleTask,
-                                    totalHour: val,
-                                })
-
-                            }
-                            } /> : (
-                                // <TextField  value={singleTask.taskName} />
-                                <span>{singleTask?.totalHour}</span>
-
-                            )}
-                        </Box>
-
-
-                        {/* starttime  */}
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label>Start Date: </label>
-                            {edit ? (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                    <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
-                                        <DatePicker label="Start Time *" slotProps={{
-                                            textField: {
-                                                error: false,
-                                            },
-                                        }}
-                                            value={dayjs(singleTask.startTime)}
-
-                                            onChange={(e) => {
-                                                if (e?.['$d']) {
-
-                                                    setSingleTask({
-                                                        ...singleTask,
-                                                        startTime: new Date(e?.['$d'])
-                                                    })
-                                                }
-                                            }}
-                                        />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-
-                            ) : (
-                                <span>{new Date(singleTask?.startTime).toLocaleDateString() || "N/A"}</span>
-                            )}
-
-                        </Box>
-
-                        {/* - end time */}
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label>Start Date: </label>
-                            {edit ? (
-                                <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                    <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
-                                        <DatePicker label="Start Time *" slotProps={{
-                                            textField: {
-                                                error: false,
-                                            },
-                                        }}
-                                            value={dayjs(singleTask.endTime)}
-
-                                            onChange={(e) => {
-                                                if (e?.['$d']) {
-
-                                                    setSingleTask({
-                                                        ...singleTask,
-                                                        endTime: new Date(e?.['$d'])
-                                                    })
-                                                }
-                                            }}
-                                        />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-
-                            ) : (
-                                <span>{new Date(singleTask?.endTime).toLocaleDateString() || "N/A"}</span>
-                            )}
-
-                        </Box>
-
-                        {/* assigned members* */}
-
-                        <Box sx={{ display: "flex", justifyContent: "start", alignItems: "baseline" }} className="task-div" >
-                            <label>Assign Members: </label>
-                            {edit ? (
-                                <Box sx={{ width: { xs: "100%", md: "45%" } }}>
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label htmlFor="taskName">Priority: </label>
+                                {edit ? (
                                     <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Assign To</InputLabel>
+                                        <InputLabel id="demo-simple-select-label">Select Priority</InputLabel>
 
                                         <Select
                                             // sx={{ width: "100%" }}
-                                             disabled={(user?.role?.name === "admin" || user?.role?.name === "projectLead" || user?.role?.name === "teamlead" ) ? false : true }
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+
+                                            value={singleTask?.priority}
+                                            label="Select Priority*"
+                                            onChange={(e) => {
+                                                setSingleTask({
+                                                    ...singleTask,
+                                                    priority: e.target.value
+                                                })
+                                            }}
+                                        >
+                                            {priorityStat.length && priorityStat.map((v, i) => (
+                                                <MenuItem key={i} value={v} >{v}</MenuItem>
+                                            ))
+
+                                            }
+
+                                        </Select>
+                                    </FormControl>
+                                )
 
 
-                                            value={singleTask?.selectedMembers}
-                                            multiple
+                                    : (
+                                        // <TextField  value={singleTask.taskName} />
+                                        <span>{singleTask?.priority}</span>
+
+                                    )}
+                            </Box>
+
+                            {/* {task type} */}
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label htmlFor="taskName">Types: </label>
+                                {edit ? (
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Select Types*</InputLabel>
+
+                                        <Select
+                                            // sx={{ width: "100%" }}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+
+                                            value={singleTask?.taskType}
+                                            label="Select Types*"
+                                            onChange={(e) => {
+                                                setSingleTask({
+                                                    ...singleTask,
+                                                    taskType: e.target.value
+                                                })
+                                            }}
+                                        >
+                                            {taskTypes.length && taskTypes.map((v, i) => (
+                                                <MenuItem key={i} value={v} >{v}</MenuItem>
+                                            ))
+
+                                            }
+
+                                        </Select>
+                                    </FormControl>
+                                )
+
+
+                                    : (
+                                        // <TextField  value={singleTask.taskName} />
+                                        <span>{singleTask?.taskType}</span>
+
+                                    )}
+                            </Box>
+
+
+                            {/* </Box> */}
+
+
+
+
+                            {/* status selection */}
+
+                            <Box style={{ display: "flex", }} className="task-div" >
+                                {/* <span className={styles.label}>Type</span> */}
+                                <label htmlFor="taskName">Status: </label>
+
+                                {edit ? (
+
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Select status*</InputLabel>
+
+                                        <Select
+                                            // sx={{ width: "100%" }}
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             // size="small"
                                             label="Select Type"
+                                            value={singleTask.status}
                                             onChange={(e) => {
-                                                console.log(e.target.value);
-                                                let mappedValue = e.target.value.map((val) => val.split("_")[0]);
-
-                                                setSingleTask({ ...singleTask, selectedMembers: e.target.value, assignedMembers: mappedValue })
+                                                setSingleTask({ ...singleTask, status: e.target.value })
                                             }}
-                                            renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                {selected.map((value) => (
-                                                    <Chip key={value} label={value.split("_")[1]} />
-                                                ))}
-                                            </Box>}
                                         >
-                                            {membersNameId?.length && membersNameId?.map((option) => {
-                                                return (
+                                            {taskStatus?.map((v, i) => (
+                                                <MenuItem key={i} value={v} >{v}</MenuItem>
+                                            ))
 
-                                                    <MenuItem key={option._id} value={option?._id + "_" + option?.firstName}  >
-                                                        <ListItemIcon>
-                                                            <Checkbox checked={singleTask.assignedMembers?.indexOf(option._id) > -1} />
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={option?.firstName} />
-                                                    </MenuItem>
-                                                )
-                                            })}
+                                            }
 
                                         </Select>
                                     </FormControl>
-                                </Box>
-                            ) : (
-                                <div style={{ fontSize: "1.2rem", display: "flex" }}>
-                                    {singleTask?.assignedMembersData?.length && singleTask?.assignedMembersData?.map((v, i) => {
-                                        return (
-                                            // <Tooltip key={i} title={v?.firstName}>
-                                            //     <Avatar imgProps={{crossOrigin: "false"}} src={profileImg(v?.imagePath)} />
-                                            // </Tooltip>
-                                            <p>{v?.firstName + ","}</p>
-                                        )
-                                    })}
-                                </div>
-                            )}
-                        </Box>
+
+                                ) : (
+                                    <span>{singleTask?.status}</span>
+
+                                )
+                                }
+                            </Box>
+
+
+                            {/* approx hour */}
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label>Total Time(hour): </label>
+                                {edit ? <TextField value={singleTask?.totalHour} onChange={(e) => {
+                                    let val = e.target.value.replace(/[^0-9]/g, '');
+
+                                    setSingleTask({
+                                        ...singleTask,
+                                        totalHour: val,
+                                    })
+
+                                }
+                                } /> : (
+                                    // <TextField  value={singleTask.taskName} />
+                                    <span>{singleTask?.totalHour}</span>
+
+                                )}
+                            </Box>
+
+
+                            {/* starttime  */}
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label>Start Date: </label>
+                                {edit ? (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                        <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
+                                            <DatePicker label="Start Time *" slotProps={{
+                                                textField: {
+                                                    error: false,
+                                                },
+                                            }}
+                                                value={dayjs(singleTask.startTime)}
+
+                                                onChange={(e) => {
+                                                    if (e?.['$d']) {
+
+                                                        setSingleTask({
+                                                            ...singleTask,
+                                                            startTime: new Date(e?.['$d'])
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+
+                                ) : (
+                                    <span>{new Date(singleTask?.startTime).toLocaleDateString() || "N/A"}</span>
+                                )}
+
+                            </Box>
+
+                            {/* - end time */}
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label>Start Date: </label>
+                                {edit ? (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                        <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
+                                            <DatePicker label="Start Time *" slotProps={{
+                                                textField: {
+                                                    error: false,
+                                                },
+                                            }}
+                                                value={dayjs(singleTask.endTime)}
+
+                                                onChange={(e) => {
+                                                    if (e?.['$d']) {
+
+                                                        setSingleTask({
+                                                            ...singleTask,
+                                                            endTime: new Date(e?.['$d'])
+                                                        })
+                                                    }
+                                                }}
+                                            />
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+
+                                ) : (
+                                    <span>{new Date(singleTask?.endTime).toLocaleDateString() || "N/A"}</span>
+                                )}
+
+                            </Box>
+
+                            {/* assigned members* */}
+
+                            <Box sx={{ display: "flex", justifyContent: "start", alignItems: "baseline" }} className="task-div" >
+                                <label>Assign Members: </label>
+                                {edit ? (
+                                    <Box sx={{ width: { xs: "100%", md: "45%" } }}>
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Assign To</InputLabel>
+
+                                            <Select
+                                                // sx={{ width: "100%" }}
+                                                disabled={(user?.role?.name === "admin" || user?.role?.name === "projectLead" || user?.role?.name === "teamlead") ? false : true}
+
+
+                                                value={singleTask?.selectedMembers}
+                                                multiple
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                // size="small"
+                                                label="Select Type"
+                                                onChange={(e) => {
+                                                    console.log(e.target.value);
+                                                    let mappedValue = e.target.value.map((val) => val.split("_")[0]);
+
+                                                    setSingleTask({ ...singleTask, selectedMembers: e.target.value, assignedMembers: mappedValue })
+                                                }}
+                                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                    {selected.map((value) => (
+                                                        <Chip key={value} label={value.split("_")[1]} />
+                                                    ))}
+                                                </Box>}
+                                            >
+                                                {membersNameId?.length && membersNameId?.map((option) => {
+                                                    return (
+
+                                                        <MenuItem key={option._id} value={option?._id + "_" + option?.firstName}  >
+                                                            <ListItemIcon>
+                                                                <Checkbox checked={singleTask.assignedMembers?.indexOf(option._id) > -1} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={option?.firstName} />
+                                                        </MenuItem>
+                                                    )
+                                                })}
+
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                ) : (
+                                    <div style={{ fontSize: "1.2rem", display: "flex" }}>
+                                        {singleTask?.assignedMembersData?.length && singleTask?.assignedMembersData?.map((v, i) => {
+                                            return (
+                                                // <Tooltip key={i} title={v?.firstName}>
+                                                //     <Avatar imgProps={{crossOrigin: "false"}} src={profileImg(v?.imagePath)} />
+                                                // </Tooltip>
+                                                <p>{v?.firstName + ","}</p>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+                            </Box>
 
 
 
-                        <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
-                            <label>Additional Notes: </label>
-                            {edit ? (
-                                <textarea
+                            <Box sx={{ display: "flex", justifyContent: "start" }} className="task-div" >
+                                <label>Additional Notes: </label>
+                                {edit ? (
+                                    <textarea
 
-                                    rows={5} className={styles.input} value={singleTask.additionalNotes}
-                                    type="text" onChange={(e) => setSingleTask({ ...singleTask, additionalNotes: e.target.value })}
-                                    placeholder="What you wish to do?" />
-                            ) : (
-                                <span>{singleTask?.additionalNotes}</span>
-                            )}
-                        </Box>
-
-
-                    </div>
-
-                </DialogContent>
-                {(userInfo()?.role?.name === "admin" || userInfo()?.role?.name === "projectlead" || userInfo()?.role?.name === "teamlead") || (
-                    singleTask?.assignedMembers?.includes(userInfo()?._id)
-                ) ? (
-
-                    <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-
-                        <Button variant="contained"
-                            onClick={updateTask}
-                            disabled={edit ? false : "true"}
-                        >
-                            Update
-                        </Button>
-                        <Button onClick={(e) => {
-                            setEdit(!edit)
-                        }} variant="contained"
-                        >
-                            {edit ? "Cancel" : "Edit"}
+                                        rows={5} className={styles.input} value={singleTask.additionalNotes}
+                                        type="text" onChange={(e) => setSingleTask({ ...singleTask, additionalNotes: e.target.value })}
+                                        placeholder="What you wish to do?" />
+                                ) : (
+                                    <span>{singleTask?.additionalNotes}</span>
+                                )}
+                            </Box>
 
 
-                        </Button>
-                    </DialogActions>
+                        </div>
 
-                ) : null}
-            </BootstrapDialog>
-        </div>
-        <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}} onClick={()=>{
-            setPageNumber((prev)=> prev + 1)
-            filterTask(pageNumber + 1,allTask)
-        }
+                    </DialogContent>
+                    {(userInfo()?.role?.name === "admin" || userInfo()?.role?.name === "projectlead" || userInfo()?.role?.name === "teamlead") || (
+                        singleTask?.assignedMembers?.includes(userInfo()?._id)
+                    ) ? (
+
+                        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+
+                            <Button variant="contained"
+                                onClick={updateTask}
+                                disabled={edit ? false : "true"}
+                            >
+                                Update
+                            </Button>
+                            <Button onClick={(e) => {
+                                setEdit(!edit)
+                            }} variant="contained"
+                            >
+                                {edit ? "Cancel" : "Edit"}
+
+
+                            </Button>
+                        </DialogActions>
+
+                    ) : null}
+                </BootstrapDialog>
+            </div>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer" }} onClick={() => {
+                setPageNumber((prev) => prev + 1)
+                filterTask(pageNumber + 1, allTask)
+            }
             }>See More</Box>
         </>
     )
