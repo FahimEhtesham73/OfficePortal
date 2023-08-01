@@ -9,6 +9,9 @@ const AdminCombinedProtected = ({ children }) => {
         decoded = jwt_decode(token);
     }else{
         decoded = ''
+        
+        return <Navigate to='/signin' />
+
     }
 
     if (decoded?.role?.alias === 'Admin' || decoded?.role?.alias === 'Team Lead' || decoded?.role?.alias === 'Project Lead') {

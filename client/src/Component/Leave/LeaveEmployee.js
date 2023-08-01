@@ -42,7 +42,7 @@ import { leaveReducer, leaveReducerInitialState, leaveReducerState } from './lea
 import LeaveDataTable from './LeaveDataTable';
 import { TextareaAutosize } from '@mui/material';
 import { getAllHoildaysApi } from '../../api/holidayApi';
-
+import Loading from "../Hook/Loading/Loading";
 const daysCount = (date_1, date_2) => {
     if (date_1 && date_2) {
         let difference = date_1.getTime() - date_2.getTime();
@@ -198,6 +198,7 @@ const YEAR = new Date().getFullYear()
 const LeaveEmployee = () => {
     const jwt = Cookies.get('_token');
 
+    const [isLoading, setIsLoading] = useState(false);
     const [allHoliday, setAllHoliday] = useState([])
     const [allHolidayDate, setAllHolidayDate] = useState([])
 
@@ -363,14 +364,18 @@ const LeaveEmployee = () => {
         return allHolidayDate.includes(dateString) || (new Date(date).getDay() === 6 || new Date(date).getDay() === 0);
     };
     const getLeaveData = async () => {
+        setIsLoading(true)
         const response = await getLeaveApi({ usersId: [], ...search }, jwt);
         if (response.status === 200) {
+            setIsLoading(false)
             let responseData = await response.json()
             console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
                 payload: responseData?.data
             })
+        }else{
+            setIsLoading(false)
         }
     }
 
@@ -408,6 +413,11 @@ const LeaveEmployee = () => {
         </Menu>
     )
     return (
+
+    <>
+    {isLoading? <Loading /> : (
+
+
         <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
@@ -454,6 +464,7 @@ const LeaveEmployee = () => {
 
             </Box>
 
+    
             {/* Searching Div */}
             <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
                 <Grid container spacing={3}>
@@ -708,7 +719,13 @@ const LeaveEmployee = () => {
                     </Button>
                 </DialogActions>
             </BootstrapDialog>
+    
+
         </Box>
+
+    )}
+    </>
+
     )
 }
 
