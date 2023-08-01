@@ -97,3 +97,12 @@ export const filterProjectTask = async(data, token)=> {
   body: JSON.stringify(data),
   credentials: 'include',})
 }
+
+export const taskSummaryApi = async(projectCode,query,token)=> {
+  return await fetch(`${process.env.REACT_APP_URL}/task/summary?projectCode=${projectCode}`,{method: "POST",  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + token
+  },
+  body: JSON.stringify({query: query}),
+  credentials: 'include',})
+}

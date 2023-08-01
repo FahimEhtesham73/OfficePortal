@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import AddTaskModal from '../../Component/ProjectTask/AddTask';
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { deleteSingleTaskApi, filterProjectTask, getAllTaskApi, getSingleTaskApi, updateATaskApi } from "../../api/projectApi";
+import { deleteSingleTaskApi, filterProjectTask, getAllTaskApi, getSingleTaskApi, taskSummaryApi, updateATaskApi } from "../../api/projectApi";
 import { profileImg, taskDataPrepration, _debounce } from "../functions/commonFunc";
 import Cookies from "js-cookie";
 import styles from './AddTaskModal.module.css'
@@ -29,6 +29,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { priorityStat, taskStatus, } from "../../Component/ProjectTask/AddTask";
 import TaskFilter from "./TaskFilter";
+import TaskSummary from "./TaskSummary";
 // Modal Styling
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -156,7 +157,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         startTime: "",
         endTime: "",
         taskType: [],
-        sortBy: ""
+        sortBy: "",
+        status:""
+    })
+
+    const [data, setData] = useState([])
+    const [othersData, setOthersData] = useState({
+        totalData: "",
+        totalTodaysDeadline: ""
     })
     // For Modal open
     const handleModalOpen = () => {
@@ -295,6 +303,23 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             };
         }
     }
+
+    const fetchSummary = async () => {
+        const response = await taskSummaryApi(projectCode, query, jwt);
+        if (response.status === 200) {
+            const responseData = await response.json();
+            console.log(responseData.data[0]);
+            setData(Object.values(responseData.data[0].summary))
+            setOthersData({
+                ...othersData,
+                totalData: responseData.data[0].totalTasks,
+                totalTodaysDeadline: responseData.data[0].totalDeadelineToday
+            })
+        }
+    }
+    useEffect(() => {
+        fetchSummary()
+    }, [projectCode])
 
 
     // useEffect(() => {
@@ -439,6 +464,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
+
     return (
         <>
             <div className="board-container" id="board-container" style={{ position: "relative", }}>
@@ -571,44 +597,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                             </Select>
                                         </FormControl>
                                     </Box>
-                                    {/* Search by status */}
-                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", }}>
-                                        {/* <Typography>Search By User</Typography> */}
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Users</InputLabel>
-
-                                            <Select
-                                                sx={{ width: "50%" }}
-                                                label="Status"
-                                                labelId="demo-simple-select-label"
-                                                value={query.userIdName}
-                                                multiple
-                                                onChange={(e) => {
-
-                                                }}
-                                                renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                    {selected.map((value) => (
-                                                        <Chip key={value} label={value.split("_")[1]}
-                                                        />
-                                                    ))}
-
-
-                                                </Box>}
-                                            >
-                                                {/* {membersNameId.length && membersNameId.map((option, i) => {
-                                                return ( */}
-
-                                                <MenuItem value="ToDo"  >
-                                                    <ListItemIcon>
-                                                        <Checkbox />
-                                                    </ListItemIcon>
-                                                    <ListItemText />
-                                                </MenuItem>
-                                                {/* ) */}
-                                                {/* })} */}
-                                            </Select>
-                                        </FormControl>
-                                    </Box>
 
                                     <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
                                         {/* <Typography>Search By Priority</Typography> */}
@@ -651,6 +639,36 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
                                         </FormControl>
                                     </Box>
+
+
+                                    {/* Search by status */}
+                                    <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }} >
+
+                                            <FormControl fullWidth>  
+                                            <InputLabel id="demo-simple-select-label">Status</InputLabel>                                        
+                                                <Select
+                                                    sx={{ width: "50%" }}
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    // size="small"
+                                                    label="Select Type"
+                                                    value={query.status}
+                                                    onChange={(e) => {
+                                                         setQuery({ ...query, status: e.target.value })
+                                                    }}
+                                                >
+                                                    {taskStatus?.map((v, i) => (
+                                                        <MenuItem key={i} value={v} >{v}</MenuItem>
+                                                    ))
+
+                                                    }
+
+                                                </Select>
+                                            </FormControl>
+
+                                      
+                                    </Box>
+
                                     <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
                                         {/* <Typography>Search By Priority</Typography> */}
                                         <FormControl fullWidth>
@@ -695,10 +713,20 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
                                 </Box>
                                 <Button variant="contained" onClick={() => {
+                                    if (query?.startTime && query.endTime && (query.startTime > query.endTime)) {
+                                        toast.warning("Invalid Date Range", {
+                                            position: toast.POSITION.TOP_CENTER,
+                                            autoClose: 1000,
+                                            pauseOnHover: false,
+                                        })
+                                        return
+                                    }
                                     setAllTask([])
                                     setBoard(taskDataPrepration([]))
                                     setPageNumber((prev) => (prev * 0) + 1)
                                     filterTask(1, [])
+                                    fetchSummary()
+
                                 }}
                                 >Search</Button>
                             </TaskFilter>
@@ -706,7 +734,21 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                     </Accordion>
 
                 </div>
+                <div>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>Summary</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <TaskSummary data={data} othersData={othersData} />
+                        </AccordionDetails>
+                    </Accordion>
 
+                </div>
 
                 <Board
                     allowAddColumn
