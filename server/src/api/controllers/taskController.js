@@ -280,6 +280,10 @@ module.exports.filterTask = async (req, res) => {
                     args.taskType = query['taskType']
 
                 }
+                if (q === 'status') {
+                    args.status = query['status']
+
+                }
 
             }
             // console.log("args",args);
@@ -300,6 +304,17 @@ module.exports.filterTask = async (req, res) => {
             }
             if (args?.taskType?.length) {
                 matchQuery['taskType'] = { $in: args.taskType };
+
+            }
+            if(args?.status?.length && args?.status === "deadline"){
+                // matchQuery['status'] = { $in: args.status };
+                matchQuery['endTime'] = {$lt: new Date() }
+                matchQuery.status = {$nin: ["done", "pause"]}
+                // matchQuery['status'] = {$nin: ["done", "pause"]},
+
+            }
+            else if(args?.status?.length){
+                matchQuery['status'] = { $eq: args.status };
 
             }
 
@@ -413,6 +428,7 @@ module.exports.projectTaskSummery = async(req, res, next) => {
                         "totalDeadelineToday": [
                             {
                                 $match: {
+                                    status: {$nin: ["done", "pause"]},
                             endTime: {
                               $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
                               $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
