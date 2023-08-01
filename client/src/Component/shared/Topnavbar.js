@@ -122,7 +122,7 @@ const Topnavbar = (props) => {
   const loginUser = () =>{
 
     getSingleUser(profileInfo?._id, jwtToken).then(d=> {
-      // console.log("d",d);
+      console.log("d",d);
       setProfileImagePath(d?.data[0]?.imagePath)
     }).catch(e=> {
       console.log(e);
@@ -132,7 +132,7 @@ const Topnavbar = (props) => {
 
   useEffect(()=> {
     loginUser()
-  },[])
+  },[jwtToken])
 
   const drawer = (
     <div>

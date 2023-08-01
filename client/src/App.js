@@ -40,11 +40,11 @@ const App = () => {
         <Route path='/profile/:id'  element={<AuthenticateUser><Profile/></AuthenticateUser>}/>
         <Route path='/allemployee' element={<AuthenticateUser><AllEmployees/></AuthenticateUser>}/>
         <Route path='/' element={<AuthenticateUser><Punch/></AuthenticateUser>}/>
-        <Route path='/attendance' element={<Attendancesheet/>}/>
-        <Route path='/holiday' element={<Holidays/>}/>
-        <Route path='/leaveemployee' element={<LeaveEmployee/>}/>
+        <Route path='/attendance' element={<AuthenticateUser><Attendancesheet/> </AuthenticateUser>}/>
+        <Route path='/holiday' element={<AuthenticateUser> <Holidays/> </AuthenticateUser>}/>
+        <Route path='/leaveemployee' element={<AuthenticateUser> <LeaveEmployee/> </AuthenticateUser>}/>
         <Route path='/leaveadmin' element={<AdminCombinedProtected><LeaveStatusLead/></AdminCombinedProtected> }/>
-        <Route path='/teamlead' element={<Teamlead/>}/>
+        {/* <Route path='/teamlead' element={  <Teamlead/>}/> */}
         <Route path='/projects' element={<AuthenticateUser><Project /></AuthenticateUser>}/>
         <Route path='/projects/:id' element={ <AuthenticateUser> <ProjectDetail /> </AuthenticateUser> }/>
         {/* All Employees */}

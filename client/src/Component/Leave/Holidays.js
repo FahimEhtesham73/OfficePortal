@@ -31,6 +31,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
 import userInfo from "../Hook/useUseInfo"
+import Loading from '../Hook/Loading/Loading';
 // table cell styling
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -332,8 +333,8 @@ const Holidays = () => {
         const data = await res.json()
         // console.log("All User", data);
         if (res.status === 200) {
-            setHolidayInfo(data)
             setLoading(false)
+            setHolidayInfo(data)
         } else {
             setLoading(false)
             toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
@@ -346,6 +347,8 @@ const Holidays = () => {
     }, [])
 
     return (
+        <>
+        {loading? <Loading /> : (
         <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Holidays 2023</Typography>
@@ -445,6 +448,9 @@ const Holidays = () => {
                 }
             </BootstrapDialog>
         </Box>
+
+        )}
+        </>
     )
 }
 

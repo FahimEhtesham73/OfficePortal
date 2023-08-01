@@ -9,6 +9,9 @@ const AdminCombinedProtected = ({ children }) => {
         decoded = jwt_decode(token);
     }else{
         decoded = ''
+        
+        return <Navigate to='/signin' />
+
     }
 
 

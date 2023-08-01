@@ -160,6 +160,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         sortBy: "",
         status:""
     })
+    // console.log("query", query);
 
     const [data, setData] = useState([])
     const [othersData, setOthersData] = useState({
@@ -207,6 +208,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 priority: query.priority,
                 taskType: query.taskType,
                 sortBy: query.sortBy,
+                status: query.status,
                 limit: limit,
                 page: pageNum
             },
@@ -255,13 +257,13 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         const fromCloumn = board.columns[source.fromColumnId - 1];
         let status = board.columns[destination.toColumnId - 1].title.toLowerCase();
         const updatedBoard = moveCard(board, source, destination)
-        console.log(updatedBoard);
+        // console.log(updatedBoard);
         setBoard(updatedBoard)
 
         statusChangeOnDrag(_card, status).then(() => {
 
         }).catch(err => {
-            console.log(err);
+            // console.log(err);
             const updateBoard = moveCard(board, destination, source)
             setBoard(updateBoard)
         })
@@ -308,7 +310,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         const response = await taskSummaryApi(projectCode, query, jwt);
         if (response.status === 200) {
             const responseData = await response.json();
-            console.log(responseData.data[0]);
+            // console.log(responseData.data[0]);
             setData(Object.values(responseData.data[0].summary))
             setOthersData({
                 ...othersData,
@@ -351,12 +353,13 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
         const response = await updateATaskApi(cardData, jwt);
         if (response.status === 200) {
+            fetchSummary()
             // setLoading(false)
             const responseData = await response.json();
             const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
             setAllTask(modifiedArray)
             // console.log("Modified array",modifiedArray);
-            console.log("after change status", responseData);
+            // console.log("after change status", responseData);
         } else {
             // setLoading(false)
             await filterTask(pageNumber, allTask)
@@ -404,11 +407,12 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
         let response = await updateATaskApi({ pcd: projectCode, taskid: taskId, updatedData: updatedData }, jwt)
         if (response.status === 200) {
-            console.log("update response page no", pageNumber);
+            fetchSummary()
+            // console.log("update response page no", pageNumber);
             await filterTask(pageNumber, allTask)
             const data = await response.json();
             const temp = data.data[0];
-            console.log(" update response data", temp);
+            // console.log(" update response data", temp);
             setSingleTask({
                 ...temp, membersNameId: membersNameId,
                 selectedMembers: temp.assignedMembersData?.map(v => v._id + "_" + v.firstName) || []
@@ -438,6 +442,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         // console.log("Delete Task",data);
         let responseData = await response.json();
         if (response.status === 200) {
+            fetchSummary()
             toast.success("Task deleted", {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 1000,
@@ -654,10 +659,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                                     label="Select Type"
                                                     value={query.status}
                                                     onChange={(e) => {
+                                                        console.log(e.target.value);
                                                          setQuery({ ...query, status: e.target.value })
                                                     }}
                                                 >
-                                                    {taskStatus?.map((v, i) => (
+                                                    {[...taskStatus, "missed"].map((v, i) => (
                                                         <MenuItem key={i} value={v} >{v}</MenuItem>
                                                     ))
 
@@ -756,14 +762,11 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                     allowRemoveCard
                     onCardDragEnd={handleCardMove}
                     disableColumnDrag
-
+                    
                     renderCard={(props) => (
                         <div
 
-                            onClick={(e) => {
-                                // console.log(e.currentTarget);
-
-                            }}
+                            
 
                             data-id={props?.assignedMembers?.join(",")} onDoubleClick={(e) => {
                                 getSingleTask({ taskId: props._id, projectCode: props.projectCode });
@@ -771,8 +774,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
 
                             }} className='kanban-card' style={getGradient(props)}>
-
-
                             {/* drwaer */}
                             <div style={{ position: "relative" }}>
                                 {/* <span>{props?.type}</span> */}
@@ -823,8 +824,8 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                         const [modalOpened, setModalOpened] = useState(false)
 
                         const handleCardAdd = (title, detail) => {
-                            console.log("title", title);
-                            console.log("detail", detail);
+                            // console.log("title", title);
+                            // console.log("detail", detail);
 
                             const card = {
                                 id: detail._id,
@@ -841,7 +842,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                         }
 
                         const removeCard = (title, detail) => {
-                            console.log("remove card", title, detail);
+                            // console.log("remove card", title, detail);
                         }
 
                         return (
@@ -871,7 +872,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                 />
                                 <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
                                     setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
-                                    task={task} setTask={setTask} setPageNumber={setPageNumber}
+                                    task={task} setTask={setTask} setPageNumber={setPageNumber} fetchSummary={fetchSummary}
                                     onClose={() => {
 
                                         setModalOpened(false)
@@ -1308,7 +1309,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                                 // size="small"
                                                 label="Select Type"
                                                 onChange={(e) => {
-                                                    console.log(e.target.value);
+                                                    // console.log(e.target.value);
                                                     let mappedValue = e.target.value.map((val) => val.split("_")[0]);
 
                                                     setSingleTask({ ...singleTask, selectedMembers: e.target.value, assignedMembers: mappedValue })

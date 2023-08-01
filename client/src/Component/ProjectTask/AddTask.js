@@ -16,7 +16,7 @@ import { toast } from 'react-toastify';
 export const taskStatus = ['todo', 'in progress', 'pause', 'done'];
 export const priorityStat = ['high', 'medium', 'low']
 
-const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask, setAllTask, allTask, pageNumber,filterTask, setPageNumber }) => {
+const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask, setAllTask, allTask, pageNumber,filterTask, setPageNumber, fetchSummary }) => {
     const jwt = Cookies.get("_token")
     const customStyles = {
         // background: "rgb(58 58 58)",
@@ -56,6 +56,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
             const response = await createProjectTaskApi(data, jwt);
             const newTask = await response.json();
             if (response.status === 200) {
+                fetchSummary()
                 setTask({...task, 
                     taskName: "",
                     startTime: "",

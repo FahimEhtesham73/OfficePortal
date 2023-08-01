@@ -238,6 +238,7 @@ module.exports.deleteATask = async (req, res) => {
 
 module.exports.filterTask = async (req, res) => {
     try {
+
         const erros = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros });
         const query = req.body.query;
@@ -306,7 +307,7 @@ module.exports.filterTask = async (req, res) => {
                 matchQuery['taskType'] = { $in: args.taskType };
 
             }
-            if(args?.status?.length && args?.status === "deadline"){
+            if(args?.status?.length && args?.status === "missed"){
                 // matchQuery['status'] = { $in: args.status };
                 matchQuery['endTime'] = {$lt: new Date() }
                 matchQuery.status = {$nin: ["done", "pause"]}
@@ -320,7 +321,6 @@ module.exports.filterTask = async (req, res) => {
 
 
 
-            console.log("final", matchQuery);
             const allTask = await ProjectTask.aggregate([
                 {
                     $match: {
@@ -387,6 +387,10 @@ module.exports.projectTaskSummery = async(req, res, next) => {
                     args.taskType = query['taskType']
 
                 }
+                if (q === 'status') {
+                    args.status = query['status']
+
+                }
 
             }
 
@@ -406,6 +410,18 @@ module.exports.projectTaskSummery = async(req, res, next) => {
             }
             if (args?.taskType?.length) {
                 matchQuery['taskType'] = { $in: args.taskType };
+
+            }
+            //new changes
+            if(args?.status?.length && args?.status === "missed"){
+                // matchQuery['status'] = { $in: args.status };
+                matchQuery['endTime'] = {$lt: new Date() }
+                matchQuery.status = {$nin: ["done", "pause"]}
+                // matchQuery['status'] = {$nin: ["done", "pause"]},
+
+            }
+            else if(args?.status?.length){
+                matchQuery['status'] = { $eq: args.status };
 
             }
 
