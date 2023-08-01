@@ -82,11 +82,11 @@ module.exports.signinUser = async (req, res) => {
 
 module.exports.deleteSingleUser = async (req, res) => {
     const { userid } = req.body;
-    const user = await User.findOne(userid);
-    if (!user) return res.status(400).json("user not found");
-    await User.findOneAndDelete(userid);
-    return res.status(200).json("successfully deleted");
-
+    const user = await User.findOne({_id:userid});
+    console.log("Deleted User",user);
+    if (!user) return res.status(400).json({message:"user not found"});
+    await User.findOneAndDelete({_id:userid});
+    return res.status(200).json({message:"successfully deleted"});
 }
 
 module.exports.allUser = async (req, res) => {

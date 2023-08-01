@@ -106,7 +106,6 @@ const AllEmployees = () => {
   const setUserInfo = (e) => {
     name = e.target.name
     value = e.target.value
-
     // console.log("Name: ",name,"value: ",value);
     setUser({ ...user, [name]: value })
   }
@@ -210,6 +209,29 @@ const AllEmployees = () => {
     } else {
       setLoading(false)
       toast.warning(data, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+    }
+
+  }
+  const deleteUser = async(menuItemUserId)=>{
+    setLoading(true)
+    const res = await fetch(`${process.env.REACT_APP_URL}/users/deleteuser`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
+      },
+      body:JSON.stringify({
+        userid:menuItemUserId
+      })
+    })
+    const data = await res.json()
+    // console.log("All User", data);
+    if (res.status === 200) {
+      getAllUser()
+      toast.success(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+    } else {
+      setLoading(false)
+      toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
     }
 
   }
@@ -448,6 +470,12 @@ const AllEmployees = () => {
                             }}>
                               <Typography textAlign="center" >View profile</Typography>
                             </MenuItem>
+                            {userRole() === 'Admin' && <MenuItem onClick={() => {
+                              handleClose()
+                              deleteUser(menuItemUserId)
+                            }}>
+                              <Typography textAlign="center" >Delete profile</Typography>
+                            </MenuItem>}
                           </Menu>
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
