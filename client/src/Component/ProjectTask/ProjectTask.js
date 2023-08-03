@@ -5,7 +5,7 @@ import "./kanvan.css"
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import AddTaskModal from '../../Component/ProjectTask/AddTask';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { deleteSingleTaskApi, filterProjectTask, getAllTaskApi, getSingleTaskApi, taskSummaryApi, updateATaskApi } from "../../api/projectApi";
 import { profileImg, taskDataPrepration, _debounce } from "../functions/commonFunc";
@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import { priorityStat, taskStatus, } from "../../Component/ProjectTask/AddTask";
 import TaskFilter from "./TaskFilter";
 import TaskSummary from "./TaskSummary";
+import userRole from "../Hook/userHook";
 // Modal Styling
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -110,6 +111,8 @@ export const taskTypes = ["feature", "bug", "test", "meeting", "research", "desi
 const ProjectTaskBoard = ({ membersNameId }) => {
     const jwt = Cookies.get("_token");
     const user = userInfo();
+    const role = userRole();
+    // const role = 
     const [allTask, setAllTask] = useState([]);
 
 
@@ -195,6 +198,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         setAllTask(allTask)
 
     }, [allTask])
+  
 
     // console.log("all task",allTask);
 
@@ -253,20 +257,27 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const handleCardMove = (_card, source, destination) => {
+        if(_card.assignedMembers.includes(userInfo()._id) || ["Admin", "Project Lead", "Team Lead"].includes(role)){
 
-        const fromCloumn = board.columns[source.fromColumnId - 1];
-        let status = board.columns[destination.toColumnId - 1].title.toLowerCase();
-        const updatedBoard = moveCard(board, source, destination)
-        // console.log(updatedBoard);
-        setBoard(updatedBoard)
+            const fromCloumn = board.columns[source.fromColumnId - 1];
+            let status = board.columns[destination.toColumnId - 1].title.toLowerCase();
+            const updatedBoard = moveCard(board, source, destination)
+            // console.log(updatedBoard);
+            setBoard(updatedBoard)
+    
+            statusChangeOnDrag(_card, status).then(() => {
+    
+            }).catch(err => {
+                // console.log(err);
+                const updateBoard = moveCard(board, destination, source)
+                setBoard(updateBoard)
+            })
+        }else{
 
-        statusChangeOnDrag(_card, status).then(() => {
-
-        }).catch(err => {
-            // console.log(err);
-            const updateBoard = moveCard(board, destination, source)
-            setBoard(updateBoard)
-        })
+            return toast.warning("You are not authorize to update the task status", {position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,})
+        }
 
     }
 
@@ -343,28 +354,30 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
     const statusChangeOnDrag = async (card, status, cb) => {
         // setLoading(true)
-        const cardData = {
-            taskid: card._id,
-            pcd: projectCode,
-            updatedData: {
-                status: status.toLowerCase()
+            const cardData = {
+                taskid: card._id,
+                pcd: projectCode,
+                updatedData: {
+                    status: status.toLowerCase()
+                }
             }
-        }
+    
+            const response = await updateATaskApi(cardData, jwt);
+            if (response.status === 200) {
+                fetchSummary()
+                // setLoading(false)
+                const responseData = await response.json();
+                const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
+                setAllTask(modifiedArray)
+                // console.log("Modified array",modifiedArray);
+                // console.log("after change status", responseData);
+            } else {
+                // setLoading(false)
+                await filterTask(pageNumber, allTask)
+                throw new Error("Error occured")
+            }
 
-        const response = await updateATaskApi(cardData, jwt);
-        if (response.status === 200) {
-            fetchSummary()
-            // setLoading(false)
-            const responseData = await response.json();
-            const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
-            setAllTask(modifiedArray)
-            // console.log("Modified array",modifiedArray);
-            // console.log("after change status", responseData);
-        } else {
-            // setLoading(false)
-            await filterTask(pageNumber, allTask)
-            throw new Error("Error occured")
-        }
+        
 
     }
 

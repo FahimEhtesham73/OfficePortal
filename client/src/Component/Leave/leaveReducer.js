@@ -28,7 +28,6 @@ export function leaveReducer(state, action){
             }
         }
         case leaveReducerState.UPDATE_DATA: {
-            console.log(action);
             return {
                 ...state,
                 singleLeave:{

@@ -12,7 +12,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { toast } from 'react-toastify';
 import {useDispatch,useSelector} from 'react-redux'
 import { addUser } from '../store/slices/UserSlice';
-
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const theme = createTheme();
 
@@ -24,6 +26,13 @@ const Signin = () => {
         //Here state represents the whole state of the project which is store 
     })
     // console.log("User Data",data);
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+  
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
     const navigate = useNavigate()
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -82,7 +91,7 @@ const Signin = () => {
                             autoComplete="email"
                             autoFocus
                         />
-                        <TextField
+                        {/* <TextField
                             margin="normal"
                             required
                             fullWidth
@@ -91,7 +100,32 @@ const Signin = () => {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                        />
+                           
+                            
+                        /> */}
+
+
+<FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+          <OutlinedInput
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+            name="password"
+          />
+        </FormControl>
                         <Button
                             type="submit"
                             fullWidth
