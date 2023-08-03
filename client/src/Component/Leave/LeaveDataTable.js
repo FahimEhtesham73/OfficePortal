@@ -80,7 +80,6 @@ const LeaveDataTable = (props) => {
 
     const handleEditFun = ()=> {
         let row = data.singleLeave;
-        console.log(row);
         handleClickOpen()
         handleClose()
         setLeaveRequest({
@@ -176,7 +175,6 @@ const LeaveDataTable = (props) => {
             <MenuItem onClick={(e) => {
                 handleClickOpen()
                 handleClose()
-                console.log(e.currentTarget.parentNode.parentNode);
             }}>
                 <Typography textAlign="center">Delete</Typography>
             </MenuItem>
@@ -205,7 +203,6 @@ const LeaveDataTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {data.leaves.map((row, ind) => {
-                            console.log(row);
                             return (
                             
                             <StyledTableRow
@@ -248,7 +245,6 @@ const LeaveDataTable = (props) => {
 
                                 )}
                                 <StyledTableCell component="th" scope="row">
-                                    {console.log(row.userId === userInfo()._id)}
                                     {((row?.approvedByLeader?.filter(v=> (v.isApproved === "Approved" && v.tId !== userInfo()._id)).length > 0 || row?.approvedBySuperVisor?.filter(v=> (v.isApproved === "Approved" && v.sId !== userInfo()._id)).length > 0) || (row?.userId?.toString() === userInfo()._id?.toString() && role === "Admin" ) || (row.isFullyApproved || row.isDeclined) )? null: (
                                     <IconButton aria-label="settings" >
                                         <MoreVertIcon onClick={(e)=> {
@@ -449,7 +445,6 @@ const LeaveDataTable = (props) => {
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
                     <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={(e)=> {
-                        // console.log(e);
                         updateALeaveDetails()
                         
                     }}>

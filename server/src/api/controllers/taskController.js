@@ -4,7 +4,6 @@ const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
 const { taskLookupStage, taskProjectStage } = require("../util/taskCommonTemplate");
-
 module.exports.createATask = async (req, res) => {
     try {
 
@@ -149,8 +148,10 @@ module.exports.updateATask = async (req, res) => {
 
         const isUserIn = await isUserInthisProject(projectCode, req.user._id);
 
-
-        if (isUserIn.length > 0 || req.user.role.name === "admin") {
+        if ((isUserIn.length > 0 && (task.assignedMembers.map(v=> v.toString()).includes(req.user._id) ||
+         isUserIn[0]?.projectSuperVisor?.map(v=> v.toString()).includes(req.user._id)
+         || isUserIn[0]?.projectLead?.map(v=> v.toString()).includes(req.user._id)
+         )) || req.user.role.name === "admin") {
 
             for (let arg in updatedData) {
                 if (arg == "taskName") {
@@ -496,7 +497,7 @@ module.exports.projectTaskSummery = async(req, res, next) => {
 }
 
 
-/************ helper function */
+/************ helper function **************/
 
 const isUserInthisProject = async (projectCode, userId) => {
     return await Project.aggregate([

@@ -196,7 +196,6 @@ const Holidays = () => {
             },
         })
         const data = await res.json()
-        console.log("Single Holiday", data);
         if (res.status === 200) {
             setHolidayInput({
                 holidayName:data[0].holidayName,
@@ -222,7 +221,6 @@ const Holidays = () => {
             body:JSON.stringify(holidayInput)
         })
         const data = await res.json()
-        console.log("Single Holiday", data);
         if (res.status === 200) {
             toast.success('Created Successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             setHolidayInput({
@@ -252,7 +250,6 @@ const Holidays = () => {
             credentials:'include'
         })
         const data = await res.json()
-        console.log("Single Holiday", data);
         if (res.status === 200) {
             toast.success('Deleted Successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             handleClose()
@@ -331,7 +328,6 @@ const Holidays = () => {
             },
         })
         const data = await res.json()
-        // console.log("All User", data);
         if (res.status === 200) {
             setLoading(false)
             setHolidayInfo(data)
@@ -423,7 +419,6 @@ const Holidays = () => {
                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                         <DemoContainer components={['DatePicker']} >
                             <DatePicker label="Add Date *" value={selectedDate} sx={{ width: 365, maxHeight: 345, }} onChange={(e) => {
-                                // console.log(e);
                                 if(e?.['$d']){
                                     setHolidayInput({ ...holidayInput, holidayDate: e.$d })
                                     setSelectedDate(e)

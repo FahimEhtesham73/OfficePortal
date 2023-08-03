@@ -180,7 +180,6 @@ const LeaveStatusLead = () => {
     };
     // For Leave Status Option
     const statusHandleClick = (event, value) => {
-        console.log(value);
         if((userRole() === "Admin" && value.isAdminApproved === "Pending")  || (userRole() !== "Admin" && value.isApproved[0] === "Pending" )){
             setStatusAnchorEl(event.currentTarget)
         }
@@ -190,7 +189,6 @@ const LeaveStatusLead = () => {
         dispatch({
             type: leaveReducerState.EMPTYDATA
         })
-        console.log(e.currentTarget.value);
         setStatusAnchorEl(null);
     };
     const handleChange = (e)=> {
@@ -277,7 +275,6 @@ const LeaveStatusLead = () => {
         })
         const data = await res.json()
         
-        // console.log("All User", data);
         if (res.status === 200) {
             setAllUser(data.data[0].result)
         }  
@@ -302,7 +299,6 @@ const LeaveStatusLead = () => {
         const response = await searchLeaveApi({search: search, pageSize: statusQuery.pageSize, pageNumber: pageNumber || 1 , selfId: decoded._id}, jwt);
         if(response.status === 200){
             const responseData = await response.json()
-            console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
                 payload: responseData[0].data
@@ -317,7 +313,6 @@ const LeaveStatusLead = () => {
         if (response.status === 200) {
             let responseData = await response.json();
             setStatusQuery({...statusQuery, totalCount: responseData[0].totalCount})
-            console.log("313",statusQuery);
             dispatch({
                 type: leaveReducerState.GET_DATA,
                 payload: responseData[0].data
@@ -331,7 +326,6 @@ const LeaveStatusLead = () => {
             approverId: userInfo()._id,
             status: status
         }
-        console.log(requestData);
         // return
         const response = await updateALeaveStatusAPI(requestData, jwt);
         if (response.status === 200) {
@@ -408,7 +402,6 @@ const LeaveStatusLead = () => {
             {leaveStatusSettings.map((setting) => (
                 <MenuItem key={setting} onClick={(e) => {
                     statusHandleClose()
-                    console.log(e);
                 }}>
                     <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
@@ -668,7 +661,6 @@ const LeaveStatusLead = () => {
                                             >
                                                 <MenuItem key={'delete'} onClick={(e) => {
                                                     // handleClickOpen()
-                                                    console.log("deleted");
                                                     handleClose(e)
                                                     deleteAleave(state.singleLeave._id)
                                                 }}>

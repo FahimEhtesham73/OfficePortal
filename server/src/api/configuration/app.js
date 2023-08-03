@@ -6,7 +6,6 @@ const { notFoundUrl } = require("../middleware/notFoundMiddleware");
 const errorMiddleware = require("../middleware/errorMiddleware");
 const { Authorize } = require("../middleware/commonMilddleware");
 
-
 // index middleware
 require('./index')(app);
 

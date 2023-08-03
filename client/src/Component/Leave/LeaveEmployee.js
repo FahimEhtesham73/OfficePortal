@@ -297,7 +297,6 @@ const LeaveEmployee = () => {
 
                 }
 
-                console.log(data);
 
                 let response;
                 if (userRole() === "Admin" || userRole() === "Project Lead") {
@@ -323,12 +322,17 @@ const LeaveEmployee = () => {
                     })
                     getLeaveData()
 
+                }else{
+                    const responseData = await response.json()
+                    toast.warning(responseData?.message || "Request not submitted", {
+                        position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
+                    })
                 }
 
             }
 
             else {
-                toast.warning("Mandatory field missing", {
+                toast.warning("Mandatory fields are missing", {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnHover: false,
@@ -352,10 +356,8 @@ const LeaveEmployee = () => {
         const response = await leaveSummeryApi({ userId: userData._id, year: search.startDate.getFullYear() }, jwt);
         if (response.status === 200) {
             const responseData = await response.json();
-            console.log(responseData.data);
             setLeaveSummery(responseData.data)
         } else {
-            console.log("nothing");
         }
     }
 
@@ -369,7 +371,6 @@ const LeaveEmployee = () => {
         if (response.status === 200) {
             setIsLoading(false)
             let responseData = await response.json()
-            console.log(responseData);
             dispatch({
                 type: leaveReducerState.GET_DATA,
                 payload: responseData?.data
@@ -514,7 +515,6 @@ const LeaveEmployee = () => {
 
                                     onChange={(e) => {
                                         if (e?.['$y']) {
-                                            console.log(e);
                                             setSearch({
                                                 ...search,
                                                 startDate: new Date(`03/01/${e?.['$y']}`),
