@@ -3,7 +3,6 @@ const address =  require('address')
 const mongoose = require("mongoose");
 var app = require("./api/configuration/app");
 const PORT = process.env.PORT || 3001;
-const http = require('http');
 const local_DB = process.env.DB_URL; //local db url
 const db = process.env.DB;
 console.log(address.ip());
