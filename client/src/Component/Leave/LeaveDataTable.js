@@ -216,7 +216,6 @@ const LeaveDataTable = (props) => {
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {row?.endDate ? new Date(row?.endDate).toDateString() : "N/A"}
-
                                 </StyledTableCell>
                                 <StyledTableCell component="th" scope="row">
                                     {row.totalDay}

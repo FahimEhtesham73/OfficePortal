@@ -106,7 +106,6 @@ const AllEmployees = () => {
   const setUserInfo = (e) => {
     name = e.target.name
     value = e.target.value
-
     // console.log("Name: ",name,"value: ",value);
     setUser({ ...user, [name]: value })
   }
@@ -213,6 +212,29 @@ const AllEmployees = () => {
     }
 
   }
+  const deleteUser = async (menuItemUserId) => {
+    setLoading(true)
+    const res = await fetch(`${process.env.REACT_APP_URL}/users/deleteuser`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + jwt
+      },
+      body: JSON.stringify({
+        userid: menuItemUserId
+      })
+    })
+    const data = await res.json()
+    // console.log("All User", data);
+    if (res.status === 200) {
+      getAllUser()
+      toast.success(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+    } else {
+      setLoading(false)
+      toast.warning(data.message, { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+    }
+
+  }
 
   // Check if there is any null or empty string in create employee field 
   function isEmptyObject(o) {
@@ -288,7 +310,7 @@ const AllEmployees = () => {
     }
   }
 
-  const todaysPunchInUsers = async()=> {
+  const todaysPunchInUsers = async () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/attendence/todayspunch`, {
       method: "GET",
       headers: {
@@ -296,6 +318,7 @@ const AllEmployees = () => {
         "Authorization": "Bearer " + jwt
       },
     })
+    
     const data = await res.json()
     console.log("today", data);
     if (res.status === 200) {
@@ -307,7 +330,7 @@ const AllEmployees = () => {
     }
   }
 
-  for(let p in punchedInToday){
+  for (let p in punchedInToday) {
     console.log(typeof p);
   }
 
@@ -411,12 +434,12 @@ const AllEmployees = () => {
                       <Grid item xs={12} sm={6} md={3}>
                         <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }} >
                           <CardHeader
-                          avatar = {
-                            // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
-                              <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime? "#B2BEB5": "green" : "black"}`}} />
+                            avatar={
+                              // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
+                              <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{ color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "#B2BEB5" : "green" : "black"}` }} />
 
-                            // </Tooltip>
-                          }
+                              // </Tooltip>
+                            }
                             action={
                               <IconButton aria-label="settings" onClick={(e) => {
                                 handleClick(e)
@@ -448,11 +471,17 @@ const AllEmployees = () => {
                             }}>
                               <Typography textAlign="center" >View profile</Typography>
                             </MenuItem>
+                            {userRole() === 'Admin' && <MenuItem onClick={() => {
+                              handleClose()
+                              deleteUser(menuItemUserId)
+                            }}>
+                              <Typography textAlign="center" >Delete profile</Typography>
+                            </MenuItem>}
                           </Menu>
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                             <CardContent>
-                              <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
+                              <Avatar imgProps={{ crossOrigin: "false" }} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
                             </CardContent>
                             <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.firstName} {val.lastName}</Typography>
                             <Typography sx={{ fontSize: '13px' }}>{val?.designation?.name}</Typography>
@@ -473,7 +502,7 @@ const AllEmployees = () => {
           onClose={handleModalClose}
           aria-labelledby="customized-dialog-title"
           open={openModal}
-          
+
         >
           <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose} >
             Create Employee

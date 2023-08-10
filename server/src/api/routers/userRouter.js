@@ -13,7 +13,7 @@ router.route("/signin").post(signinDataValidation ,signinUser);
 router.route("/getsingleuser/:id").get(Authorize,getSingleUser)
 router.route("/updateUser/:id").put(Authorize,updateSingleUserValidation,updateSingleUser)
 router.route("/searchuser").post(Authorize,searchEmployeeValidation,searchUser)
-// router.route("/delete").delete(deleteSingleUser);
+router.route("/deleteuser").delete(Authorize,isAdmin,deleteSingleUser);
 router.route("/imgupload").post(Authorize,profileImgUpload)
 router.route("/viewcv").post(Authorize, viewCv)
 router.route("/userlist").get(Authorize, isAdminTeamLeadProjectLead,  getUserUnderSuperVisorOrTemlead);
