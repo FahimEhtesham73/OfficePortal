@@ -1,7 +1,8 @@
 const {body, check} = require("express-validator");
 const { isObjectIdOrHexString, default: mongoose } = require("mongoose");
 const { isDateString } = require("./commonValidation");
-const TASKSTATUS = ["todo", "in progress", "done", "pause"]
+// const TASKSTATUS = ["todo", "in progress", "done", "pause"]
+const {TASKCATEGORY, TASKPRIORITIES, TASKSTATUSTYPES} = require("../commonValues")
 module.exports.taskCreationValidation = [
     body("taskName").notEmpty().isString(),
     // body("projectCode").notEmpty().isString(),
@@ -27,7 +28,7 @@ module.exports.taskCreationValidation = [
     }),
     body("priority").custom(v=> {
         if(v){
-            let list = ["high", "medium", "low"];
+            let list = TASKPRIORITIES;
             return list.includes(v)
 
         }
@@ -36,7 +37,7 @@ module.exports.taskCreationValidation = [
     }),
     body("status").custom(v=> {
         if(v){
-            let list = TASKSTATUS;
+            let list = TASKSTATUSTYPES;
             return list.includes(v)
 
         }
@@ -91,7 +92,7 @@ module.exports.taskUpdateValidation = [
     }),
     body("updatedData.taskType").custom(v=> {
         if(v){
-            let list = ["feature", "bug", "test", "research", "meeting", "design", "others"];
+            let list = TASKCATEGORY;
             return list.includes(v)
 
         }
@@ -101,7 +102,7 @@ module.exports.taskUpdateValidation = [
   
     body("updatedData.priority").custom(v=> {
         if(v){
-            let list = ["high", "medium", "low"];
+            let list = TASKPRIORITIES;
             return list.includes(v)
 
         }
@@ -111,7 +112,7 @@ module.exports.taskUpdateValidation = [
     body("updatedData.status").custom(v=> {
         if(v){
             console.log(v);
-            let list = TASKSTATUS;
+            let list = TASKSTATUSTYPES;
             return list.includes(v)
 
         }
@@ -150,7 +151,7 @@ module.exports.filterTaskValidation = [
         return true;
     }),
     body("query.priority").custom(v=>{
-        let list = ['low', 'high', "medium"]
+        let list = TASKSTATUSTYPES
         if(v.length>0){
             return v.every(i=> list.includes(i))
         }

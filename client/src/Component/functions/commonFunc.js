@@ -2,7 +2,6 @@ export const profileImg = (imgPath) => {
     if(imgPath){
         const pathArray = imgPath.split("/");
         const lastTwo = `${pathArray[pathArray.length-2]}/${pathArray[pathArray.length-1]}`
-        console.log("img path",process.env.REACT_APP_IMGLOCATION + lastTwo);
         return process.env.REACT_APP_IMGLOCATION + lastTwo;
     }else{
         return ""
