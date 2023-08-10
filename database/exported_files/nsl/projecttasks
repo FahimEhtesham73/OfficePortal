@@ -1,0 +1,571 @@
+[{
+  "_id": {
+    "$oid": "64c24d243cb5bbaa751a1431"
+  },
+  "taskName": "Task One",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-12T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-07-28T18:00:00Z"
+  },
+  "totalHour": 10,
+  "taskType": "feature",
+  "priority": "low",
+  "status": "in progress",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T10:55:32.710Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T10:30:59.419Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c24d913cb5bbaa751a14d0"
+  },
+  "taskName": "Task Threee",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-19T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-07-28T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "test",
+  "priority": "low",
+  "status": "pause",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T10:57:21.987Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T08:26:28.112Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c24e8661e1be187b6bdb0c"
+  },
+  "taskName": "Block chain",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a02362e3543b1bddc90"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-03T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-07-30T18:00:00Z"
+  },
+  "totalHour": 50,
+  "taskType": "research",
+  "priority": "high",
+  "status": "todo",
+  "additionalNotes": "nothing",
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T11:01:26.285Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T05:48:47.289Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c24ea261e1be187b6bdb1b"
+  },
+  "taskName": "another",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a02362e3543b1bddc90"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-04T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-07-14T18:00:00Z"
+  },
+  "totalHour": 85,
+  "taskType": "test",
+  "priority": "medium",
+  "status": "done",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T11:01:54.081Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-27T11:29:49.242Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c24ece61e1be187b6bdb30"
+  },
+  "taskName": "designs",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a02362e3543b1bddc90"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-25T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-08-22T18:00:00Z"
+  },
+  "totalHour": null,
+  "taskType": "design",
+  "priority": "low",
+  "status": "pause",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T11:02:38.502Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T05:42:37.842Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c250a87180ec7570a8d7c0"
+  },
+  "taskName": "Dummy task 0000",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-12T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2022-06-30T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "test",
+  "priority": "medium",
+  "status": "todo",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T11:10:32.346Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T10:32:22.671Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c37e6af2a567079b9cc33c"
+  },
+  "taskName": "aaaaa",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-19T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-07-20T18:00:00Z"
+  },
+  "totalHour": 3,
+  "taskType": "test",
+  "priority": "high",
+  "status": "in progress",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T08:38:02.411Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T11:18:30.074Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c37f05f2a567079b9cc3e3"
+  },
+  "taskName": "Task Prev 1",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-05-31T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-06-14T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "others",
+  "priority": "low",
+  "status": "pause",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T08:40:37.372Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T08:59:46.400Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c37f42f2a567079b9cc428"
+  },
+  "taskName": "Task Long Prev 1",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-04-30T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-05-03T18:00:00Z"
+  },
+  "totalHour": 3,
+  "taskType": "design",
+  "priority": "medium",
+  "status": "in progress",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T08:41:38.863Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-31T03:42:51.169Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c38071f2a567079b9cc61c"
+  },
+  "taskName": "prev 11111",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-04-30T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-05-09T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "feature",
+  "priority": "low",
+  "status": "done",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T08:46:41.719Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T09:06:19.810Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c383da423e45e471d3fc02"
+  },
+  "taskName": "prevvvvvvvvvvvvvv",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2022-11-30T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2022-12-15T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "test",
+  "priority": "low",
+  "status": "todo",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T09:01:14.872Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T09:40:08.051Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c38747423e45e471d3fe21"
+  },
+  "taskName": "page 2",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-06-07T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-06-14T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "feature",
+  "priority": "low",
+  "status": "done",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T09:15:51.221Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T11:17:28.344Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c3880c423e45e471d3fe9a"
+  },
+  "taskName": "january",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2022-12-31T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-01-05T18:00:00Z"
+  },
+  "totalHour": 60,
+  "taskType": "bug",
+  "priority": "low",
+  "status": "todo",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T09:19:08.963Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T09:19:08.963Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c388bb423e45e471d3ff39"
+  },
+  "taskName": "Last Task",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2022-10-05T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2022-10-19T18:00:00Z"
+  },
+  "totalHour": 5,
+  "taskType": "design",
+  "priority": "low",
+  "status": "done",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T09:22:03.635Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T09:22:03.635Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64c87d7ae83046a5bb145ac3"
+  },
+  "taskName": "Task today",
+  "projectId": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectCode": "WP-001",
+  "assignedMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    }
+  ],
+  "startTime": {
+    "$date": "2023-07-30T18:00:00Z"
+  },
+  "endTime": {
+    "$date": "2023-08-01T17:59:59Z"
+  },
+  "totalHour": 5,
+  "taskType": "test",
+  "priority": "low",
+  "status": "todo",
+  "additionalNotes": "",
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-08-01T03:35:22.905Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T03:39:05.230Z"
+  },
+  "__v": 0
+}]

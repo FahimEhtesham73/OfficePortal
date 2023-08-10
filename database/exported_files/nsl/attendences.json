@@ -1,0 +1,4113 @@
+[{
+  "_id": {
+    "$oid": "6433daeeaa1b1bf89749941a"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-10T09:46:22.034Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-10T09:46:22.064Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-10T09:46:22.064Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6435218434c3c4c9ec4b59d2"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-04-11T08:59:48.848Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-04-11T08:59:48.870Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-11T09:08:56.670Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-04-11T09:08:56.662Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "643521d934c3c4c9ec4b59e2"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-11T09:01:13.429Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-04-11T09:01:13.450Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-11T09:24:58.774Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-04-11T09:24:58.759Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64367243fd1a1f84401a7222"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-04-12T08:56:35.370Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-04-12T08:56:35.390Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-12T09:29:11.958Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-04-12T09:29:11.941Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64367e5910cbc2959fd681db"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-12T09:48:09.470Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-04-12T09:48:09.493Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-12T10:19:45.809Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-04-12T10:19:45.803Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6437d1cecd2e14752175b52c"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-13T09:56:30.075Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-13T09:56:30.082Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-13T09:56:30.082Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6437d49bcd2e14752175b54b"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-04-13T10:08:27.216Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-13T10:08:27.222Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-13T10:08:27.222Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "643cbd29099f65c72e2e67fd"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-17T03:29:45.044Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-17T03:29:45.057Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-17T03:29:45.057Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "643e0a41d3c03c9179f301f5"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-04-18T03:10:57.711Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-18T03:10:57.716Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-18T03:10:57.716Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "643e3b23b63eba4857c61bb1"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-04-18T06:39:31.129Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-04-18T06:39:31.150Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-18T06:39:31.150Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "643f6782471ebd6bd5a3a17c"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-04-19T04:01:06.162Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-04-19T04:01:06.179Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-19T10:14:38.121Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-04-19T10:14:38.116Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64507c4fd380f52f21cf012e"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-02T02:58:23.061Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-02T02:58:23.074Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-02T11:21:38.743Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-02T11:21:38.730Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6451c9c5ff48dcd41a63c2ee"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-03T02:41:09.166Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-03T02:41:09.174Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-03T11:26:28.358Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-03T11:26:28.353Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6451cabb554cc99961d0dabf"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-03T02:45:15.268Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-03T02:45:15.276Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T08:39:48.111Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-03T02:45:15.268Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-03T11:30:00.000Z"
+  },
+  "isModified": true
+},
+{
+  "_id": {
+    "$oid": "645338c32e0a7edc49a8d402"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-04T04:46:59.469Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-04T04:46:59.497Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-04T04:46:59.497Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64546a74d3d65fe7008b6e06"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-05T02:31:16.710Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-05T02:31:16.720Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-05T02:31:16.720Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64546a82d3d65fe7008b6e26"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-05T02:31:30.239Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-05T02:31:30.243Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-05T11:01:39.355Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-05T11:01:39.344Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645862cedf2e1da72dd47fd5"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-08T02:47:42.167Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-08T02:47:42.173Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T06:46:24.812Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-08T11:30:00.000Z"
+  },
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-08T02:47:42.167Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-08T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64588ae0a1480b7313923cc8"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-05-08T05:38:40.363Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-08T05:38:40.387Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-08T05:38:40.387Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6459ada70be634800ac60cad"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-09T02:19:19.631Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T02:19:19.641Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T11:27:54.779Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-09T11:27:54.773Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6459addd0be634800ac60d25"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-09T02:20:13.058Z"
+  },
+  "status": [
+    "HD"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T02:20:13.063Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T11:29:52.985Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-09T11:29:52.980Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645b0d688cf4fd085f2c58fd"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-10T03:20:08.064Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-10T03:20:08.076Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-10T11:28:56.130Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-10T11:28:56.119Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645b279d0cbe5f6f1c9249ac"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-10T05:11:57.554Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-10T05:11:57.561Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-10T11:29:42.541Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-10T11:29:42.532Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645c5485f142a2a9475ea062"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-11T02:35:49.838Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-11T02:35:49.848Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-11T09:01:15.366Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-11T09:01:15.360Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645c5492f142a2a9475ea095"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-11T02:36:02.193Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-11T02:36:02.196Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-11T11:27:16.183Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-11T11:27:16.179Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645caf04f142a2a9475eba2a"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-05-11T09:01:56.991Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "createdAt": {
+    "$date": "2023-05-11T09:01:57.000Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-11T09:21:57.448Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-11T09:21:57.441Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645cba62f142a2a9475ec061"
+  },
+  "userId": {
+    "$oid": "642fe1983ccecef4f9a41bce"
+  },
+  "checkInTime": {
+    "$date": "2023-05-11T09:50:26.447Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642fe1983ccecef4f9a41bce"
+  },
+  "updatedBy": {
+    "$oid": "642fe1983ccecef4f9a41bce"
+  },
+  "createdAt": {
+    "$date": "2023-05-11T09:50:26.454Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-11T11:26:53.945Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-11T11:26:53.938Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645da537588edc2866c09bb2"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-12T02:32:23.048Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-12T02:32:23.058Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T07:45:01.724Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-12T03:05:02.458Z"
+  },
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-12T02:30:23.048Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-12T11:30:02.458Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "645da54e588edc2866c09be6"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-12T02:32:46.303Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-12T02:32:46.308Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-12T11:28:33.198Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-12T11:28:33.189Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6461bab4e9b40c821f96583a"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-15T04:53:08.133Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-15T04:53:08.150Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-18T11:25:48.335Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-15T11:12:21.223Z"
+  },
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-15T02:53:08.133Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-15T11:12:21.223Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6461bac4e9b40c821f96586e"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-15T04:53:24.860Z"
+  },
+  "status": [
+    "WOH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-15T04:53:24.865Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-15T11:12:19.830Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-15T11:12:19.826Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6462eab72eb9d1b7e593fa68"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-16T02:30:15.834Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-16T02:30:15.844Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-16T11:27:02.421Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-16T11:27:02.407Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6462eac52eb9d1b7e593fa9c"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-16T02:30:29.179Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-16T02:30:29.184Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-16T11:27:08.563Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-16T11:27:08.553Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6464487bb721190a38c699a0"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-17T03:22:35.761Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-17T03:22:35.786Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-18T11:26:02.908Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-17T11:27:49.165Z"
+  },
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-17T02:22:35.761Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-17T11:27:49.165Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6464488eb721190a38c699bc"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-17T03:22:54.163Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-17T03:22:54.170Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-17T03:22:54.170Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "646591db21bce702989bad83"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-18T02:47:55.967Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-18T02:47:55.976Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T05:43:26.989Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-18T11:27:26.061Z"
+  },
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-18T02:47:55.967Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-18T11:30:26.061Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646591ea21bce702989bad9b"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-18T02:48:10.129Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-18T02:48:10.134Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-18T11:27:32.391Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-18T11:27:32.385Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6465e39d598961389366f960"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-06T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-06-05T11:30:00.000Z"
+  },
+  "status": [
+    "WFH",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-18T08:36:45.426Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-18T08:39:04.899Z"
+  },
+  "__v": 0,
+  "modifiedCheckInTime": {
+    "$date": "2023-06-05T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-06-05T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6466070d0cb5417223b59691"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-13T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-05-13T11:30:00.000Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-18T11:07:57.226Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T06:02:31.307Z"
+  },
+  "__v": 0,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-13T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-13T13:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64660abc0699e04fb1bd627f"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-02T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-05-02T11:30:00.000Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-18T11:23:40.403Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-18T11:23:55.636Z"
+  },
+  "__v": 0,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-02T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-02T12:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6466e1ed07f3982a93b196c9"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-19T02:41:49.865Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-19T02:41:49.874Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T11:24:14.157Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-19T11:24:14.144Z"
+  },
+  "isModified": true
+},
+{
+  "_id": {
+    "$oid": "6466e1fb07f3982a93b196e5"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-19T02:42:03.036Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-19T02:42:03.044Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T11:24:18.248Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-19T11:24:18.239Z"
+  },
+  "isModified": true
+},
+{
+  "_id": {
+    "$oid": "6467115623aae657f9f9b091"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-01T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-05-01T11:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-01T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-01T11:30:00.000Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-19T06:04:06.237Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-19T06:04:06.237Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "646ad89e0375754dbb8f203f"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-22T02:51:10.691Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-22T02:51:10.737Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-22T03:52:12.279Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-22T03:52:12.267Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646c25f64ff24fb4ec7e79fc"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-23T02:33:26.791Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-23T02:33:26.800Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-24T02:35:02.571Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-23T02:33:26.791Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-23T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646c261b4ff24fb4ec7e7a3a"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-23T02:34:03.304Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-23T02:34:03.308Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-24T02:54:47.298Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-23T02:34:03.304Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-23T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646d77cb60fc3ecf303917e7"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-24T02:34:51.238Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-24T02:34:51.250Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-24T11:24:46.899Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-24T11:24:46.888Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646d78d0c3d1a0e346d50b4b"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-24T02:39:12.424Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-24T02:39:12.433Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-24T11:24:52.915Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-24T11:24:52.912Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646ecb477aec4d1b33173076"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-25T02:43:19.825Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-25T02:43:19.846Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-25T11:30:38.410Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-25T11:30:38.396Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "646ecc12bd8809f7e2aa22e2"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-25T02:46:42.874Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-25T02:46:42.885Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-25T11:30:49.329Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-25T11:30:49.322Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "647019cacb078d544812df5c"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-26T02:30:34.093Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-26T02:30:34.104Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-26T11:27:05.062Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-26T11:27:05.055Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64701ce67ecaa4b06261841b"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-26T02:43:50.676Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-26T02:43:50.684Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-26T09:53:35.566Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-26T09:26:45.696Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-26T02:29:50.676Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-26T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "647410cf9bc7d75b7be8320c"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-29T02:41:19.107Z"
+  },
+  "status": [
+    "WAO",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-29T02:41:19.121Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-29T11:30:46.863Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-29T11:30:46.848Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "647410e89bc7d75b7be83228"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-29T02:41:44.932Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-29T02:41:44.937Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-29T11:30:52.472Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-29T11:30:52.461Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475616f1da665a40be67c0d"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-30T02:37:35.002Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T02:37:35.012Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T11:34:16.993Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-30T11:34:16.981Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-30T02:30:35.002Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "6475617e1da665a40be67c29"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-30T02:37:50.257Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T02:37:50.262Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T06:48:08.794Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-30T06:47:43.091Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-30T02:30:50.257Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-30T11:30:43.091Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475bc215b17078492e6234d"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-01T02:30:00.000Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:04:33.276Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:06:15.275Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-01T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-01T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-01T11:40:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475bca9cf944ea551c687dd"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-02T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-05-02T11:30:00.000Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:06:49.891Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:06:49.891Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6475bcd4cf944ea551c68810"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-30T09:07:32.674Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:07:32.687Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:08:15.168Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-30T05:00:32.674Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "6475c1aacf944ea551c689a2"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-03T02:30:00.000Z"
+  },
+  "status": [
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:28:10.138Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:28:10.138Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6475c263cf944ea551c689d3"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-04T02:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:31:15.532Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:31:33.153Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-04T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-04T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-04T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475c528b4276d69718d6554"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-05T02:30:00.000Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:43:04.446Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:43:27.125Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-05T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-05-05T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-05T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475c6e6b4276d69718d6581"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-05-06T04:00:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-05-06T11:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T09:50:30.340Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T09:57:52.835Z"
+  },
+  "__v": 0,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-06T04:00:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-05-06T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6475ca2a3fe2aa409daae6f8"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-05-30T10:04:26.093Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-30T10:04:26.105Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-30T10:04:26.105Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6476b1c26549a2f82c0957d0"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-05-31T02:32:34.663Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-31T02:32:34.674Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-31T04:48:31.836Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-05-31T02:30:34.663Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "6476b1d26549a2f82c0957ec"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-05-31T02:32:50.283Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-05-31T02:32:50.288Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-31T11:26:21.853Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-05-31T11:26:21.844Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6476d72de2a7071e5a3c1dfa"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-05-31T05:12:13.309Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-31T05:12:13.320Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-31T05:12:13.320Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6478102f52563e1257f27f4c"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-06-01T03:27:43.931Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-06-01T03:27:43.957Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-01T06:12:55.064Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-06-01T06:12:55.045Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6478104252563e1257f27f68"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-06-01T03:28:02.565Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-06-01T03:28:02.576Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-01T03:28:02.576Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6479660cd279cbc1876ef7ff"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-06-02T03:46:20.590Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-06-02T03:46:20.614Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-02T03:46:33.104Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-06-02T02:30:20.590Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "649a5369e39dd3cc118c3aa6"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-06-27T03:11:37.725Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-06-27T03:11:37.753Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-27T10:58:56.228Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-06-27T10:58:56.202Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64a387d840525b0ef95f6e8f"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-04T02:45:44.694Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-04T02:45:44.718Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-04T10:31:49.391Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-04T02:28:44.694Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64a533676640c91d267ea9ab"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-05T09:09:59.451Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-05T09:09:59.478Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-06T03:17:27.879Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-05T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-07-05T09:09:59.451Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-05T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64a628c6f2a30ea9bfeeeff2"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-06T02:36:54.800Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-06T02:36:54.812Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-06T02:36:54.812Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64a63230efcff3a4f2c15a27"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-06T03:17:04.958Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "createdAt": {
+    "$date": "2023-07-06T03:17:04.987Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-06T11:45:55.346Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-06T11:45:55.336Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64a779fed56bfa375026119e"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-07T02:35:42.910Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-07T02:35:42.924Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-07T02:35:42.924Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64af7a2b4cb8d2a94a93628a"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-13T04:14:35.184Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "createdAt": {
+    "$date": "2023-07-13T04:14:35.222Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T04:19:09.147Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-13T04:19:09.114Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64afd0d6f7f2cb51a2af86ed"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-13T10:24:21.968Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-13T10:24:22.021Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T10:24:22.021Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64afd2fef7f2cb51a2af87cf"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-07-13T10:33:34.045Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-13T10:33:34.058Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T10:33:34.058Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64afd53bf7f2cb51a2af8810"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-07-13T10:43:07.392Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-07-13T10:43:07.408Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T10:43:19.295Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-13T10:43:19.283Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64afdbacf7f2cb51a2af88e7"
+  },
+  "userId": {
+    "$oid": "6476d981e2a7071e5a3c1e14"
+  },
+  "checkInTime": {
+    "$date": "2023-07-13T11:10:36.753Z"
+  },
+  "status": [
+    "WAO",
+    "WOH",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "6476d981e2a7071e5a3c1e14"
+  },
+  "updatedBy": {
+    "$oid": "6476d981e2a7071e5a3c1e14"
+  },
+  "createdAt": {
+    "$date": "2023-07-13T11:10:36.768Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T11:13:07.663Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-13T11:13:07.645Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b0b79c1f18c2e7356d26a0"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-07-14T02:49:00.356Z"
+  },
+  "status": [
+    "WAO",
+    "HD"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-14T02:49:00.379Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-14T02:49:00.379Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4c77a8a44de78efa32f3d"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-17T04:45:46.880Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T04:45:46.940Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T04:45:46.940Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4ccf1453d9e4e667ba17c"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-17T05:09:05.211Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:09:05.294Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:09:05.294Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4cd13453d9e4e667ba1bd"
+  },
+  "userId": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "checkInTime": {
+    "$date": "2023-07-17T05:09:39.458Z"
+  },
+  "status": [
+    "WAO",
+    "WOH",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "updatedBy": {
+    "$oid": "642d398eb2e3a8d7eae12530"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:09:39.475Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:09:49.492Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-17T05:09:49.475Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b4cda0c7afc27a599077d1"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-17T05:12:00.962Z"
+  },
+  "status": [
+    "WFH",
+    "WOH",
+    "HD"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:12:00.984Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:12:00.984Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4ce83ebb976def69e1c60"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-02T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-07-02T11:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:15:47.579Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:15:47.579Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4cf2b0bd40a9a474861f5"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-03T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-07-03T11:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:18:35.236Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-26T13:17:42.908Z"
+  },
+  "__v": 0,
+  "modifiedCheckInTime": null,
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-03T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b4cfe40bd40a9a47486222"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-04T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-07-04T11:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:21:40.803Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:21:40.803Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b4d0254e575526e053c0a3"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-05T02:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T05:22:45.242Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T05:23:01.544Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-05T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-07-05T02:30:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-05T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b4da150dd7bc6dba418d6a"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-06T02:30:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T06:05:09.354Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T06:05:09.354Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b5135dd34ca1c8e7ea3ab5"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-01T02:00:00.000Z"
+  },
+  "status": [
+    "WAO",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T10:09:33.501Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-27T09:33:53.159Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-01T01:00:00.000Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64b51390d34ca1c8e7ea3ae2"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-02T18:00:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-17T10:10:24.829Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-17T10:10:24.829Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b5f9c993250eeb2604b094"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-18T02:32:41.887Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T02:32:41.903Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T02:32:56.624Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-18T02:32:41.887Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64b5fc7c93250eeb2604b4ac"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-07-18T02:44:12.799Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T02:44:12.810Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T02:44:12.810Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b612e593250eeb2604b7c1"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-02T02:00:00.000Z"
+  },
+  "status": [
+    "WAO",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T04:19:49.659Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T04:20:40.273Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-02T02:00:00.000Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64b6138091af578c30689c01"
+  },
+  "userId": {
+    "$oid": "6476d981e2a7071e5a3c1e14"
+  },
+  "checkInTime": {
+    "$date": "2023-06-30T18:00:00.000Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T04:22:24.311Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T04:22:24.311Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b61ebd81c10d5e5fdfc11d"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-06-30T18:00:00.000Z"
+  },
+  "status": [
+    "WFH",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T05:10:21.977Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-19T05:15:51.410Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-01T00:00:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-06-30T18:00:00.000Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-01T00:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b620f874b357e6b9985b15"
+  },
+  "userId": {
+    "$oid": "643d1391099f65c72e2e68a3"
+  },
+  "checkInTime": {
+    "$date": "2023-06-30T18:00:00.000Z"
+  },
+  "status": [
+    "WFH",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T05:19:52.460Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T05:21:13.049Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-01T02:45:00.000Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64b6210874b357e6b9985b42"
+  },
+  "userId": {
+    "$oid": "643d1391099f65c72e2e68a3"
+  },
+  "checkInTime": {
+    "$date": "2023-07-02T02:00:00.000Z"
+  },
+  "status": [
+    "WAO",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-18T05:20:08.238Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-18T05:20:08.238Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64b74c669194665987a1b96e"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-19T02:37:26.566Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-19T02:37:26.587Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-20T02:42:41.661Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-19T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-07-19T02:37:26.566Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-19T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b89f12c6aa8f05a82ede3f"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-20T02:42:26.756Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-20T02:42:26.771Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-21T02:49:31.960Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-20T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-07-20T02:42:26.756Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-07-20T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64b9f22ae8099a160e8067d0"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-21T02:49:14.671Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-21T02:49:14.706Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-21T06:09:07.574Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-21T06:09:07.559Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba104feb7466cbe587157b"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-21T04:57:51.023Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-21T04:57:51.049Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-21T04:57:51.049Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64ba1cd1eb7466cbe587184f"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-07-21T05:51:13.480Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "createdAt": {
+    "$date": "2023-07-21T05:51:13.500Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-21T06:08:14.117Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-21T06:08:14.094Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64ba1d2ce8099a160e806863"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-21T05:52:44.266Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "updatedBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "createdAt": {
+    "$date": "2023-07-21T05:52:44.292Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-21T05:55:41.439Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-21T05:55:41.422Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64bde7dab9be9484ecf4d325"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-24T02:54:18.794Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-24T02:54:18.810Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-24T02:54:18.810Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64bdf0b71da183c363f2d2f9"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-24T03:32:07.154Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-24T03:32:07.173Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-24T03:32:07.173Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64bdffd2b9be9484ecf4dc29"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-02T02:30:00.000Z"
+  },
+  "checkOutTime": {
+    "$date": "2023-07-02T08:30:00.000Z"
+  },
+  "status": [
+    "WFH",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-24T04:36:34.904Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-24T04:36:34.904Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64be1100b9be9484ecf4df1d"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-03T02:30:00.000Z"
+  },
+  "status": [
+    "WFH",
+    "HD"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-24T05:49:52.664Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-27T03:41:13.256Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-03T03:30:00.000Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64bf37352f80da85f67211bf"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-25T02:45:09.287Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-25T02:45:09.319Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-25T02:45:09.319Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c08969c0b88f8dd6763131"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-26T02:48:09.195Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-07-26T02:48:09.215Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-26T09:37:30.723Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-26T09:37:30.701Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c09175d46cd65383fc13ae"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-26T03:22:28.979Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-26T03:22:29.005Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-26T03:22:29.005Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c11bd07e22c4678d5f4c63"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-07-26T13:12:48.001Z"
+  },
+  "status": [
+    "WAO",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-26T13:12:48.022Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-26T13:17:58.336Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-07-26T02:30:48.001Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64c1eb05e0eeec806ee3f31c"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-27T03:56:53.205Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T03:56:53.237Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-27T09:33:04.695Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-07-27T09:33:04.667Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c1f7ced49875a7948d68d6"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-27T04:51:26.599Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-27T04:51:26.660Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-27T04:51:26.660Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c32c3674fc8581ee136239"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-07-28T02:47:18.598Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-28T02:47:18.653Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-28T02:47:18.653Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c777364386ff25abb9d742"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-07-31T08:56:22.611Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-07-31T08:56:22.642Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-31T08:56:22.642Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c877c5730bb9860783d8ff"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-08-01T03:11:01.737Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "createdAt": {
+    "$date": "2023-08-01T03:11:01.767Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T11:22:09.619Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-08-01T11:22:09.600Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c8ce4740d62ff8b03120fe"
+  },
+  "userId": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "checkInTime": {
+    "$date": "2023-08-01T09:20:07.298Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-01T09:20:07.313Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T09:20:07.313Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64c9c684baf525715e1e5454"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-08-02T02:59:16.675Z"
+  },
+  "status": [
+    "WAO",
+    "WOH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "createdAt": {
+    "$date": "2023-08-02T02:59:16.722Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-07T06:22:21.088Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-08-02T11:11:34.023Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-08-02T02:59:16.675Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-08-02T11:11:34.023Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64c9ca14688fecc863f3e9db"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-08-02T03:14:28.869Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-02T03:14:28.902Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T02:36:40.560Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-08-02T11:33:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-08-02T02:30:28.869Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-08-02T11:33:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cb12a1a3348d5155d25a86"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-08-03T02:36:17.484Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-03T02:36:17.503Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T02:36:17.503Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64cb2561afa322351583c030"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-08-03T03:56:17.385Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-03T03:56:17.406Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-04T02:36:48.434Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-08-03T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-08-03T03:56:17.385Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-08-03T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cb6316afa322351583c0d8"
+  },
+  "userId": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "checkInTime": {
+    "$date": "2023-08-03T08:19:34.727Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-03T08:19:34.767Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-03T08:19:34.767Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64cc6428a2684674ab25a2fd"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-08-04T02:36:23.999Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-04T02:36:24.016Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-04T02:37:58.642Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-08-04T02:25:23.999Z"
+  },
+  "modifiedCheckOutTime": null
+},
+{
+  "_id": {
+    "$oid": "64cc752ca4522c20fcaaa4ab"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-08-04T03:49:00.852Z"
+  },
+  "status": [
+    "WFH"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-04T03:49:00.884Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-07T02:37:45.834Z"
+  },
+  "__v": 0,
+  "checkOutTime": {
+    "$date": "2023-08-04T11:30:00.000Z"
+  },
+  "modifiedCheckInTime": {
+    "$date": "2023-08-04T03:49:00.852Z"
+  },
+  "modifiedCheckOutTime": {
+    "$date": "2023-08-04T11:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "64cc8ba7a2684674ab25a4ab"
+  },
+  "userId": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "checkInTime": {
+    "$date": "2023-08-04T05:24:55.130Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-04T05:24:55.155Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-04T05:24:55.155Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64d058ff3b77ef625fbd3389"
+  },
+  "userId": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "checkInTime": {
+    "$date": "2023-08-07T02:37:51.741Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-07T02:37:51.757Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-07T02:37:51.757Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64d05bc9cb6f9b67761f973d"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-08-07T02:49:45.354Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": false,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-07T02:49:45.371Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-07T02:49:45.371Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "64d3154762acffd6bd778b61"
+  },
+  "userId": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "checkInTime": {
+    "$date": "2023-08-09T04:25:43.089Z"
+  },
+  "status": [
+    "WAO"
+  ],
+  "isModified": true,
+  "createdBy": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-08-09T04:25:43.106Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-09T04:26:35.330Z"
+  },
+  "__v": 0,
+  "checkOutTime": null,
+  "modifiedCheckInTime": {
+    "$date": "2023-08-09T02:25:43.089Z"
+  },
+  "modifiedCheckOutTime": null
+}]

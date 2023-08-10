@@ -1,0 +1,99 @@
+[{
+  "_id": {
+    "$oid": "647861db1bb909f66fff1825"
+  },
+  "projectDescription": "Libor GUI",
+  "projectOwner": "sheikh sharaiar",
+  "projectName": "Libor Project",
+  "projectSuperVisor": [
+    {
+      "$oid": "646b04862ca8b8d72ef5dbad"
+    }
+  ],
+  "projectLead": [
+    {
+      "$oid": "64379f9bcd2e14752175b38a"
+    }
+  ],
+  "projectMembers": [
+    {
+      "$oid": "642d4a02362e3543b1bddc90"
+    },
+    {
+      "$oid": "643d1391099f65c72e2e68a3"
+    }
+  ],
+  "superVisorTime": 100,
+  "leadTime": 100,
+  "memberTime": 200,
+  "projectStartTime": {
+    "$date": "2023-05-31T18:00:00Z"
+  },
+  "projectEndTime": {
+    "$date": "2023-06-29T18:00:00Z"
+  },
+  "isCurrentlyActive": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-06-01T09:16:11.153Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-02T03:14:45.005Z"
+  },
+  "__v": 0,
+  "projectCode": "PL-01"
+},{
+  "_id": {
+    "$oid": "647864051bb909f66fff1949"
+  },
+  "projectDescription": "Management solution",
+  "projectOwner": "sheikh sharaiar hossain",
+  "projectName": "Web Portal",
+  "projectSuperVisor": [
+    {
+      "$oid": "646b04862ca8b8d72ef5dbad"
+    }
+  ],
+  "projectLead": [
+    {
+      "$oid": "6437d561cd2e14752175b586"
+    }
+  ],
+  "projectMembers": [
+    {
+      "$oid": "642d4a3d362e3543b1bddc93"
+    },
+    {
+      "$oid": "642d4a02362e3543b1bddc90"
+    }
+  ],
+  "superVisorTime": 100,
+  "leadTime": 100,
+  "memberTime": 500,
+  "projectStartTime": {
+    "$date": "2022-02-28T18:00:00Z"
+  },
+  "projectEndTime": {
+    "$date": "2023-08-30T18:00:00Z"
+  },
+  "isCurrentlyActive": true,
+  "createdBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "updatedBy": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "createdAt": {
+    "$date": "2023-06-01T09:25:25.812Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-08T04:37:05.218Z"
+  },
+  "__v": 0,
+  "projectCode": "WP-001"
+}]

@@ -1,0 +1,522 @@
+[{
+  "_id": {
+    "$oid": "642d36f3b2e3a8d7eae12506"
+  },
+  "email": "shazzad@nextsolutionlab.com",
+  "password": "$2b$12$/mcti8o11O6ODnAF3uAlE.DtjZGY4Q8jZDxXaRHrjZ.OG8AfyAX7C",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbec"
+  },
+  "empId": "10006",
+  "firstName": "Shazzad",
+  "lastName": "Hossain",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688cc"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc47"
+  },
+  "joiningDate": {
+    "$date": "2022-01-03T18:00:00Z"
+  },
+  "imagePath": "/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/server/assets/images/642d36f3b2e3a8d7eae12506/iot_network&cloud.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "education": [],
+  "prevWorkPlace": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-04-05T08:53:07.144Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-01T06:15:31.521Z"
+  },
+  "__v": 0,
+  "maritalStatus": "Married",
+  "nationality": "Bangladeshi",
+  "personalPhone": "01988888887",
+  "religion": "Islam",
+  "birthDate": {
+    "$date": "2023-05-12T00:00:00Z"
+  },
+  "skills": [
+    {
+      "title": "Full Stack",
+      "tools": "React",
+      "_id": {
+        "$oid": "64588c48a1480b7313923d76"
+      }
+    }
+  ],
+  "cvPath": "/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/server/assets/cv/642d36f3b2e3a8d7eae12506/invoice.pdf",
+  "bloodGroup": "A+",
+  "isProfileUpdate": false
+},{
+  "_id": {
+    "$oid": "642d4a02362e3543b1bddc90"
+  },
+  "email": "saimom@nextsolutionlab.com",
+  "password": "$2b$12$2uUyNGEdR5ret0G6HoBsxegUNA7r/itxM760ECTifnf2o.3QnO8wS",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "empId": "100004",
+  "firstName": "MD. saimom",
+  "lastName": "Islam",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688c1"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc44"
+  },
+  "joiningDate": {
+    "$date": "2022-01-10T18:00:00Z"
+  },
+  "imagePath": "/home/nsl46/Saimom/Leave_Management_All_Files/Leave_Management_System/server/assets/images/642d4a02362e3543b1bddc90/saimom.jpg",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "education": [],
+  "prevWorkPlace": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-04-05T10:14:26.849Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-29T10:16:03.137Z"
+  },
+  "__v": 0,
+  "bloodGroup": "A+",
+  "maritalStatus": "Single",
+  "nationality": "Bangladeshi",
+  "personalPhone": "01521400864",
+  "religion": "Islam",
+  "expertise": [
+    {
+      "title": "React",
+      "tools": "Test",
+      "_id": {
+        "$oid": "642e920df4a4959951d185a3"
+      }
+    },
+    {
+      "title": "sdas",
+      "tools": "asdas",
+      "_id": {
+        "$oid": "642e9900f4a4959951d185db"
+      }
+    },
+    {
+      "title": "asd",
+      "tools": "asda",
+      "_id": {
+        "$oid": "642e9900f4a4959951d185dc"
+      }
+    }
+  ],
+  "skills": [
+    {
+      "title": "Backend",
+      "tools": "MongoDB, Express, NodeJs",
+      "_id": {
+        "$oid": "645b255d0cbe5f6f1c924909"
+      }
+    },
+    {
+      "title": "Web Tools Knowledge",
+      "tools": "Postman, Figma, Mongodb compass",
+      "_id": {
+        "$oid": "645b255d0cbe5f6f1c92490a"
+      }
+    },
+    {
+      "title": "Frontend",
+      "tools": "HTML,CSS, Javascript, Bootstrap, ReactJs, NextJs, Redux, RTK,ContextAPI",
+      "_id": {
+        "$oid": "645b265b0cbe5f6f1c924914"
+      }
+    },
+    {
+      "title": "Deployment Experience",
+      "tools": "CPanel, Netlify, Render.com, Heroku",
+      "_id": {
+        "$oid": "645b265b0cbe5f6f1c924915"
+      }
+    },
+    {
+      "title": "Language",
+      "tools": "English,Bangla,japanese",
+      "_id": {
+        "$oid": "645b2a5d0cbe5f6f1c924a15"
+      }
+    }
+  ],
+  "goals": [
+    {
+      "goalName": "AWS",
+      "goalType": "Cloud Server",
+      "_id": {
+        "$oid": "645b266d0cbe5f6f1c92491e"
+      }
+    }
+  ],
+  "educations": [
+    {
+      "institution": "Chittagong GOVT. High School",
+      "location": "CHITTAGONG",
+      "endYear": {
+        "$date": "2014-11-30T18:00:00Z"
+      },
+      "startYear": {
+        "$date": "2008-12-31T18:00:00Z"
+      },
+      "degree": "SSC",
+      "_id": {
+        "$oid": "645b26c00cbe5f6f1c924928"
+      }
+    }
+  ],
+  "cvPath": "/home/nsl46/Saimom/Leave_Management_All_Files/Leave_Management_System/server/assets/cv/642d4a02362e3543b1bddc90/02_21_Master.pdf"
+},{
+  "_id": {
+    "$oid": "642d4a3d362e3543b1bddc93"
+  },
+  "email": "shuvo@nextsolutionlab.com",
+  "password": "$2b$12$dLRJ4ipBtI2t3JmRIj2uM.Tl/5AGNGdCOZONMxDXhasX3YUpTLiOW",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "empId": "10006",
+  "firstName": "Touhedur",
+  "lastName": "Rahman",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688c1"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc44"
+  },
+  "joiningDate": {
+    "$date": "2022-01-03T18:00:00Z"
+  },
+  "imagePath": "/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/server/assets/images/642d4a3d362e3543b1bddc93/3_4.jpg",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "education": [],
+  "prevWorkPlace": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-04-05T10:15:25.783Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-01T09:34:45.781Z"
+  },
+  "__v": 0,
+  "skills": [
+    {
+      "title": "React JS",
+      "tools": "Frontend Technology",
+      "_id": {
+        "$oid": "64523d1d7a5169a7b56a9814"
+      }
+    },
+    {
+      "title": "Node JS",
+      "tools": "Backend Tech",
+      "_id": {
+        "$oid": "64546b5fbdfa3ee860f238ca"
+      }
+    },
+    {
+      "title": "NExt Js",
+      "tools": "full",
+      "_id": {
+        "$oid": "64548609d3dd811fc2aacc07"
+      }
+    }
+  ],
+  "goals": [
+    {
+      "goalName": "nginx, docker",
+      "goalType": "backend",
+      "_id": {
+        "$oid": "6451fc036e95eb42a2b5eb24"
+      }
+    }
+  ],
+  "educations": [
+    {
+      "institution": "East West University",
+      "location": "Dhaka",
+      "endYear": {
+        "$date": "2023-05-02T18:00:00Z"
+      },
+      "startYear": {
+        "$date": "2023-05-02T18:00:00Z"
+      },
+      "degree": "B.Sc in Computer Science & Engineering",
+      "_id": {
+        "$oid": "64522ae095a66d11c9779306"
+      }
+    }
+  ],
+  "experinces": [
+    {
+      "company": "NSL",
+      "location": "Dhaka",
+      "title": "Trainee",
+      "startYear": {
+        "$date": "2023-04-30T18:00:00Z"
+      },
+      "endYear": {
+        "$date": "2023-05-01T18:00:00Z"
+      },
+      "_id": {
+        "$oid": "645231307a5169a7b56a935c"
+      }
+    },
+    {
+      "company": "Next",
+      "location": "NSL",
+      "title": "dev",
+      "startYear": {
+        "$date": "2023-05-10T18:00:00Z"
+      },
+      "endYear": {
+        "$date": "2023-05-17T18:00:00Z"
+      },
+      "contribution": "work on different modules",
+      "_id": {
+        "$oid": "645c8aa4df48fca101fbcd6e"
+      }
+    }
+  ],
+  "birthDate": {
+    "$date": "2023-05-02T00:00:00Z"
+  },
+  "bloodGroup": "O+",
+  "maritalStatus": "Unmarried",
+  "nationality": "Bangladeshi",
+  "personalPhone": "01741196354",
+  "religion": "Islam",
+  "cvPath": "/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/server/assets/cv/642d4a3d362e3543b1bddc93/Touhedur_cv.pdf",
+  "isProfileUpdate": false
+},{
+  "_id": {
+    "$oid": "642fe1983ccecef4f9a41bce"
+  },
+  "email": "arafat@nextsolutionlab.com",
+  "password": "$2b$12$ECdN1DvnsaDoiS3P1dRCYuiUJFdD.38sXCFpEi1PQWlQ/HiWAwzcS",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "empId": "1000140",
+  "firstName": "Arafat",
+  "lastName": "Protik",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688c1"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc45"
+  },
+  "joiningDate": {
+    "$date": "2023-04-06T18:00:00Z"
+  },
+  "imagePath": "https://cdn-icons-png.flaticon.com/512/21/21104.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "education": [],
+  "prevWorkPlace": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-04-07T09:25:44.448Z"
+  },
+  "updatedAt": {
+    "$date": "2023-08-02T03:25:29.449Z"
+  },
+  "__v": 0,
+  "birthDate": null,
+  "isProfileUpdate": false
+},{
+  "_id": {
+    "$oid": "6437d561cd2e14752175b586"
+  },
+  "email": "nahid@nextsolutionlab.com",
+  "password": "$2b$12$ojPCpde30aoIbjIz18bzoePSi9FakoTCoHCAcYKHW.2h/Ihmmr70C",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "empId": "102564",
+  "firstName": "Nur",
+  "lastName": "Nahid",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688c9"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "joiningDate": {
+    "$date": "2016-12-31T18:00:00Z"
+  },
+  "imagePath": "https://cdn-icons-png.flaticon.com/512/21/21104.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "education": [],
+  "prevWorkPlace": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-04-13T10:11:45.409Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-13T10:11:45.409Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "646b04862ca8b8d72ef5dbad"
+  },
+  "email": "shafi@nextsolutionlab.com",
+  "password": "$2b$12$V/LggoRZpGTQ4wQ.4WFYyuUpUoPj8gTn090TuNNV34Qu5hLA8Yy4e",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "empId": "1000123",
+  "firstName": "Shafi Ud",
+  "lastName": "Doula",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688cb"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "joiningDate": {
+    "$date": "2018-12-31T18:00:00Z"
+  },
+  "imagePath": "https://cdn-icons-png.flaticon.com/512/21/21104.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "educations": [],
+  "experinces": [],
+  "goals": [],
+  "skills": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-05-22T05:58:30.941Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-22T05:58:30.941Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64747d88c7ae3646c9a3368f"
+  },
+  "email": "farukahmed@nextsolutionlab.com",
+  "password": "$2b$12$BHIYLykiYoSSg1p1I2LUCuyuN0nI6G3ddFbGbbwA6Cq.7pcKvty0q",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "empId": "1000080",
+  "firstName": "Faruk",
+  "lastName": "Ahmed",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688cb"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc43"
+  },
+  "joiningDate": {
+    "$date": "2016-12-31T18:00:00Z"
+  },
+  "imagePath": "https://cdn-icons-png.flaticon.com/512/21/21104.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "educations": [],
+  "experinces": [],
+  "goals": [],
+  "skills": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-05-29T10:25:12.142Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-29T10:25:12.142Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6476d981e2a7071e5a3c1e14"
+  },
+  "email": "kazal@nextsolutionlab.com",
+  "password": "$2b$12$Lj.O2YQmaJD79trzITanv.wWAS.ReoqZ7GzM6hBeo6gnAln5V49W6",
+  "role": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "empId": "100001",
+  "firstName": "Kazal",
+  "lastName": "Chandra Barman",
+  "isSuperAdmin": false,
+  "designation": {
+    "$oid": "642d2fe21c8be69c961688c9"
+  },
+  "department": {
+    "$oid": "642509b165069cb4d7accc45"
+  },
+  "joiningDate": {
+    "$date": "2023-05-16T18:00:00Z"
+  },
+  "imagePath": "/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/server/assets/images/6476d981e2a7071e5a3c1e14/Screenshot from 2023-07-11 15-09-08.png",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "educations": [],
+  "experinces": [],
+  "goals": [],
+  "skills": [],
+  "address": [],
+  "createdAt": {
+    "$date": "2023-05-31T05:22:09.405Z"
+  },
+  "updatedAt": {
+    "$date": "2023-07-13T11:10:27.884Z"
+  },
+  "__v": 0,
+  "isProfileUpdate": false,
+  "birthDate": null
+}]

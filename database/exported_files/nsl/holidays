@@ -1,0 +1,169 @@
+[{
+  "_id": {
+    "$oid": "6459e3540580c2357480a892"
+  },
+  "holidayName": "Buddho Purnima",
+  "date": {
+    "$date": "2023-05-03T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T06:08:20.258Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T06:08:20.258Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0ad9582930f8512ddc72"
+  },
+  "holidayName": "Language Martyrs' Day",
+  "date": {
+    "$date": "2023-02-20T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T08:56:57.588Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T08:56:57.588Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0e873d27542fd7867d05"
+  },
+  "holidayName": "Shab-e-Barat",
+  "date": {
+    "$date": "2023-03-07T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T09:12:39.580Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T09:12:39.580Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0ead3d27542fd7867d08"
+  },
+  "holidayName": "Sheikh Mujibur Rahman’s birthday",
+  "date": {
+    "$date": "2023-03-16T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T09:13:17.260Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T09:13:17.260Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0ecf3d27542fd7867d0b"
+  },
+  "holidayName": "Independence Day",
+  "date": {
+    "$date": "2023-03-25T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T09:13:51.798Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T09:13:51.798Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0ef13d27542fd7867d0e"
+  },
+  "holidayName": "Bengali New Year",
+  "date": {
+    "$date": "2023-04-13T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T09:14:25.485Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T09:14:25.485Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a0f183d27542fd7867d11"
+  },
+  "holidayName": "Shab-e-qadr",
+  "date": {
+    "$date": "2023-04-18T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T09:15:04.165Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T09:15:04.165Z"
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "645a2a6b5ee3ce9ab1877650"
+  },
+  "holidayName": "Sarswati Puja",
+  "date": {
+    "$date": "2023-01-25T18:00:00Z"
+  },
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "createdAt": {
+    "$date": "2023-05-09T11:11:39.402Z"
+  },
+  "updatedAt": {
+    "$date": "2023-05-09T11:18:49.839Z"
+  },
+  "__v": 0
+}]

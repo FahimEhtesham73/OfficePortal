@@ -1,0 +1,49 @@
+[{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbec"
+  },
+  "name": "admin",
+  "alias": "Admin",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbed"
+  },
+  "name": "projectlead",
+  "alias": "Project Lead",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbee"
+  },
+  "name": "teamlead",
+  "alias": "Team Lead",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+},{
+  "_id": {
+    "$oid": "64227b89852c6ed8da49bbf0"
+  },
+  "name": "employee",
+  "alias": "Employee",
+  "createdBy": {
+    "$oid": "000000000000000000000000"
+  },
+  "updatedBy": {
+    "$oid": "000000000000000000000000"
+  }
+}]

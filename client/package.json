@@ -37,7 +37,7 @@
     "zustand": "^4.3.3"
   },
   "scripts": {
-    "start": " react-scripts start",
+    "start": "HTTPS=true SSL_CRT_FILE=./ssl/172.16.16.55.pem SSL_KEY_FILE=./ssl/172.16.16.55-key.pem PORT=5000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

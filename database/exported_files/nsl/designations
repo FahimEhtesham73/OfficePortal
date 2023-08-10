@@ -1,0 +1,76 @@
+[{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c0"
+  },
+  "name": "Intern"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c1"
+  },
+  "name": "Associate Software Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c2"
+  },
+  "name": "Software Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c3"
+  },
+  "name": "Senior Software Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c4"
+  },
+  "name": "Team Lead Software Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c5"
+  },
+  "name": " Senior Team Lead Software Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c6"
+  },
+  "name": "Associate AI Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c7"
+  },
+  "name": "AI Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c8"
+  },
+  "name": "Senior AI Engineer"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688c9"
+  },
+  "name": "Team Lead AI"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688ca"
+  },
+  "name": "Senior Team Lead AI"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688cb"
+  },
+  "name": "Project Manager"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688cc"
+  },
+  "name": "Facility manager"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688cd"
+  },
+  "name": "CEO"
+},{
+  "_id": {
+    "$oid": "642d2fe21c8be69c961688ce"
+  },
+  "name": "COO"
+}]
