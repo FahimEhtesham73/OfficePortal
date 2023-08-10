@@ -537,7 +537,8 @@ const Profile = () => {
                                                 {/* {geeeetImg()} */}
                                                 <Avatar imgProps={{ crossOrigin: "false" }} alt='Employee' src={profileImg(userData?.imagePath)} sx={{ width: 120, height: 120 }} />
 
-                                                {(userInfoData?._id === id) ?<div class="middle">
+                                                {(userInfoData?._id === id) ? (
+                                                <div class="middle">
                                                     <label for="file-input" style={{ color: "#2776d3" }}>
                                                         <UploadIcon sx={{ color: "#2776D3" }} />
                                                         Upload
@@ -578,7 +579,9 @@ const Profile = () => {
                                                             })
                                                         }}
                                                     />
-                                                </div>:null}
+                                                </div>
+
+                                                ) : null}
                                                 {/* </a> */}
                                             </div>
                                         </div>
