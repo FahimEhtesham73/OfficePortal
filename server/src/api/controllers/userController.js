@@ -19,7 +19,7 @@ const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
 const multer = require("multer");
-const TIME = 43200000;
+const TIME = parseInt(process.env.COOKIE_TTL);
 
 module.exports.createUser = async (req, res) => {
     try {
@@ -65,13 +65,13 @@ module.exports.signinUser = async (req, res) => {
         }
         const userSession = await createSession(user._id, userSessionData);
         // const cookie = `_token=${token};samesite=strict; secure;path=/; expires:${new Date(Date.now() + TIME).toUTCString()};`
-        res.cookie("_token", token, { secure: true, sameSite: true,expires: new Date(Date.now() + TIME)});
+        res.cookie("_token", token, { secure: true, sameSite: true,expires: new Date(Date.now() + TIME,),  domain: process.env.DOMAINNAME});
         // res.setHeader("Set-Cookie", [cookie])
         // res.cookie("_info", jwt.sign(restUserInformation, "secret"),);
-        res.cookie("_info", jwt.sign(restUserInformation, "secret"), {expires: new Date(Date.now() + TIME)});
+        res.cookie("_info", jwt.sign(restUserInformation, "secret"), {expires: new Date(Date.now() + TIME),  domain: process.env.DOMAINNAME});
 
         //{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
-        res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true, });
+        res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true,  domain: process.env.DOMAINNAME});
 
 
 
@@ -320,14 +320,7 @@ module.exports.viewImage =  async(req, res) => {
     }
 };
 
-module.exports.findUsers = async (req, res) => {
-    try{
 
-        const user = await User.aggregate()
-    }catch(err){
-
-    }
-}
   
 module.exports.getUserUnderSuperVisorOrTemlead = async (req, res) => {
     try{
