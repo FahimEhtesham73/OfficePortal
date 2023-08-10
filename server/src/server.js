@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 var app = require("./api/configuration/app");
 const PORT = process.env.PORT || 3001;
 const http = require('http');
-const local_DB = "mongodb://172.16.16.54:27017/nsl"; //local db url
+const local_DB = process.env.DB_URL; //local db url
 const db = process.env.DB;
 console.log(address.ip());
 //db connection

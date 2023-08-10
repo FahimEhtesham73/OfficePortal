@@ -448,7 +448,7 @@ module.exports.projectTaskSummery = async(req, res, next) => {
                                     status: {$nin: ["done", "pause"]},
                             endTime: {
                               $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
-                              $lt: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
+                              $lte: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
                             }
                           }
                         }
