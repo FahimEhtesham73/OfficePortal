@@ -21,6 +21,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'react-toastify';
 
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
+
+
 import Cookies from 'js-cookie';
 import { TextField } from '@mui/material';
 import dayjs from 'dayjs';
@@ -51,8 +55,8 @@ const Attendancesheet = () => {
     const date = new Date()
     // const year = date.getFullYear()
     // const month = date.getMonth() + 1
-    const [month,setMonth] = useState(date.getMonth() + 1)
-    const [year,setYear] = useState(date.getFullYear())
+    const [month, setMonth] = useState(date.getMonth() + 1)
+    const [year, setYear] = useState(date.getFullYear())
     const [searchingDate, setSearchinDate] = useState('')
     const [attendanceData, setAttendanceData] = useState('')
     const [loading, setLoading] = useState(false)
@@ -66,7 +70,7 @@ const Attendancesheet = () => {
             (value, index) => 1 + index * 1)
     }
 
-    console.log("Attendence Data", attendanceData);
+    // console.log("Attendence Data", attendanceData);
 
     const getAttendanceSheet = async () => {
         setLoading(true)
@@ -92,6 +96,7 @@ const Attendancesheet = () => {
         }
     }
 
+
     const isCheckLateTime = (date) => {
         const givenDate = new Date(date);
 
@@ -111,7 +116,6 @@ const Attendancesheet = () => {
     }
     // Convert Date
     function formatAMPM(date) {
-        // console.log("Date",date);
         var hours = date.getHours();
         var minutes = date.getMinutes();
         var ampm = hours >= 12 ? 'pm' : 'am';
@@ -122,20 +126,98 @@ const Attendancesheet = () => {
         return strTime;
     }
 
-    function filterAttendenceData(text){
-        if(text.length <= 0){
+    function filterAttendenceData(text) {
+        if (text.length <= 0) {
             setAttendanceData(allData)
             return;
         }
         let re = new RegExp(`${text}`, "i")
-        const filterData = allData?.filter((d,i)=> re.test(d?.user));
+        const filterData = allData?.filter((d, i) => re.test(d?.user));
         console.log(filterData);
         setAttendanceData(filterData)
     }
 
-    useEffect(()=> {
+    const generateExcelData = (data) => {
+        const monthHeader = ['Month', date.toLocaleString('default', {
+            month: 'long'
+        })]
+        const header = ["User", ...data[0].attendance.map((day) => `Day ${day.day}/ ${getWeekdayName(new Date(`${year}/${month}/${day.day}`))}`)];
+        const rows = data.map((user) => {
+            const userRow = [user.user];
+            user.attendance.forEach((day) => {
+                if (day.present) {
+                    const aIdString = day.aId.length > 0 ? day.aId.join("<br>") : "";
+                    const checkInTime = (day.modifiedCheckIn === "" || day.modifiedCheckIn === "Unspecified") ? formatAMPM(new Date(day.checkIn)) : formatAMPM(new Date(day.modifiedCheckIn))
+                    userRow.push(`Present<br>${aIdString}<br>${checkInTime}`);
+                } else {
+                    userRow.push("Absent");
+                }
+            });
+            return userRow;
+        });
+        console.log("rows", rows);
+        return [header, ...rows];
+    }
 
-    })
+    const getWeekdayName = (date) => {
+        const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return weekdays[date.getDay()];
+      };
+
+    const handleDownload = () => {
+        const data = generateExcelData(attendanceData);
+
+        let worksheet = "<table>";
+        worksheet += "<tr>"
+        worksheet += `<td>Month</td>`;
+        worksheet += `<td>${searchingDate ? searchingDate.toLocaleString('default', {
+            month: 'long'
+        }) : new Date().toLocaleString('default', {
+            month: 'long'
+        })}</td>`;
+        worksheet += "</tr>";
+        data.forEach((row) => {
+            worksheet += "<tr>";
+            row.forEach((cell) => {
+                worksheet += `<td>${cell}</td>`;
+            });
+            worksheet += "</tr>";
+        });
+        worksheet += "</table>";
+
+        const excelData =
+            "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8," +
+            encodeURIComponent(
+                `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+               <head>
+                   <!--[if gte mso 9]>
+                   <xml>
+                       <x:ExcelWorkbook>
+                           <x:ExcelWorksheets>
+                               <x:ExcelWorksheet>
+                                   <x:Name>Attendance</x:Name>
+                                   <x:WorksheetOptions>
+                                       <x:DisplayGridlines/>
+                                   </x:WorksheetOptions>
+                               </x:ExcelWorksheet>
+                           </x:ExcelWorksheets>
+                       </x:ExcelWorkbook>
+                   </xml>
+                   <![endif]-->
+               </head>
+               <body>
+                   ${worksheet}
+               </body>
+           </html>`
+            );
+
+        const anchor = document.createElement("a");
+        anchor.href = excelData;
+        anchor.download = `attendance_${year}_${month}.xlsx`;
+        anchor.click();
+    };
+
+
     useLayoutEffect(() => {
         getAttendanceSheet()
     }, [])
@@ -149,59 +231,65 @@ const Attendancesheet = () => {
                             <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Attendance</Typography>
                         </Box>
 
-                        <Box sx={{ display: "flex", justifyContent: "space-between",marginTop:"25px" }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "25px" }}>
                             <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Filter By Date</Typography>
                         </Box>
 
-                        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "20px",flexDirection:"column" }}>
-                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
-                                    <DatePicker sx={{maxWidth: 365, width: 365}} label={'Select Date'} 
-                                    value={dayjs(searchingDate)}
-                                    slotProps={{textField: {error: false}}}
-                                    placeHolder='MM YYYY'
-                                    views={['year', 'month']} onChange={(e) => {
-                                        if(e?.['$d']){
+                        <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "20px", flexDirection: "column" }}>
+                            <Box sx={{ display: "flex", flexFlow: { xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start" }}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker', 'DatePicker', 'DatePicker']}>
+                                        <DatePicker sx={{ maxWidth: 365, width: 365 }} label={'Select Date'}
+                                            value={dayjs(searchingDate)}
+                                            slotProps={{ textField: { error: false } }}
+                                            placeHolder='MM YYYY'
+                                            views={['year', 'month']} onChange={(e) => {
 
-                                            if (e.$y === year && e.$M + 1 === month) {
-                                                setSearchinDate('')
-                                            } else {
-                                                setSearchinDate(e.$d)
-                                                setMonth(e.$M + 1)
-                                                setYear(e.$y)
-                                            }
-                                        }
-                                    }} />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                            {/* <Typography></Typography> */}
+                                                if (e?.['$d']) {
 
-                            <Button variant="contained" sx={{ minWidth: 200, height: 55, margin: {md: "0", lg:"10px 20px 40px 20px"}, marginTop: { xs: "10px", md: "10px"} }} onClick={getAttendanceSheet}>Search</Button>
+                                                    if (e.$y === year && e.$M + 1 === month) {
+                                                        setSearchinDate('')
+                                                    } else {
+                                                        setSearchinDate(e.$d)
+                                                        setMonth(e.$M + 1)
+                                                        setYear(e.$y)
+                                                    }
+                                                }
+                                            }} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                                {/* <Typography></Typography> */}
+
+                                <Button variant="contained" sx={{ minWidth: 200, height: 55, margin: { md: "0", lg: "10px 20px 40px 20px" }, marginTop: { xs: "10px", md: "10px" } }} onClick={getAttendanceSheet}>Search</Button>
 
                             </Box>
-                            
+
 
                             {/* Employee Filter */}
-                            <Box sx={{ display: "flex", justifyContent: "space-between",marginTop:"0px" }}>
-                            <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Filter By Name</Typography>
-                        </Box>
-                            <Box sx={{display: "flex", flexFlow: {xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start"} }>
-                                
-                            <TextField id="outlined-search" label="Employee Name" value={empName} type="search" sx={{maxWidth: 365, width: 365, height: 55, margin: {md:"0", lg:"10px 20px 40px 0px"}}} 
-                            onChange={(e)=> {
-                                setEmpName(e.target.value)    
-                                filterAttendenceData(e.target.value)}
-                            }
-                            name='empName' />
+                            <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: "0px" }}>
+                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>Filter By Name</Typography>
+                            </Box>
+                            <Box sx={{ display: "flex", flexFlow: { xs: "column", lg: "row" }, justifyContent: "start", alignItems: "start" }}>
 
+                                <TextField id="outlined-search" label="Employee Name" value={empName} type="search" sx={{ maxWidth: 365, width: 365, height: 55, margin: { md: "0", lg: "10px 20px 0px 0px" } }}
+                                    onChange={(e) => {
+                                        setEmpName(e.target.value)
+                                        filterAttendenceData(e.target.value)
+                                    }
+                                    }
+                                    name='empName' />
 
                             </Box>
 
+                            <Box sx={{ marginTop: { xs: "40px" }, display: "flex", justifyContent: "end" }}>
+                                <Button variant="contained" startIcon={<FileDownloadIcon />} sx={{ width: 200, height: 55, }} onClick={handleDownload}>
+                                    Download Excel
+                                </Button>
+                            </Box>
 
-                            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw", height:"100vh", overflowY: "scroll" }}>
-                                <Table sx={{ minWidth: 650,  height:"auto", overflowY: "scroll" }} aria-label="simple table">
-                                    <TableHead sx={{position: "sticky", top: 0,zIndex: 2}}>
+                            <TableContainer elevation={3} component={Paper} sx={{ marginTop: "30px", minWidth: '600px', width: "82vw", height: "100vh", overflowY: "scroll" }}>
+                                <Table sx={{ minWidth: 650, height: "auto", overflowY: "scroll" }} aria-label="simple table">
+                                    <TableHead sx={{ position: "sticky", top: 0, zIndex: 2 }}>
                                         <TableRow>
                                             <StyledTableCell sx={{ fontWeight: "bold" }}>Employee</StyledTableCell>
                                             {
@@ -221,7 +309,7 @@ const Attendancesheet = () => {
                                                     key={row.user}
                                                 >
                                                     <StyledTableCell component="th" scope="row"
-                                                    sx={{position: "sticky", left: 0,padding: "0 10px",zIndex: 1,background: "#fff"}}>
+                                                        sx={{ position: "sticky", left: 0, padding: "0 10px", zIndex: 1, background: "#fff" }}>
                                                         {row.user}
                                                     </StyledTableCell>
                                                     {
@@ -257,7 +345,7 @@ const Attendancesheet = () => {
 
 
                                                                         }
-                                                                        {val?.checkIn && isCheckLateTime(val?.modifiedCheckIn !=='Unspecified'?val?.modifiedCheckIn : val?.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn!=='Unspecified'?val?.modifiedCheckIn : val?.checkIn))} /> : ""}
+                                                                        {val?.checkIn && isCheckLateTime(val?.modifiedCheckIn !== 'Unspecified' ? val?.modifiedCheckIn : val?.checkIn) ? <InfoIcon titleAccess={formatAMPM(new Date(val?.modifiedCheckIn !== 'Unspecified' ? val?.modifiedCheckIn : val?.checkIn))} /> : ""}
                                                                     </>
                                                                 )
                                                                     : <CloseIcon style={{ color: 'red' }} />}</StyledTableCell>

@@ -212,7 +212,7 @@ const AllEmployees = () => {
     }
 
   }
-  const deleteUser = async(menuItemUserId)=>{
+  const deleteUser = async (menuItemUserId) => {
     setLoading(true)
     const res = await fetch(`${process.env.REACT_APP_URL}/users/deleteuser`, {
       method: "DELETE",
@@ -220,8 +220,8 @@ const AllEmployees = () => {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + jwt
       },
-      body:JSON.stringify({
-        userid:menuItemUserId
+      body: JSON.stringify({
+        userid: menuItemUserId
       })
     })
     const data = await res.json()
@@ -310,7 +310,7 @@ const AllEmployees = () => {
     }
   }
 
-  const todaysPunchInUsers = async()=> {
+  const todaysPunchInUsers = async () => {
     const res = await fetch(`${process.env.REACT_APP_URL}/attendence/todayspunch`, {
       method: "GET",
       headers: {
@@ -318,6 +318,7 @@ const AllEmployees = () => {
         "Authorization": "Bearer " + jwt
       },
     })
+    
     const data = await res.json()
     console.log("today", data);
     if (res.status === 200) {
@@ -329,7 +330,7 @@ const AllEmployees = () => {
     }
   }
 
-  for(let p in punchedInToday){
+  for (let p in punchedInToday) {
     console.log(typeof p);
   }
 
@@ -433,12 +434,12 @@ const AllEmployees = () => {
                       <Grid item xs={12} sm={6} md={3}>
                         <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }} >
                           <CardHeader
-                          avatar = {
-                            // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
-                              <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime? "#B2BEB5": "green" : "black"}`}} />
+                            avatar={
+                              // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
+                              <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{ color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "#B2BEB5" : "green" : "black"}` }} />
 
-                            // </Tooltip>
-                          }
+                              // </Tooltip>
+                            }
                             action={
                               <IconButton aria-label="settings" onClick={(e) => {
                                 handleClick(e)
@@ -480,7 +481,7 @@ const AllEmployees = () => {
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
                             <CardContent>
-                              <Avatar  imgProps={{crossOrigin: "false"}} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
+                              <Avatar imgProps={{ crossOrigin: "false" }} alt='Employee' src={profileImg(val?.imagePath)} sx={{ width: 120, height: 120 }} />
                             </CardContent>
                             <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val.firstName} {val.lastName}</Typography>
                             <Typography sx={{ fontSize: '13px' }}>{val?.designation?.name}</Typography>
@@ -501,7 +502,7 @@ const AllEmployees = () => {
           onClose={handleModalClose}
           aria-labelledby="customized-dialog-title"
           open={openModal}
-          
+
         >
           <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleModalClose} >
             Create Employee

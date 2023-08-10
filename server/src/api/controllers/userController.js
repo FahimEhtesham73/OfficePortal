@@ -1,6 +1,6 @@
 
 const fs = require("fs");
-const {readFile} = require("fs/promises");
+const { readFile } = require("fs/promises");
 const path = require("path");
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
@@ -37,7 +37,7 @@ module.exports.createUser = async (req, res) => {
         return res.status(200).json(result);
     } catch (e) {
         console.log(e);
-        return res.status(500).json("Something went wrong"); 
+        return res.status(500).json("Something went wrong");
     }
 }
 
@@ -55,7 +55,7 @@ module.exports.signinUser = async (req, res) => {
             "_id": user._id,
             "role": user.role,
         };
-       
+
         const { password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation } = user;
         const token = tokenGeneration(userTokenData);
         const userSessionData = {
@@ -65,17 +65,17 @@ module.exports.signinUser = async (req, res) => {
         }
         const userSession = await createSession(user._id, userSessionData);
         // const cookie = `_token=${token};samesite=strict; secure;path=/; expires:${new Date(Date.now() + TIME).toUTCString()};`
-        res.cookie("_token", token, { secure: true, sameSite: true,expires: new Date(Date.now() + TIME)});
+        res.cookie("_token", token, { secure: true, sameSite: true, expires: new Date(Date.now() + TIME) });
         // res.setHeader("Set-Cookie", [cookie])
         // res.cookie("_info", jwt.sign(restUserInformation, "secret"),);
-        res.cookie("_info", jwt.sign(restUserInformation, "secret"), {expires: new Date(Date.now() + TIME)});
+        res.cookie("_info", jwt.sign(restUserInformation, "secret"), { expires: new Date(Date.now() + TIME) });
 
         //{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
-        res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true, });
+        res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME), path: "/", httpOnly: true, secure: true, sameSite: true, });
 
 
 
-        return res.status(200).json({ "userInformation": restUserInformation,  "message": "successfully login" });
+        return res.status(200).json({ "userInformation": restUserInformation, "message": "successfully login" });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ "message": "Something went wrong" })
@@ -85,11 +85,11 @@ module.exports.signinUser = async (req, res) => {
 
 module.exports.deleteSingleUser = async (req, res) => {
     const { userid } = req.body;
-    const user = await User.findOne({_id:userid});
-    console.log("Deleted User",user);
-    if (!user) return res.status(400).json({message:"user not found"});
-    await User.findOneAndDelete({_id:userid});
-    return res.status(200).json({message:"successfully deleted"});
+    const user = await User.findOne({ _id: userid });
+    console.log("Deleted User", user);
+    if (!user) return res.status(400).json({ message: "user not found" });
+    await User.findOneAndDelete({ _id: userid });
+    return res.status(200).json({ message: "successfully deleted" });
 }
 
 module.exports.allUser = async (req, res) => {
@@ -98,38 +98,38 @@ module.exports.allUser = async (req, res) => {
         console.log("role", req.query);
         const users = await User.aggregate([
 
-        //     {$match: {$or: [ {
-        //         role: new mongoose.Types.ObjectId(role) 
-        //     }, {role: {$exists: true}}
-        // ]
-        // }
-        
-        // },
+            //     {$match: {$or: [ {
+            //         role: new mongoose.Types.ObjectId(role) 
+            //     }, {role: {$exists: true}}
+            // ]
+            // }
 
-        {
-            $lookup: {
-                from: "roles",
-                localField: "role",
-                foreignField: "_id",
-                as: "roleDetails"  
+            // },
+
+            {
+                $lookup: {
+                    from: "roles",
+                    localField: "role",
+                    foreignField: "_id",
+                    as: "roleDetails"
+                }
             }
-        }
-        ,
-        {
-            $unwind: "$roleDetails"
-        },
-        
+            ,
+            {
+                $unwind: "$roleDetails"
+            },
+
             {
                 $project: {
-                  "password": 0,
-                //   "roleDetails.alias": 0,
-                  "roleDetails.createdBy": 0,
-                  "roleDetails.updatedBy": 0,
+                    "password": 0,
+                    //   "roleDetails.alias": 0,
+                    "roleDetails.createdBy": 0,
+                    "roleDetails.updatedBy": 0,
 
                 }
             },
 
-        
+
         ])
         return res.status(200).json(users)
     } catch (e) {
@@ -145,9 +145,9 @@ module.exports.getSingleUser = async (req, res) => {
         const users = await User.find({ _id: id }).populate("role", "alias")
             .populate("designation", "name")
             .populate("department", "name")
-            .select({password: 0, updatedAt: 0, createdAt: 0, updatedBy: 0}).lean()
+            .select({ password: 0, updatedAt: 0, createdAt: 0, updatedBy: 0 }).lean()
 
-            // console.log(users[0].imagePath);
+        // console.log(users[0].imagePath);
         // const imageBase64 = await readFile(users[0].imagePath, {encoding: "base64"});
         // console.log(imageBase64);
         // users[0].imageBase64 = imageBase64
@@ -166,18 +166,18 @@ module.exports.updateSingleUser = async (req, res) => {
         const data = req.body;
         const id = req.params.id;
         console.log(req.user);
-        console.log(req.user._id === id.toString() );
-        if(req.user._id == id.toString() || req.user.role.alias === "Admin" ) {
+        console.log(req.user._id === id.toString());
+        if (req.user._id == id.toString() || req.user.role.alias === "Admin") {
 
-            const updateUser = await User.findByIdAndUpdate({ _id: id }, {$set: {...data,isProfileUpdate:true}}, { new: true }).populate("role", "alias")
+            const updateUser = await User.findByIdAndUpdate({ _id: id }, { $set: { ...data, isProfileUpdate: true } }, { new: true }).populate("role", "alias")
                 .populate("designation", "name")
                 .populate("department", "name")
             console.log(updateUser);
-            return res.status(200).json({"message": "User info updated successfully"})
+            return res.status(200).json({ "message": "User info updated successfully" })
         }
-        
-        else{
-            return res.status(403).json({ "message": "Forbidden" }) 
+
+        else {
+            return res.status(403).json({ "message": "Forbidden" })
         }
 
     } catch (e) {
@@ -188,9 +188,9 @@ module.exports.updateSingleUser = async (req, res) => {
 
 module.exports.searchUser = async (req, res) => {
     try {
-        
+
         const erros = validationMessages(validationResult(req).mapped());
-        if(isErrorFounds(erros)) return res.status(400).json({"errors": erros})
+        if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
         const desgntn = req.body.desgId
         const userId = req.body.userId
         const empName = req.body.empName.trim()
@@ -198,15 +198,15 @@ module.exports.searchUser = async (req, res) => {
 
         const matchQuery = {};
         if (userId) {
-          matchQuery['empId'] = userId;
+            matchQuery['empId'] = userId;
         }
         if (desgntn) {
-          matchQuery['designation._id'] = new monngoose.Types.ObjectId(desgntn);
+            matchQuery['designation._id'] = new monngoose.Types.ObjectId(desgntn);
         }
         if (empName) {
-          matchQuery['$or'] = [  { firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } },{ $expr: { $regexMatch: { input: { $concat: ['$firstName',' ','$lastName'] }, regex: empName, options: 'i' } } } ];
+            matchQuery['$or'] = [{ firstName: { $regex: empName, $options: 'i' } }, { lastName: { $regex: empName, $options: 'i' } }, { $expr: { $regexMatch: { input: { $concat: ['$firstName', ' ', '$lastName'] }, regex: empName, options: 'i' } } }];
         }
-      
+
         const result = await User.aggregate([
             {
                 $lookup: {
@@ -218,8 +218,8 @@ module.exports.searchUser = async (req, res) => {
             },
             { $unwind: '$designation' },
             { $match: matchQuery },
-        
-            
+
+
 
         ])
         console.log(matchQuery);
@@ -228,127 +228,130 @@ module.exports.searchUser = async (req, res) => {
 
     } catch (e) {
         console.log(e);
-        return res.status(500).json({"message":"Something went wrong"});
+        return res.status(500).json({ "message": "Something went wrong" });
     }
 }
 
-module.exports.profileImgUpload = async(req, res)=> {
-    try{
+module.exports.profileImgUpload = async (req, res) => {
+    try {
         const fileName = req.headers.filename;
         let contentLength = parseInt(req.headers['content-length'])
-        if (isNaN(contentLength) || contentLength <= 0 ) {
-          return res.status(411).json({"message": "no file found"})
-        }        
+        if (isNaN(contentLength) || contentLength <= 0) {
+            return res.status(411).json({ "message": "no file found" })
+        }
         const writeStream = fs.createWriteStream(`/home/nsl52/SHUVO/projects/nsl_leave_system/nsl_leave/client/src/images/${fileName}`);
-        writeStream.on("error", (err)=> {
-            res.status(400).json({"message": "File not uploded"})
+        writeStream.on("error", (err) => {
+            res.status(400).json({ "message": "File not uploded" })
         })
-        writeStream.on("finish", ()=> {
+        writeStream.on("finish", () => {
             writeStream.close()
-            res.status(200).json({"message": "file uploded successfully"})
+            res.status(200).json({ "message": "file uploded successfully" })
         })
         req.pipe(writeStream);
 
-    }catch(e){
+    } catch (e) {
         console.log(e);
         return res.status(500).json("something went wrong on single user get function")
     }
 }
 
 module.exports.fileUpload = async (req, res) => {
-    try{
-        if(req.fileValidationError) return res.status(400).json({"message": req.fileValidationError})
+    try {
+        if (req.fileValidationError) return res.status(400).json({ "message": req.fileValidationError })
         const type = req.body.type;
-       console.log(type);
-        const user = await User.findOne({_id: req.body.userId}).lean();
-        if(!user) return res.status(400).json({"message": "user not found"});
+        console.log(type);
+        const user = await User.findOne({ _id: req.body.userId }).lean();
+        if (!user) return res.status(400).json({ "message": "user not found" });
 
         const data = {};
         console.log(req.body);
-        if(type == "img"){
+        if (type == "img") {
             data.imagePath = req.userPath;
             data.isProfileUpdate = true;
-            
-        }else if(type === "cv"){
+
+        } else if (type === "cv") {
             data.cvPath = req.userPath;
         }
         // console.log("data", data);
 
-        const result = await User.findByIdAndUpdate({_id: req.body.userId}, {$set: {
-            ...data
-        }})
-        return res.status(200).json({"message": "file uploaded successfully"});
-        
-    }catch(err){
-        
-        return res.status(500).json({"message": "Something went wrong"});
+        const result = await User.findByIdAndUpdate({ _id: req.body.userId }, {
+            $set: {
+                ...data
+            }
+        })
+        return res.status(200).json({ "message": "file uploaded successfully" });
+
+    } catch (err) {
+
+        return res.status(500).json({ "message": "Something went wrong" });
     }
 }
 
 module.exports.viewCv = async (req, res) => {
-    try{
+    try {
         console.log(req.body);
         const userId = req.body.userId;
-        const user = await User.findById({_id: userId}).lean();
-        if(! user?.cvPath) return res.status(400).json({"message": "data not found"});
+        const user = await User.findById({ _id: userId }).lean();
+        if (!user?.cvPath) return res.status(400).json({ "message": "data not found" });
         console.log(user.cvPath);
-        let data = await readFile(user?.cvPath, {encoding: "base64"})
-        return res.status(200).json({"data": data})
-        
-    }catch(err){
+        let data = await readFile(user?.cvPath, { encoding: "base64" })
+        return res.status(200).json({ "data": data })
+
+    } catch (err) {
         console.log(err);
-        return res.status(500).json({"message": "Something went wrong"});
+        return res.status(500).json({ "message": "Something went wrong" });
     }
 }
 
-module.exports.viewImage =  async(req, res) => {
+module.exports.viewImage = async (req, res) => {
     const { filename } = req.params;
-    const user = await User.findOne({_id: req.query.id}).lean();
+    const user = await User.findOne({ _id: req.query.id }).lean();
     const filePath = user.imagePath;
 
     console.log(filePath);
     // Check if the file exists
     if (fs.existsSync(filePath)) {
-      // Set the appropriate content type based on the file extension
-    //   const contentType = getContentType(filename);
-      res.set('Content-Type', "image/png");
-  
-      // Read the file and send it as a response
-      fs.createReadStream(filePath).pipe(res);
+        // Set the appropriate content type based on the file extension
+        //   const contentType = getContentType(filename);
+        res.set('Content-Type', "image/png");
+
+        // Read the file and send it as a response
+        fs.createReadStream(filePath).pipe(res);
     } else {
-      res.status(404).json({ message: 'Image not found' });
+        res.status(404).json({ message: 'Image not found' });
     }
 };
 
 module.exports.findUsers = async (req, res) => {
-    try{
-
+    try {
         const user = await User.aggregate()
-    }catch(err){
+    } catch (err) {
 
     }
 }
-  
+
 module.exports.getUserUnderSuperVisorOrTemlead = async (req, res) => {
-    try{
+    try {
         const role = req.user.role.name;
-    
+
         let matchStage
         let projectStage
         let lookupStage
         let unwindStage
         let groupStage
         let lastProjectStage
-        
-        if(role === "teamlead"){
-            matchStage = {$match:{
+
+        if (role === "teamlead") {
+            matchStage = {
+                $match: {
                     $or: [
                         {
                             projectLead: new mongoose.Types.ObjectId(req.user._id)
                         }
                     ]
-                
-            }}
+
+                }
+            }
 
             //project stage
             projectStage = {
@@ -359,14 +362,14 @@ module.exports.getUserUnderSuperVisorOrTemlead = async (req, res) => {
 
             //unwind stage
             unwindStage = [{
-                $unwind: { path: "$projectMembers"}
+                $unwind: { path: "$projectMembers" }
             }]
 
             //group stage
             groupStage = {
                 $group: {
                     _id: null,
-                    projectMembers: {$addToSet: "$projectMembers"}
+                    projectMembers: { $addToSet: "$projectMembers" }
                 }
             }
 
@@ -380,217 +383,222 @@ module.exports.getUserUnderSuperVisorOrTemlead = async (req, res) => {
                 }
             }
 
-
             const userUnder = await Project.aggregate([
                 matchStage,
                 projectStage,
                 ...unwindStage,
                 groupStage,
                 lookupStage,
-                {$project: {
-                    _id: 0,
-                    result : {
-                        $map: {
-                            input: "$memberDetails",
-                            as: "item",
-                            in: {
-                              _id: "$$item._id",
-                              email: "$$item.email",
-                              firstName: "$$item.firstName",
-                              lastName: "$$item.lastName",
-        
-        
+                {
+                    $project: {
+                        _id: 0,
+                        result: {
+                            $map: {
+                                input: "$memberDetails",
+                                as: "item",
+                                in: {
+                                    _id: "$$item._id",
+                                    email: "$$item.email",
+                                    firstName: "$$item.firstName",
+                                    lastName: "$$item.lastName",
+
+
+                                }
+
                             }
-                             
+                        }
                     }
                 }
-            }
-        }
-                
+
             ])
-            return res.status(200).json({"message": "success", data: userUnder})
+            return res.status(200).json({ "message": "success", data: userUnder })
         }
 
 
-        if(role === "projectlead"){
+        if (role === "projectlead") {
             //matchstage
-            matchStage = {$match:{
-                $or: [
-                    {
-                        projectSuperVisor: new mongoose.Types.ObjectId(req.user._id)
-                    }
-                ]
-            
-        }}
+            matchStage = {
+                $match: {
+                    $or: [
+                        {
+                            projectSuperVisor: new mongoose.Types.ObjectId(req.user._id)
+                        }
+                    ]
 
-         //project stage
-         projectStage = {
-            $project: {
-                projectMembers: 1,
-                projectLead: 1
-            }
-        }
-
-        //unwind stage
-        unwindStage =[{ $unwind: { path: "$projectMembers"}}, { $unwind: { path: "$projectLead"}}]
-
-         //group stage
-         groupStage = {
-            $group: {
-                _id: null,
-                data: {
-                    $addToSet: {
-                      $concatArrays: [
-                        { $cond: { if: "$projectLead", then: ["$projectLead"], else: [] } },
-                        { $cond: { if: "$projectMembers", then: ["$projectMembers"], else: [] } }
-                      ]
-                    }
-                  }
                 }
             }
 
- //lookup stage
- lookupStage = {
-    $lookup: {
-        from: "users",
-        localField: "result",
-        foreignField: "_id",
-        as: "memberDetails"
-    }
-}
-
-//lastp projectStage 
-lastProjectStage = {
-    $project: {
-        "memberDetails._id": 1
-    }
-}
-
-
-    const userUnder = await Project.aggregate([
-        matchStage,
-        projectStage,
-        ...unwindStage,
-        groupStage,
-        {
-            $unwind: "$data"
-          },
-          {
-            $unwind: "$data"
-          },
-          {
-            $group: {
-              _id: null,
-              result: {
-                $addToSet: "$data"
-              }
+            //project stage
+            projectStage = {
+                $project: {
+                    projectMembers: 1,
+                    projectLead: 1
+                }
             }
-          },
-        lookupStage,
-        {$project: {
-            _id: 0,
-            result : {
-                $map: {
-                    input: "$memberDetails",
-                    as: "item",
-                    in: {
-                      _id: "$$item._id",
-                      email: "$$item.email",
-                      firstName: "$$item.firstName",
-                      lastName: "$$item.lastName",
 
+            //unwind stage
+            unwindStage = [{ $unwind: { path: "$projectMembers" } }, { $unwind: { path: "$projectLead" } }]
 
+            //group stage
+            groupStage = {
+                $group: {
+                    _id: null,
+                    data: {
+                        $addToSet: {
+                            $concatArrays: [
+                                { $cond: { if: "$projectLead", then: ["$projectLead"], else: [] } },
+                                { $cond: { if: "$projectMembers", then: ["$projectMembers"], else: [] } }
+                            ]
+                        }
                     }
-                     
+                }
             }
+
+            //lookup stage
+            lookupStage = {
+                $lookup: {
+                    from: "users",
+                    localField: "result",
+                    foreignField: "_id",
+                    as: "memberDetails"
+                }
+            }
+
+            //lastp projectStage 
+            lastProjectStage = {
+                $project: {
+                    "memberDetails._id": 1
+                }
+            }
+
+
+            const userUnder = await Project.aggregate([
+                matchStage,
+                projectStage,
+                ...unwindStage,
+                groupStage,
+                {
+                    $unwind: "$data"
+                },
+                {
+                    $unwind: "$data"
+                },
+                {
+                    $group: {
+                        _id: null,
+                        result: {
+                            $addToSet: "$data"
+                        }
+                    }
+                },
+                lookupStage,
+                {
+                    $project: {
+                        _id: 0,
+                        result: {
+                            $map: {
+                                input: "$memberDetails",
+                                as: "item",
+                                in: {
+                                    _id: "$$item._id",
+                                    email: "$$item.email",
+                                    firstName: "$$item.firstName",
+                                    lastName: "$$item.lastName",
+
+
+                                }
+
+                            }
+                        }
+                    }
+                },
+                // {$unwind: "$newData"}
+
+
+            ])
+
+            return res.status(200).json({ message: "success", data: userUnder });
+
+
+
         }
-    }
-},
-// {$unwind: "$newData"}
 
-        
-    ])
-
-    return res.status(200).json({message: "success",data:userUnder});
-
-
-            
-        }
-
-        if(role === "admin"){
+        if (role === "admin") {
             const userUnder = await User.aggregate([
                 {
                     $match: {
-                        _id: {$ne: new mongoose.Types.ObjectId(req.user._id)}
+                        _id: { $ne: new mongoose.Types.ObjectId(req.user._id) }
                     }
                 },
-                {$project: {
-                _id:1,
-                email: 1,
-                firstName:1,
-                lastName: 1
-            }}])
-            return res.status(200).json({"message": "success", data:[ {result:userUnder}]})
+                {
+                    $project: {
+                        _id: 1,
+                        email: 1,
+                        firstName: 1,
+                        lastName: 1
+                    }
+                }])
+            return res.status(200).json({ "message": "success", data: [{ result: userUnder }] })
 
         }
 
-        return res.status(400).json({"message": "unsuccessfull"})
-
-        
+        return res.status(400).json({ "message": "unsuccessfull" })
 
 
-    }catch(err){
+
+
+    } catch (err) {
         console.log(err);
-        return res.status(500).json({"message": "Something went wrong"});
+        return res.status(500).json({ "message": "Something went wrong" });
     }
 }
 
-module.exports.passwordReset = async ( req, res, next ) => {
-    try{
+module.exports.passwordReset = async (req, res, next) => {
+    try {
         const errors = validationMessages(validationResult(req).mapped());
-        if(isErrorFounds(errors)) return res.status(400).json({"errors": errors})
+        if (isErrorFounds(errors)) return res.status(400).json({ "errors": errors })
         const userId = req.body.userId;
-        const user = await User.findOne({_id: userId}).lean();
+        const user = await User.findOne({ _id: userId }).lean();
         // if(userId !== req.user._id) return res.status(403).json({"message": "Invalid request"}) 
-        if(!user) return res.status(400).json({'message': "User not found"});
+        if (!user) return res.status(400).json({ 'message': "User not found" });
         const email = user.email;
-        if(!email) return res.status(400).json({'message': "User email not found"});
+        if (!email) return res.status(400).json({ 'message': "User email not found" });
 
-        const isEmailTokenAvialbe = await ResetPassowrd.findOne({userId}).lean();
-        if(isEmailTokenAvialbe) return res.status(200).json({"message": 'Check your email or try after sometimes'})
+        const isEmailTokenAvialbe = await ResetPassowrd.findOne({ userId }).lean();
+        if (isEmailTokenAvialbe) return res.status(200).json({ "message": 'Check your email or try after sometimes' })
         //frontend domain name 
         const domainName = "http://localhost:3000/password-reset/";
-        const emailToken = tokenGeneration({email, redirectUrl:domainName}, 180 );
+        const emailToken = tokenGeneration({ email, redirectUrl: domainName }, 180);
         //send eamil
-        const emailLink = domainName+emailToken;
-        const resetDbData = await ResetPassowrd.create({userId: userId, token: emailToken})
-        
-        return res.status(200).json({'message': "success", "data": emailLink })
-    }catch(err){
+        const emailLink = domainName + emailToken;
+        const resetDbData = await ResetPassowrd.create({ userId: userId, token: emailToken })
+
+        return res.status(200).json({ 'message': "success", "data": emailLink })
+    } catch (err) {
         console.log(err);
         next(err)
     }
 }
 
-module.exports.resetConfirmation = async ( req, res, next ) => {
-    try{
+module.exports.resetConfirmation = async (req, res, next) => {
+    try {
         const errors = validationMessages(validationResult(req).mapped());
-        if(isErrorFounds(errors)) return res.status(400).json({"errors": errors})
+        if (isErrorFounds(errors)) return res.status(400).json({ "errors": errors })
         const userId = req.body.userId;
         const token = req.body.token;
         const password = req.body.password;
-        const user = await User.findOne({_id: userId}).lean();
-        if(!user) return res.status(400).json({"message": "Invalid request"})
+        const user = await User.findOne({ _id: userId }).lean();
+        if (!user) return res.status(400).json({ "message": "Invalid request" })
         const isValid = verifyToken(token);
-        if(!isValid) return res.status(400).json({"message": "Invalid Token or token expired"});
+        if (!isValid) return res.status(400).json({ "message": "Invalid Token or token expired" });
         const hashPassword = await hashPasswordGenarator(password);
-        await User.updateOne({_id: user}, {$set: {password: hashPassword}});
-        await Session.deleteOne({userId})
-        await ResetPassowrd.deleteOne({userId})
-        
-        return res.status(200).json({"message": "Password updated successfully"});
-        
-    }catch(err){
+        await User.updateOne({ _id: user }, { $set: { password: hashPassword } });
+        await Session.deleteOne({ userId })
+        await ResetPassowrd.deleteOne({ userId })
+
+        return res.status(200).json({ "message": "Password updated successfully" });
+
+    } catch (err) {
         console.log(err);
         next(err)
     }
