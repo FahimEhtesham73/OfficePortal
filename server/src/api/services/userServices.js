@@ -3,8 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const path = require("node:path");
 const Session = require("../models/sessionModel");
-const { taskLookupStage, taskProjectStage } = require("../util/taskCommonTemplate");
-const { parentPort } = require("node:worker_threads");
 
 /**
  * 

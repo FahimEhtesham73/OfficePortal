@@ -23,7 +23,6 @@ router.route("/passwordchange").post(changePasswordValidation,resetConfirmation)
 
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
-        // console.log("original name",file.originalname);
     let folder;
     if(req.body.type === "img"){
         folder = "images"
@@ -31,10 +30,30 @@ const storage = multer.diskStorage({
         folder = "cv"
     }
        const userId = req.body.userId;
-        const uniqueFolder = path.join(process.env.FILESTORAGE, folder,userId).normalize();
+        const uniqueFolder = path.join(process.env.FILESTORAGE, folder, userId).normalize();
+        const isFolderExist = fs.existsSync(uniqueFolder);
+        console.log(isFolderExist);
+        if(isFolderExist){
             fs.rmdir(uniqueFolder, {recursive: true}, err => {
-                if(err) throw err
-                else{
+                if(err) {
+                    console.log(err);
+                    throw err}
+                    else{
+                        fs.mkdir(uniqueFolder, async(err)=> {
+                            if(!err){
+                                req.userPath = path.join(uniqueFolder, file.originalname)
+                                cb(null, uniqueFolder);
+                            }else{
+                                console.log(err);
+                            }
+                        })
+                    }
+        })
+        }
+        else{
+            // fs.rmdir(uniqueFolder, {recursive: true}, err => {
+            //     if(err) throw err
+            //     else{
 
                     fs.mkdir(uniqueFolder, async(err)=> {
                         if(!err){
@@ -45,7 +64,7 @@ const storage = multer.diskStorage({
                         }
                     })
                 }
-            })
+            // })
   
     },
     filename: (req, file, cb)=> {

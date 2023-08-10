@@ -2,8 +2,8 @@ export const profileImg = (imgPath) => {
     if(imgPath){
         const pathArray = imgPath.split("/");
         const lastTwo = `${pathArray[pathArray.length-2]}/${pathArray[pathArray.length-1]}`
-        // console.log("last two", lastTwo);
-        return "http://localhost:3001/images/" + lastTwo;
+        console.log("img path",process.env.REACT_APP_IMGLOCATION + lastTwo);
+        return process.env.REACT_APP_IMGLOCATION + lastTwo;
     }else{
         return ""
     }
@@ -143,8 +143,3 @@ export const _debounce = (cb, timeout)=> {
   }
 }
 
-
-const mapStatusData = {
-  "Open": "Todo",
-  "Doing": "In Progress"
-}
