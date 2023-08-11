@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useAsyncError, useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import jwtDecode from 'jwt-decode';
 // Importing from MUI
@@ -28,6 +28,10 @@ import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
 import EngineeringIcon from '@mui/icons-material/Engineering';
+import CloseIcon from '@mui/icons-material/Close';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
 import LoginIcon from '@mui/icons-material/Login';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 // Importing Component
@@ -37,8 +41,48 @@ import PunchClockIcon from '@mui/icons-material/PunchClock';
 import userRole from '../Hook/userHook';
 import { profileImg } from '../functions/commonFunc';
 import userInfo from '../Hook/useUseInfo';
-import { getSingleUser } from '../../api/userApi';
+import { getSingleUser, passwordChangeApi } from '../../api/userApi';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { toast } from 'react-toastify';
 
+// Modal Styling
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(3),
+    overflowY: 'revert',
+    marginTop: '20px'
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+    overflowY: 'revert',
+    marginTop: '20px'
+  },
+}));
+
+
+function BootstrapDialogTitle(props) {
+  const { children, onClose, ...other } = props;
+
+  return (
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
+}
 
 
 const drawerWidth = 240;
@@ -83,10 +127,33 @@ const Topnavbar = (props) => {
   const [openLeave, setOpenLeave] = useState(false)
   const [width, setWidth] = useState(window.innerWidth);
   const [profileImagePath, setProfileImagePath] = useState();
+  const [passwordChange, setPasswordChange] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    notes: ""
+  })
 
+  const [showPassword, setShowPassword] = useState({
+    
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  
+  
+  });
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const token = Cookies.get('_info');
   const jwtToken = Cookies.get("_token") 
   // console.log(token);
+
+  const [openModalP, setOpenModalP] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   let decode = ''
   if (token) {
     decode = jwtDecode(token)
@@ -119,6 +186,66 @@ const Topnavbar = (props) => {
     navigate(`/${text}`)
   }
 
+  const handleSpaceKeyPress = (event) => {
+    if (event.key === ' ') {
+      event.preventDefault(); // Prevent default space bar behavior
+    }
+  };
+
+  const handleClosePass = () => {
+    // setAnchorEl(null);
+    setOpenModalP(false)
+    setPasswordChange({
+      passwordChange,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+      notes: ""
+    })
+    setShowPassword({
+      currentPassword: false,
+      newPassword: false,
+      confirmPassword: false,
+    })
+  };
+
+  // For Modal open
+  const handleModalOpenPass = () => {
+    setOpenModalP(true);
+  };
+
+  const passwordChangeOp = async()=> {
+    if(passwordChange.confirmPassword !== passwordChange.newPassword){
+      setPasswordChange({...passwordChange, notes: "Password not matched."})
+      return;
+    }
+
+    if(passwordChange.newPassword === passwordChange.currentPassword){
+      setPasswordChange({...passwordChange, notes: "Current and new password are same."})
+      return;
+    }
+
+    if(passwordChange.newPassword.length <= 7){
+      setPasswordChange({...passwordChange, notes: "Need 8 characters or greater"})
+      return;
+
+    }
+
+    if(passwordChange.currentPassword && passwordChange.newPassword && passwordChange.confirmPassword){
+      // return;
+      const response = await passwordChangeApi({userId: profileInfo._id,currentPassword: passwordChange.currentPassword, newPassword: passwordChange.newPassword }, jwtToken);
+      const responseData = await response.json();
+      if(response.status === 200){
+        toast.success("Password Changed Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+        handleClosePass()
+        return;
+      }else{
+        toast.warning(responseData?.errors || "Something went wrong, try again", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+
+      }
+
+    }
+  }
   const loginUser = () =>{
 
     getSingleUser(profileInfo?._id, jwtToken).then(d=> {
@@ -420,8 +547,10 @@ const Topnavbar = (props) => {
                   }}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
-                  <MenuItem >
-                    <Typography textAlign="center">Settings</Typography>
+                  <MenuItem  onClick={()=> {
+                    handleModalOpenPass()
+                  }} >
+                    <Typography textAlign="center">Reset Password</Typography>
                   </MenuItem>
                   <MenuItem onClick={() => {
                     handleCloseUserMenu()
@@ -478,7 +607,114 @@ const Topnavbar = (props) => {
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
       </Box>
+      {/* Modal */}
+      <BootstrapDialog
+          onClose={handleClosePass}
+          aria-labelledby="customized-dialog-title"
+          open={openModalP}
 
+        >
+          <BootstrapDialogTitle id="customized-dialog-title" className="text-center" 
+          onClose={handleClosePass}
+           >
+            Change Password
+          </BootstrapDialogTitle>
+          <DialogContent sx={{
+            display: "flex", justifyContent: "center", flexDirection: "column",
+            overflowY: "auto",
+            gap: "1rem"
+          }}>
+            <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-password">Old</InputLabel>
+          <OutlinedInput
+          onKeyDown={handleSpaceKeyPress}
+          onChange={
+            (e)=> setPasswordChange({...passwordChange, currentPassword: e.target.value.trim()})}
+            id="currentpassword"
+            type={showPassword.currentPassword ? 'text' : 'password'}
+
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={()=> setShowPassword({...showPassword, currentPassword: !showPassword.currentPassword})}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword.currentPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+            name="password"
+          />
+        </FormControl>
+        <FormControl  fullWidth variant="outlined">
+          <InputLabel  htmlFor="outlined-adornment-password">New</InputLabel>
+          <OutlinedInput
+          onKeyDown={handleSpaceKeyPress}
+
+            id="newpassword"
+            onChange={
+              (e)=> setPasswordChange({...passwordChange, newPassword: e.target.value.trim(), notes: ""})}
+            type={showPassword.newPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={()=> setShowPassword({...showPassword, newPassword: !showPassword.newPassword})}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+            name="password"
+          />
+        </FormControl>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-password">Confirm</InputLabel>
+          <OutlinedInput
+          onKeyDown={handleSpaceKeyPress}
+
+            id="confirmpassword"
+            type={showPassword.confirmPassword ? 'text' : 'password'}
+            onChange={
+              (e)=>{ 
+                setPasswordChange({...passwordChange, confirmPassword: e.target.value, notes: ""})}
+              
+              }
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={()=> setShowPassword({...showPassword, confirmPassword: !showPassword.confirmPassword})}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword.confirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+            name="password"
+          />
+        </FormControl>
+          {passwordChange.notes.length > 0 ? <span style={{color: "red"}}>{passwordChange.notes}</span>: null}
+
+            </DialogContent>
+          <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+            <Button 
+            disabled = {(passwordChange.currentPassword && passwordChange.confirmPassword && passwordChange.newPassword)? false: true}
+            variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
+              passwordChangeOp()
+            }}>
+              Update
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
     </Box>
   )
 }

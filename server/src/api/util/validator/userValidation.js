@@ -52,6 +52,6 @@ module.exports.resetPasswordValidation = body('userId').isMongoId()
 
 module.exports.changePasswordValidation = [
     body("userId").isMongoId(),
-    body("token").notEmpty().customSanitizer(v => v.trim()),
-    body("password").notEmpty().isString().isLength({min: 8, max: 12}).withMessage("Password should be 8-10 characters")
+    // body("currentPassword").notEmpty().isString(),
+    body("newPassword").notEmpty().isString().isLength({min: 8}).withMessage("Password should be 8 characters")
 ]

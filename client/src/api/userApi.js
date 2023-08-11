@@ -58,3 +58,17 @@ export const getAllUserApi = async ( token) => {
         credentials: 'include',
       })
 }
+
+
+
+export const passwordChangeApi = async (data, token) => {
+    return fetch(`${process.env.REACT_APP_URL}/users/passwordchange`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      })
+}
