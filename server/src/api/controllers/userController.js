@@ -63,15 +63,16 @@ module.exports.signinUser = async (req, res) => {
             jwt: token,
             timeZone: "",
         }
+        // console.log("Token",token);
         const userSession = await createSession(user._id, userSessionData);
         // const cookie = `_token=${token};samesite=strict; secure;path=/; expires:${new Date(Date.now() + TIME).toUTCString()};`
-        res.cookie("_token", token, { secure: true, sameSite: true,expires: new Date(Date.now() + TIME,),  domain: process.env.DOMAINNAME});
+        res.cookie("_token", token, {domain: process.env.DOMAINNAME, expires: new Date(Date.now() + TIME)});
         // res.setHeader("Set-Cookie", [cookie])
         // res.cookie("_info", jwt.sign(restUserInformation, "secret"),);
-        res.cookie("_info", jwt.sign(restUserInformation, "secret"), {expires: new Date(Date.now() + TIME),  domain: process.env.DOMAINNAME});
+        res.cookie("_info", jwt.sign(restUserInformation, "secret"), {domain: process.env.DOMAINNAME, expires: new Date(Date.now() + TIME)});
 
         //{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
-        res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true,  domain: process.env.DOMAINNAME});
+        // res.cookie("_sid", userSession._id, {domain: "172.16.16.55", expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true});
 
 
 

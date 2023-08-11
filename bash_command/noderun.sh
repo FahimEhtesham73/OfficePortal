@@ -1,7 +1,10 @@
 #!/bin/bash
 
+#start mongodb process
+systemctl start mongod
+systemctl enable mongod
 # Navigate to the desired folder
-cd "/media/nslserver/hdd2/fullstack/Leave_Management_07_07_2023/server"
+cd "/home/nslserver/nsl_official_portal/Leave_Management_System/server"
 
 # Run the Node.js script
 npm run cluster
