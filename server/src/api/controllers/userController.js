@@ -558,11 +558,10 @@ module.exports.passwordReset = async (req, res, next) => {
         if (!user) return res.status(400).json({ 'message': "User not found" });
         const email = user.email;
         if (!email) return res.status(400).json({ 'message': "User email not found" });
-        if(user._id.toString !== req.user._id.toString()) return res.status(400).json({"message": "Invalid Request"})
+        if(user._id.toString() !== req.user._id.toString()) return res.status(400).json({"message": "Invalid Request"})
         const newPassword = req.body.newPassword;
         const currentPassword = req.body.currentPassword;
 
-        console.log("data", currentPassword, user.password);
         const isValidPass = await verifyHash(currentPassword, user?.password);
         if(!isValidPass) return res.status(400).json({"message": "Invalid password"})
         const newPasswordHash = await hashPasswordGenarator(newPassword);
