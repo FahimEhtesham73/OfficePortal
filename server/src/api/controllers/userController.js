@@ -551,23 +551,25 @@ module.exports.passwordReset = async (req, res, next) => {
     try {
         const errors = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(errors)) return res.status(400).json({ "errors": errors })
+        console.log(req.body);
         const userId = req.body.userId;
         const user = await User.findOne({ _id: userId }).lean();
         // if(userId !== req.user._id) return res.status(403).json({"message": "Invalid request"}) 
         if (!user) return res.status(400).json({ 'message': "User not found" });
         const email = user.email;
         if (!email) return res.status(400).json({ 'message': "User email not found" });
+        if(user._id.toString !== req.user._id.toString()) return res.status(400).json({"message": "Invalid Request"})
+        const newPassword = req.body.newPassword;
+        const currentPassword = req.body.currentPassword;
 
-        const isEmailTokenAvialbe = await ResetPassowrd.findOne({ userId }).lean();
-        if (isEmailTokenAvialbe) return res.status(200).json({ "message": 'Check your email or try after sometimes' })
-        //frontend domain name 
-        const domainName = "http://localhost:3000/password-reset/";
-        const emailToken = tokenGeneration({ email, redirectUrl: domainName }, 180);
-        //send eamil
-        const emailLink = domainName + emailToken;
-        const resetDbData = await ResetPassowrd.create({ userId: userId, token: emailToken })
+        console.log("data", currentPassword, user.password);
+        const isValidPass = await verifyHash(currentPassword, user?.password);
+        if(!isValidPass) return res.status(400).json({"message": "Invalid password"})
+        const newPasswordHash = await hashPasswordGenarator(newPassword);
+    console.log("hased", newPasswordHash);
+        await User.findOneAndUpdate({_id: user._id}, {$set: {password: newPasswordHash}});
 
-        return res.status(200).json({ 'message': "success", "data": emailLink })
+        return res.status(200).json({ 'message': "password updated successfully" })
     } catch (err) {
         console.log(err);
         next(err)
