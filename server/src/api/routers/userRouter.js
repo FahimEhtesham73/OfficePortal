@@ -18,7 +18,7 @@ router.route("/imgupload").post(Authorize,profileImgUpload)
 router.route("/viewcv").post(Authorize, viewCv)
 router.route("/userlist").get(Authorize, isAdminTeamLeadProjectLead,  getUserUnderSuperVisorOrTemlead);
 router.route("/resetpassword").post(resetPasswordValidation, passwordReset);
-router.route("/passwordchange").post(changePasswordValidation,resetConfirmation);
+router.route("/passwordchange").post(Authorize, changePasswordValidation ,passwordReset);
 
 
 const storage = multer.diskStorage({
