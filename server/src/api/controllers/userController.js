@@ -58,6 +58,7 @@ module.exports.signinUser = async (req, res) => {
 
         const { password: p, createdAt, createdBy, updatedAt, updatedBy, ...restUserInformation } = user;
         const token = tokenGeneration(userTokenData);
+        
         const userSessionData = {
             ipAddress: req.ip,
             jwt: token,
@@ -72,8 +73,6 @@ module.exports.signinUser = async (req, res) => {
 
         //{expires: new Date(Date.now() + parseInt(process.env.SESSION_TIMEOUT))}
         res.cookie("_sid", userSession._id, { expires: new Date(Date.now() + TIME),path: "/", httpOnly: true, secure: true, sameSite: true,  domain: process.env.DOMAINNAME});
-
-
 
         return res.status(200).json({ "userInformation": restUserInformation, "message": "successfully login" });
     } catch (err) {
