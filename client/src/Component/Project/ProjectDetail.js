@@ -24,11 +24,6 @@ import ProjectTask from "../ProjectTask/ProjectTask";
 
 
 
-
-
-
-
-
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -75,8 +70,9 @@ const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
 }));
+
 const ProjectDetail = () => {
-    const jwt = Cookies.get("_token");
+    const jwt = localStorage.getItem('_token');
 
     const [projectInfo, setProjectInfo] = useState({});
     const { id } = useParams();
@@ -95,6 +91,8 @@ const ProjectDetail = () => {
         isCurrentlyActive: "",
         projectCode: ""
     });
+
+    // console.log({projectDetails});
 
     const [users, setUsers] = useState([]);
     const [teamLead, setTeamLead] = useState([])
@@ -143,7 +141,6 @@ const ProjectDetail = () => {
             let data = await getAllUserApi(jwt);
             if (data?.status === 200) {
                 let resData = await data.json();
-
 
                 setUsers(resData)
                 if (resData.length) {
@@ -351,7 +348,7 @@ const ProjectDetail = () => {
 
 
                                 <Item sx={{ textAlign: "justify", p: ".5rem", m: "1rem 0", }}  >
-                                    <ProjectTask membersNameId={allMembers} />
+                                    <ProjectTask membersNameId={allMembers} projectDetails={projectDetails}/>
 
                                 </Item>
                             </Stack>
@@ -449,7 +446,6 @@ const ProjectDetail = () => {
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             primary={`${m.firstName}`}
-
                                                         />
                                                     </ListItem>
 

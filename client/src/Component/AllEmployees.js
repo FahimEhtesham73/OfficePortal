@@ -77,13 +77,12 @@ function BootstrapDialogTitle(props) {
 }
 
 
-
-
 const AllEmployees = () => {
-  const jwt = Cookies.get('_token')
+  const jwt = localStorage.getItem('_token')
 
   const [loading, setLoading] = useState(false)
   const [openModal, setOpenModal] = useState(false);
+  const [statusUpdate, setStatusUpdate] = useState(true)
   const [anchorEl, setAnchorEl] = useState(null);
   const [department, setDepartment] = useState([])
   const [designation, setDesignation] = useState([])
@@ -293,7 +292,7 @@ const AllEmployees = () => {
       })
 
       const data = await res.json()
-      console.log(data);
+      // console.log(data);
       if (res.status === 200) {
         setFilterInfo({
           desgId: "", empName: "", userId: ""
@@ -318,9 +317,9 @@ const AllEmployees = () => {
         "Authorization": "Bearer " + jwt
       },
     })
-    
+
     const data = await res.json()
-    console.log("today", data);
+    // console.log("today", data);
     if (res.status === 200) {
       setPunchedInToday(data?.data)
       setLoading(false)
@@ -331,7 +330,38 @@ const AllEmployees = () => {
   }
 
   for (let p in punchedInToday) {
-    console.log(typeof p);
+    // console.log(typeof p);
+  }
+
+  const userStatusUpdate = async (id, isActive) => {
+    // console.log({ id }, { isActive });
+    const res = await fetch(
+      `${process.env.REACT_APP_URL}/users/updateUser/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + jwt
+        },
+        body: JSON.stringify({ isActive: isActive === undefined ? false : !isActive }),
+      }
+    );
+    const data = await res.json();
+    // console.log("user Data", data);
+    if (res.status === 200) {
+      toast.success("Profile updated successfully", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 1000,
+        pauseOnHover: false,
+      });
+      getAllUser()
+    } else {
+      toast.warning("Something went wrong", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+        pauseOnHover: false,
+      });
+    }
   }
 
   useEffect(() => {
@@ -345,7 +375,7 @@ const AllEmployees = () => {
   return (
 
     <>
-      <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px" }}>
+      <Box sx={{ marginLeft: { sm: '30px', md: "280px", xs: '30px' }, marginRight: "30px", maxWidth: '2618px' }}>
 
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Employee</Typography>
@@ -427,9 +457,7 @@ const AllEmployees = () => {
                 {
                   allUser.map((val, ind) => {
                     let id = val?._id.toString();
-                    // console.log("val", id);
-
-                    // console.log(`hello: ${JSON.parse(JSON.stringify(punchedInToday))[id]}`);
+                    // console.log("val", val.isActive);
                     return (
                       <Grid item xs={12} sm={6} md={3}>
                         <Card elevation='4' sx={{ width: '100%', maxHeight: 345 }} >
@@ -437,13 +465,13 @@ const AllEmployees = () => {
                             avatar={
                               // <Tooltip title= `${(punchedInToday?.[id]?.checkInTime ? "available": "away")}` >
                               <FiberManualRecordIcon titleAccess={`${(punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "away" : "online" : "Not Present")}`} sx={{ color: `${punchedInToday?.[id]?.checkInTime ? punchedInToday?.[id]?.checkOutTime ? "#B2BEB5" : "green" : "black"}` }} />
-
                               // </Tooltip>
                             }
                             action={
                               <IconButton aria-label="settings" onClick={(e) => {
                                 handleClick(e)
                                 setMenuItemUserId(val._id)
+                                setStatusUpdate(val.isActive)
                               }}>
                                 <MoreVertIcon />
                               </IconButton>
@@ -477,6 +505,15 @@ const AllEmployees = () => {
                             }}>
                               <Typography textAlign="center" >Delete profile</Typography>
                             </MenuItem>}
+
+                            {
+                              userRole() === 'Admin' && <MenuItem onClick={() => {
+                                userStatusUpdate(menuItemUserId,statusUpdate)
+                                handleClose()
+                              }}>
+                                <Typography textAlign="center" >{statusUpdate === undefined ? "Deactivate Profile":statusUpdate === true ? "Deactivate Profile" : "Active Profile"}</Typography>
+                              </MenuItem>
+                            }
                           </Menu>
 
                           <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
@@ -608,7 +645,7 @@ const AllEmployees = () => {
                   // setUserInfo(e)
                   setUser({ ...user, joiningDate: e?.['$d'] ? e['$d'] : "" })
                   setSelectedDate(e)
-                  console.log("date Change", e?.['$d'] ? e['$d'] : "");
+                  // console.log("date Change", e?.['$d'] ? e['$d'] : "");
                 }} />
               </DemoContainer>
             </LocalizationProvider>

@@ -13,6 +13,7 @@ import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import NextPlanIcon from '@mui/icons-material/NextPlan';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -27,13 +28,17 @@ import ListItemText from '@mui/material/ListItemText';
 import PeopleIcon from '@mui/icons-material/People';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import BallotIcon from '@mui/icons-material/Ballot';
-import EngineeringIcon from '@mui/icons-material/Engineering';
 import CloseIcon from '@mui/icons-material/Close';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
+import SchoolIcon from '@mui/icons-material/School';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ArchitectureIcon from '@mui/icons-material/Architecture';
 import LoginIcon from '@mui/icons-material/Login';
+import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+
 // Importing Component
 import HolidayVillageIcon from '@mui/icons-material/HolidayVillage';
 import EmojiTransportationIcon from '@mui/icons-material/EmojiTransportation';
@@ -42,7 +47,7 @@ import userRole from '../Hook/userHook';
 import { profileImg } from '../functions/commonFunc';
 import userInfo from '../Hook/useUseInfo';
 import { getSingleUser, passwordChangeApi } from '../../api/userApi';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, Popover, TextField } from '@mui/material';
 import { toast } from 'react-toastify';
 
 // Modal Styling
@@ -58,6 +63,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     marginTop: '20px'
   },
 }));
+
+const style = {
+  p: 2,
+  bgcolor: 'background.paper',
+  boxShadow: 3,
+  borderRadius: 1,
+};
 
 
 function BootstrapDialogTitle(props) {
@@ -134,13 +146,19 @@ const Topnavbar = (props) => {
     notes: ""
   })
 
+  const [anchorElManual, setAnchorElManual] = useState(null);
+
+  const handleOpen = (event) => setAnchorElManual(event.currentTarget);
+  const handleClose = () => setAnchorElManual(null);
+
+  const openManual = Boolean(anchorElManual);
+
   const [showPassword, setShowPassword] = useState({
-    
+
     currentPassword: false,
     newPassword: false,
     confirmPassword: false,
-  
-  
+
   });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -148,8 +166,8 @@ const Topnavbar = (props) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const token = Cookies.get('_info');
-  const jwtToken = Cookies.get("_token") 
+  const token = localStorage.getItem('_info');
+  const jwtToken = localStorage.getItem('_token')
   // console.log(token);
 
   const [openModalP, setOpenModalP] = useState(false);
@@ -160,8 +178,11 @@ const Topnavbar = (props) => {
   } else {
     decode = ''
   }
+  const [openList, setOpenList] = useState(false)
 
-
+  function handleClickList() {
+    setOpenList(!openList)
+  }
   const id = decode?._id
   // For handling Drawer
   const handleDrawerClose = () => {
@@ -214,51 +235,62 @@ const Topnavbar = (props) => {
     setOpenModalP(true);
   };
 
-  const passwordChangeOp = async()=> {
-    if(passwordChange.confirmPassword !== passwordChange.newPassword){
-      setPasswordChange({...passwordChange, notes: "Password not matched."})
+  const passwordChangeOp = async () => {
+    if (passwordChange.confirmPassword !== passwordChange.newPassword) {
+      setPasswordChange({ ...passwordChange, notes: "Password not matched." })
       return;
     }
 
-    if(passwordChange.newPassword === passwordChange.currentPassword){
-      setPasswordChange({...passwordChange, notes: "Current and new password are same."})
+    if (passwordChange.newPassword === passwordChange.currentPassword) {
+      setPasswordChange({ ...passwordChange, notes: "Current and new password are same." })
       return;
     }
 
-    if(passwordChange.newPassword.length <= 7){
-      setPasswordChange({...passwordChange, notes: "Need 8 characters or greater"})
+    if (passwordChange.newPassword.length <= 7) {
+      setPasswordChange({ ...passwordChange, notes: "Need 8 characters or greater" })
       return;
 
     }
 
-    if(passwordChange.currentPassword && passwordChange.newPassword && passwordChange.confirmPassword){
+    if (passwordChange.currentPassword && passwordChange.newPassword && passwordChange.confirmPassword) {
       // return;
-      const response = await passwordChangeApi({userId: profileInfo._id,currentPassword: passwordChange.currentPassword, newPassword: passwordChange.newPassword }, jwtToken);
+      const response = await passwordChangeApi({ userId: profileInfo._id, currentPassword: passwordChange.currentPassword, newPassword: passwordChange.newPassword }, jwtToken);
       const responseData = await response.json();
-      if(response.status === 200){
+      if (response.status === 200) {
         toast.success("Password Changed Successfully", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         handleClosePass()
         return;
-      }else{
+      } else {
         toast.warning(responseData?.errors || "Something went wrong, try again", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
 
       }
 
     }
   }
-  const loginUser = () =>{
 
-    getSingleUser(profileInfo?._id, jwtToken).then(d=> {
+  const loginUser = () => {
+    getSingleUser(profileInfo?._id, jwtToken).then(d => {
+      // console.log(d.status);
+      // if(d.status === 401){
+      //   toast.warning("Authorization Failed", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+      //   return;
+      // }
       setProfileImagePath(d?.data[0]?.imagePath)
-    }).catch(e=> {
-      console.log(e);
+    }).catch(e => {
+      // console.log(e.response.status);
+      if(e.response.status === 401){
+        toast.warning("Authorization Failed", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+      } else{
+        toast.warning("Something Went Wrong", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+      }
     })
-
   }
 
-  useEffect(()=> {
-    loginUser()
-  },[jwtToken])
+  useEffect(() => {
+    if(jwtToken){
+      loginUser()
+    }
+  }, [jwtToken])
 
   const drawer = (
     <div>
@@ -270,28 +302,52 @@ const Topnavbar = (props) => {
       <Divider />
       <List>
         {
-          !Cookies.get('_info') ?
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-                onClick={() => { saveMenuData('signin') }}
-              >
-                <ListItemIcon
+          !localStorage.getItem('_info') ?
+            <>
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
                   }}
+                  onClick={() => { saveMenuData('signin') }}
                 >
-                  <LoginIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Sign In'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem> :
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <LoginIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={'Sign In'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+              {/* <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                  onClick={(e) => { handleOpen(e) }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <StickyNote2Icon />
+                  </ListItemIcon>
+                  <ListItemText primary={'User Access'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem> */}
+            </>
+            :
             (
               <>
                 {/* Punch IN */}
@@ -358,7 +414,7 @@ const Topnavbar = (props) => {
                     >
                       <GridOnIcon />
                     </ListItemIcon>
-                    <ListItemText primary={'Attendence Sheet'} sx={{ opacity: open ? 1 : 0 }} />
+                    <ListItemText primary={'Attendance Sheet'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
                 {/* Holidays */}
@@ -434,27 +490,7 @@ const Topnavbar = (props) => {
                   </ListItem>
                 }
                 {/* Team Lead */}
-                {/* <ListItem disablePadding sx={{ display: 'block' }}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? 'initial' : 'center',
-                      px: 2.5,
-                    }}
-                    onClick={() => { saveMenuData('teamlead') }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : 'auto',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <EngineeringIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={'Team Leads'} sx={{ opacity: open ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem> */}
+
                 <ListItem disablePadding sx={{ display: 'block' }}>
                   <ListItemButton
                     sx={{
@@ -476,6 +512,93 @@ const Topnavbar = (props) => {
                     <ListItemText primary={'Projects'} sx={{ opacity: open ? 1 : 0 }} />
                   </ListItemButton>
                 </ListItem>
+                {/* Knowledge Sharing */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('knowledge_shareing') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'knowledge Sharing'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem> 
+                {/* Planner */}
+                <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={() => { saveMenuData('Planner') }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <NextPlanIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Planner'} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+                {/* Evalution */}
+                {/* <ListItem disablePadding sx={{ display: 'block' }}>
+                  <ListItemButton
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                    }}
+                    onClick={handleClickList}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <ArchitectureIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Project SnapShot" />
+                    {openList ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  </ListItemButton>
+                  <Collapse in={openList} timeout="auto" unmountOnExit>
+                    <Divider />
+                    <List component="div" disablePadding>
+                      <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText primary="Create SnapShot" onClick={() => { navigate('/create-snap') }}/>
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText primary="SnapShot Dashboard" />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText primary="Team Pulse Reporting" />
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
+                  </Collapse>
+                </ListItem> */}
               </>
 
             )
@@ -502,7 +625,7 @@ const Topnavbar = (props) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{ width: "100%" }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -517,12 +640,12 @@ const Topnavbar = (props) => {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           {
-            Cookies.get('_info') ?
+            localStorage.getItem('_info') ?
               <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '10px' }}>
                 <Typography variant="p" component="div" sx={{ marginRight: "15px" }}>{decode?.firstName}</Typography>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar imgProps={{crossOrigin: "false"}} alt="Remy Sharp"  src={profileImg(profileImagePath)} />
+                    <Avatar imgProps={{ crossOrigin: "false" }} alt="Remy Sharp" src={profileImg(profileImagePath)} />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -547,7 +670,7 @@ const Topnavbar = (props) => {
                   }}>
                     <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
-                  <MenuItem  onClick={()=> {
+                  <MenuItem onClick={() => {
                     handleModalOpenPass()
                   }} >
                     <Typography textAlign="center">Reset Password</Typography>
@@ -558,6 +681,8 @@ const Topnavbar = (props) => {
                     Cookies.remove('_sid')
                     Cookies.remove('_token')
                     // localStorage.removeItem('userData')
+                    localStorage.removeItem('_info')
+                    localStorage.removeItem('_token')
                     navigate('/signin')
                   }}>
                     <Typography textAlign="center">Log Out</Typography>
@@ -565,7 +690,6 @@ const Topnavbar = (props) => {
                 </Menu>
               </Box> : ""
           }
-
         </Toolbar>
       </AppBar>
 
@@ -603,118 +727,167 @@ const Topnavbar = (props) => {
           {drawer}
         </Drawer>
       </Box>
-
       <Box component={'main'} sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
       </Box>
       {/* Modal */}
       <BootstrapDialog
-          onClose={handleClosePass}
-          aria-labelledby="customized-dialog-title"
-          open={openModalP}
+        onClose={handleClosePass}
+        aria-labelledby="customized-dialog-title"
+        open={openModalP}
 
+      >
+        <BootstrapDialogTitle id="customized-dialog-title" className="text-center"
+          onClose={handleClosePass}
         >
-          <BootstrapDialogTitle id="customized-dialog-title" className="text-center" 
-          onClose={handleClosePass}
-           >
-            Change Password
-          </BootstrapDialogTitle>
-          <DialogContent sx={{
-            display: "flex", justifyContent: "center", flexDirection: "column",
-            overflowY: "auto",
-            gap: "1rem"
-          }}>
-            <FormControl fullWidth variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Old</InputLabel>
-          <OutlinedInput
-          onKeyDown={handleSpaceKeyPress}
-          onChange={
-            (e)=> setPasswordChange({...passwordChange, currentPassword: e.target.value.trim()})}
-            id="currentpassword"
-            type={showPassword.currentPassword ? 'text' : 'password'}
+          Change Password
+        </BootstrapDialogTitle>
+        <DialogContent sx={{
+          display: "flex", justifyContent: "center", flexDirection: "column",
+          overflowY: "auto",
+          gap: "1rem"
+        }}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Old</InputLabel>
+            <OutlinedInput
+              onKeyDown={handleSpaceKeyPress}
+              onChange={
+                (e) => setPasswordChange({ ...passwordChange, currentPassword: e.target.value.trim() })}
+              id="currentpassword"
+              type={showPassword.currentPassword ? 'text' : 'password'}
 
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={()=> setShowPassword({...showPassword, currentPassword: !showPassword.currentPassword})}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword.currentPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
-            name="password"
-          />
-        </FormControl>
-        <FormControl  fullWidth variant="outlined">
-          <InputLabel  htmlFor="outlined-adornment-password">New</InputLabel>
-          <OutlinedInput
-          onKeyDown={handleSpaceKeyPress}
-
-            id="newpassword"
-            onChange={
-              (e)=> setPasswordChange({...passwordChange, newPassword: e.target.value.trim(), notes: ""})}
-            type={showPassword.newPassword ? 'text' : 'password'}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={()=> setShowPassword({...showPassword, newPassword: !showPassword.newPassword})}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
-            name="password"
-          />
-        </FormControl>
-        <FormControl fullWidth variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Confirm</InputLabel>
-          <OutlinedInput
-          onKeyDown={handleSpaceKeyPress}
-
-            id="confirmpassword"
-            type={showPassword.confirmPassword ? 'text' : 'password'}
-            onChange={
-              (e)=>{ 
-                setPasswordChange({...passwordChange, confirmPassword: e.target.value, notes: ""})}
-              
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword({ ...showPassword, currentPassword: !showPassword.currentPassword })}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.currentPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
               }
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={()=> setShowPassword({...showPassword, confirmPassword: !showPassword.confirmPassword})}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword.confirmPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
-            name="password"
-          />
-        </FormControl>
-          {passwordChange.notes.length > 0 ? <span style={{color: "red"}}>{passwordChange.notes}</span>: null}
+              label="Password"
+              name="password"
+            />
+          </FormControl>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">New</InputLabel>
+            <OutlinedInput
+              onKeyDown={handleSpaceKeyPress}
 
-            </DialogContent>
-          <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-            <Button 
-            disabled = {(passwordChange.currentPassword && passwordChange.confirmPassword && passwordChange.newPassword)? false: true}
+              id="newpassword"
+              onChange={
+                (e) => setPasswordChange({ ...passwordChange, newPassword: e.target.value.trim(), notes: "" })}
+              type={showPassword.newPassword ? 'text' : 'password'}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword({ ...showPassword, newPassword: !showPassword.newPassword })}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+              name="password"
+            />
+          </FormControl>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Confirm</InputLabel>
+            <OutlinedInput
+              onKeyDown={handleSpaceKeyPress}
+
+              id="confirmpassword"
+              type={showPassword.confirmPassword ? 'text' : 'password'}
+              onChange={
+                (e) => {
+                  setPasswordChange({ ...passwordChange, confirmPassword: e.target.value, notes: "" })
+                }
+              }
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword({ ...showPassword, confirmPassword: !showPassword.confirmPassword })}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword.confirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+              name="password"
+            />
+          </FormControl>
+          {passwordChange.notes.length > 0 ? <span style={{ color: "red" }}>{passwordChange.notes}</span> : null}
+
+        </DialogContent>
+        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            disabled={(passwordChange.currentPassword && passwordChange.confirmPassword && passwordChange.newPassword) ? false : true}
             variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={() => {
               passwordChangeOp()
             }}>
-              Update
-            </Button>
-          </DialogActions>
-        </BootstrapDialog>
+            Update
+          </Button>
+        </DialogActions>
+      </BootstrapDialog>
+
+      <Popover
+        open={openManual}
+        anchorEl={anchorElManual}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <Box sx={style}>
+          <Typography id="notepad-title" variant="h6" component="h2">
+            Notepad
+          </Typography>
+          <Typography id="notepad-description" sx={{ mt: 2 }}>
+            There are 4 types of roles in this system. Admin, Project Lead, Team Lead, Employee. Dummy Account of each user is given below - <br /> <br />
+
+            <b>Admin</b><br />
+            Email: admin@portal.gmail.com
+            <br />
+            password: Admin
+            <br />
+
+            <b>Project Lead</b><br />
+            Email: projectlead@portal.gmail.com
+            <br />
+            password: ProjectLead
+            <br />
+
+            <b>Team Lead</b><br />
+            Email: teamlead@portal.gmail.com
+            <br />
+            password: Teamlead
+            <br />
+
+            <b>Employee</b><br />
+            Email: useremployee@portal.gmail.com
+            <br />
+            password: Useremployee
+
+          </Typography>
+          <Button onClick={handleClose} sx={{ mt: 2 }} variant="contained">
+            Close
+          </Button>
+        </Box>
+      </Popover>
     </Box>
   )
 }

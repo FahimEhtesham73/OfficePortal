@@ -17,6 +17,7 @@ const UserSchema = new Schema({
     birthDate:Date,
     nid: String,
     gender: String,
+    isActive:{type: Boolean, default:true},
     isSuperAdmin: {type: Boolean, default: false},
     designation: {type: Schema.Types.ObjectId, ref: "Designation"},
     department: {type: Schema.Types.ObjectId, ref: "Department"},
@@ -29,6 +30,11 @@ const UserSchema = new Schema({
     // expertises:[{skillName: String, skillType: String, level: Boolean}],
     goals: [{goalName: String, goalType: String}],
     skills: [{title: String, tools:String}],
+    officeTimeSlot: {
+        type: String,
+        enum: ["9:00 AM", "11:00 AM", "2:00 PM"],
+        default: "9:00 AM"
+    },
     address: [{houseNo: String, roadNo: String, city: String, district: String, country:String, AddressType: String, }], // addressType: "present/permanent"
     maritalStatus: String,
     nationality:String,
@@ -41,6 +47,5 @@ const UserSchema = new Schema({
 },{timestamps: true});
 
 // UserSchema.cre({"empId": 1})
-
 
 module.exports = model("User", UserSchema);

@@ -4,7 +4,6 @@ const express = require("express");
 const app = express();
 const { notFoundUrl } = require("../middleware/notFoundMiddleware");
 const errorMiddleware = require("../middleware/errorMiddleware");
-const { Authorize } = require("../middleware/commonMilddleware");
 
 // index middleware
 require('./index')(app);
@@ -14,6 +13,8 @@ require("./routes")(app);
 
 //images routes
 app.use("/images", express.static(path.join(path.resolve(process.env.FILESTORAGE), "images")))
+app.use("/videos", express.static(path.join(path.resolve(process.env.FILESTORAGE), "videos")))
+
     //not found url
 app.use(notFoundUrl);
 

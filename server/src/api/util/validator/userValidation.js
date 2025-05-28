@@ -55,3 +55,8 @@ module.exports.changePasswordValidation = [
     // body("currentPassword").notEmpty().isString(),
     body("newPassword").notEmpty().isString().isLength({min: 8}).withMessage("Password should be 8 characters")
 ]
+
+module.exports.updateDisiplinaryActionValidaion = [
+    body("userId").isMongoId(),
+    body("lateAId").isMongoId(),
+]

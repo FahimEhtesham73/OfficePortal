@@ -54,10 +54,10 @@ module.exports.createProjectValidation = [
         }
         return true;
     }),
-    body("projectSuperVisor").custom((val) => {
-        return validateProjectSupervisors(val)
+    // body("projectSuperVisor").custom((val) => {
+    //     return validateProjectSupervisors(val)
         
-    }),
+    // }),
     body("projectLead").custom((val) => {
         return validateProjectSupervisors(val)
     }),
@@ -169,6 +169,39 @@ module.exports.upateProjectValidation = [
         else{
             return validateProjectSupervisors(val)
         }
+    })
+
+]
+
+module.exports.createSubProjectValidation = [
+    body('projectName').isString().withMessage("Invalid Project Name"),
+    body('projectId').isString().withMessage("Invalid Project Id"),
+    body('projectOwner').isString().withMessage("Invalid Project Owner Name"),
+    body('projectDescription').isString().withMessage("Invalid Project Description"),
+    body('superVisorTime').isNumeric().withMessage("Invalid Time Format"),
+    body('leadTime').isNumeric().withMessage("Invalid Time Format"),
+    body('memberTime').isNumeric().withMessage("Invalid Time Format"),
+    body("projectStartTime").custom((val) => {
+        if(val){
+            return isDateString(val)
+        }
+        return true;
+    }),
+    body("projectEndTime").custom((val) => {
+        if(val){
+            return isDateString(val)
+        }
+        return true;
+    }),
+    // body("projectSuperVisor").custom((val) => {
+    //     return validateProjectSupervisors(val)
+        
+    // }),
+    body("projectLead").custom((val) => {
+        return validateProjectSupervisors(val)
+    }),
+    body("projectMembers").custom((val) => {
+        return validateProjectSupervisors(val)
     })
 
 ]

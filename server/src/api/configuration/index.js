@@ -3,12 +3,15 @@ const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 
 module.exports = (app)=>{
 
+    app.use(helmet({
+        crossOriginResourcePolicy: false,
 
-    app.use(helmet());
+    }));
     
     // app.use(cors());
     // Adding headers for cors policy
@@ -16,7 +19,7 @@ module.exports = (app)=>{
     app.use(function (req, res, next) {
 
         // Website you wish to allow to connect
-
+        console.log(process.env.ORIGIN);
         res.setHeader('Access-Control-Allow-Origin', process.env.ORIGIN);
         // res.setHeader('Content-Security-Policy', 'script-src http://localhost:3000')
         // Request methods you wish to allow
@@ -32,8 +35,8 @@ module.exports = (app)=>{
         // Pass to next layer of middleware
         next();
     });
-    app.use(express.json());
-    app.use(express.urlencoded({extended: true}));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
     app.use(cookieParser())
     //dev
     if(process.env.NODE_ENV === 'dev'){

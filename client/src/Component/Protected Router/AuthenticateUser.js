@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 
 const AuthenticateUser = ({children}) => {
-    let cookies = Cookies.get('_info')
-
+    let cookies = localStorage.getItem('_info')
+    // console.log({cookies});
     if(cookies){
         return children
     }

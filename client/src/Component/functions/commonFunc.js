@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const profileImg = (imgPath) => {
     if(imgPath){
         const pathArray = imgPath.split("/");
@@ -142,3 +144,99 @@ export const _debounce = (cb, timeout)=> {
   }
 }
 
+/**
+ * 
+ * @param {string} msg 
+ * @param {number} duration 
+ */
+export const successMessageToast = (msg, duration=2000)=> {
+  toast.success(msg, { position: toast.POSITION.TOP_CENTER, autoClose: duration, pauseOnHover: false })
+
+}
+
+/**
+ * 
+ * @param {string} msg 
+ * @param {number} duration 
+ */
+export const errorMessageToast = (msg = "Something went wrong", duration=2000)=> {
+  toast.error(msg, { position: toast.POSITION.TOP_CENTER, autoClose: duration, pauseOnHover: false })
+}
+
+/**
+ * 
+ * @param {String} text 
+ * @param {Number} maxLength 
+ * @returns {String}
+ */
+export function truncateWithEllipsis(text, maxLength) {
+  if (text.length <= maxLength) {
+    return text;
+  } else {
+    return text.substring(0, maxLength - 3) + "...";
+  }
+}
+
+
+/**
+ * 
+ * @param {String} stringPath 
+ * @returns {String}
+ */
+
+export const FromPathTofileName = (stringPath) => {
+  const splitPath = stringPath.split("/");
+  const fullName = splitPath[splitPath.length-1];
+  const fullNameSpliiter = fullName.split("_");
+  return fullNameSpliiter.slice(2, fullNameSpliiter.length).join("_");
+}
+
+export const mappingFormatValue = (key)=> {
+  const object = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/pdf': 'pdf'
+  }
+  return object[key] ? object[key] : "N/A"
+}
+
+  // Convert UTC time to BDT
+  export function countDelayDays(data){
+    const convertUTCToBDT = (utcDate) => {
+      const date = new Date(utcDate);
+      // BDT is UTC +6 hours
+      date.setHours(date.getHours() + 6);
+      return date;
+    };
+    
+    // Define the target time in BDT
+    const targetHour = 8;
+    const targetMinute = 35;
+    
+    // Calculate the total delay count
+    const totalDelayCount = data.reduce((acc, curr) => {
+      if (curr.present) {
+        const checkInTime = curr.checkIn ? convertUTCToBDT(curr.checkIn) : null;
+        const modifiedCheckInTime = curr.modifiedCheckIn && curr.modifiedCheckIn !== 'Unspecified' 
+          ? convertUTCToBDT(curr.modifiedCheckIn) 
+          : null;
+    
+        const checkTime = modifiedCheckInTime || checkInTime;
+    
+        if (checkTime) {
+          const hour = checkTime.getUTCHours();
+          const minute = checkTime.getUTCMinutes();
+    
+          // Check if the check time is later than the target time
+          if (hour > targetHour || (hour === targetHour && minute > targetMinute)) {
+            acc += 1;
+          }
+        }
+      }
+      return acc;
+    }, 0);
+
+    return totalDelayCount;
+
+}

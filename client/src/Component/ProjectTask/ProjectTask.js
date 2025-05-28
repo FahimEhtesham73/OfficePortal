@@ -108,16 +108,14 @@ function uniqueObj(data) {
 // const taskStatus = ['open', 'doing', 'pause', 'done'];
 // const priorityStat = ['high', 'medium', 'low']
 export const taskTypes = ["feature", "bug", "test", "meeting", "research", "design", "others"]
-const ProjectTaskBoard = ({ membersNameId }) => {
-    const jwt = Cookies.get("_token");
+const ProjectTaskBoard = ({ membersNameId, projectDetails }) => {
+    const jwt = localStorage.getItem('_token');
     const user = userInfo();
     const role = userRole();
     // const role = 
     const [allTask, setAllTask] = useState([]);
-
-
     const [tasks, setTasks] = useState([]);
-    const { id: projectCode } = useParams()
+    const { subId: projectCode } = useParams()
     const { board, setBoard } = useBoard();
     const [task, setTask] = useState({
         projectCode: projectCode,
@@ -161,7 +159,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
         endTime: "",
         taskType: [],
         sortBy: "",
-        status:""
+        status: ""
     })
     // console.log("query", query);
 
@@ -179,6 +177,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     const handleModalClose = () => {
         setOpenModal(false);
     };
+
     const getAllTask = async () => {
         try {
             const response = await getAllTaskApi(projectCode, jwt);
@@ -196,9 +195,10 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     useEffect(() => {
         // console.log("ALL Task changed");
         setAllTask(allTask)
+        setBoard(taskDataPrepration(allTask))
 
-    }, [allTask])
-  
+    }, [allTask,])
+
 
     // console.log("all task",allTask);
 
@@ -217,8 +217,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 page: pageNum
             },
 
-        }
-
+        }        
 
         try {
             if (data.query.startTime && data.query.endTime && data.query.startTime > data.query.endTime) {
@@ -233,9 +232,12 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             if (response.status === 200) {
                 const responseData = await response.json();
 
+                
                 responseData.data.length <= 0 ? setPageNumber((prev) => prev - 1) : setPageNumber((prev) => prev)
-                setAllTask([...taskList, ...responseData.data])
+                // setAllTask([...taskList, ...responseData.data])
+                setAllTask((prev)=> [...prev, ...responseData.data])
                 setBoard(taskDataPrepration([...taskList, ...responseData.data]))
+                console.log({allTask}, {responseData});
             } else {
                 toast.warning("Fetching error", {
                     position: toast.POSITION.TOP_CENTER,
@@ -257,26 +259,51 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const handleCardMove = (_card, source, destination) => {
-        if(_card.assignedMembers.includes(userInfo()._id) || ["Admin", "Project Lead", "Team Lead"].includes(role)){
+
+        if (projectDetails.isCurrentlyActive ===  true) {
+            toast.warning("This Project is Locked ", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            });
+            setTask({
+                ...task,
+                taskName: "",
+                startTime: "",
+                endTime: "",
+                status: "",
+                totalHour: "",
+                additionalNotes: "",
+                assignedMembers: [],
+                assignedMembersNameId: [],
+                priority: "",
+                progress: "",
+                taskType: ""
+            })
+            return;
+        }
+        if (_card.assignedMembers.includes(userInfo()._id) || ["Admin", "Project Lead", "Team Lead"].includes(role)) {
 
             const fromCloumn = board.columns[source.fromColumnId - 1];
             let status = board.columns[destination.toColumnId - 1].title.toLowerCase();
             const updatedBoard = moveCard(board, source, destination)
             // console.log(updatedBoard);
             setBoard(updatedBoard)
-    
+
             statusChangeOnDrag(_card, status).then(() => {
-    
+
             }).catch(err => {
                 // console.log(err);
                 const updateBoard = moveCard(board, destination, source)
                 setBoard(updateBoard)
             })
-        }else{
+        } else {
 
-            return toast.warning("You are not authorize to update the task status", {position: toast.POSITION.TOP_CENTER,
+            return toast.warning("You are not authorize to update the task status", {
+                position: toast.POSITION.TOP_CENTER,
                 autoClose: 1000,
-                pauseOnHover: false,})
+                pauseOnHover: false,
+            })
         }
 
     }
@@ -330,14 +357,15 @@ const ProjectTaskBoard = ({ membersNameId }) => {
             })
         }
     }
+
     useEffect(() => {
         fetchSummary()
     }, [projectCode])
 
 
-    // useEffect(() => {
-    //     getAllTask()
-    // }, [projectCode])
+    useEffect(() => {
+        getAllTask()
+    }, [projectCode])
 
     useEffect(() => {
         filterTask(1, allTask)
@@ -354,30 +382,31 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
     const statusChangeOnDrag = async (card, status, cb) => {
         // setLoading(true)
-            const cardData = {
-                taskid: card._id,
-                pcd: projectCode,
-                updatedData: {
-                    status: status.toLowerCase()
-                }
-            }
-    
-            const response = await updateATaskApi(cardData, jwt);
-            if (response.status === 200) {
-                fetchSummary()
-                // setLoading(false)
-                const responseData = await response.json();
-                const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
-                setAllTask(modifiedArray)
-                // console.log("Modified array",modifiedArray);
-                // console.log("after change status", responseData);
-            } else {
-                // setLoading(false)
-                await filterTask(pageNumber, allTask)
-                throw new Error("Error occured")
-            }
 
-        
+        const cardData = {
+            taskid: card._id,
+            pcd: projectCode,
+            updatedData: {
+                status: status.toLowerCase()
+            }
+        }
+
+        const response = await updateATaskApi(cardData, jwt);
+        if (response.status === 200) {
+            fetchSummary()
+            // setLoading(false)
+            const responseData = await response.json();
+            const modifiedArray = replaceKeyValue(allTask, '_id', responseData.data[0]._id, responseData.data[0])
+            setAllTask(modifiedArray)
+            // console.log("Modified array",modifiedArray);
+            // console.log("after change status", responseData);
+        } else {
+            // setLoading(false)
+            await filterTask(pageNumber, allTask)
+            throw new Error("Error occured")
+        }
+
+
 
     }
 
@@ -398,6 +427,30 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const updateSingleTask = async (taskId, projectCode) => {
+        if (projectDetails.isCurrentlyActive ===  true) {
+            toast.warning("This Project is Locked ", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            });
+            setTask({
+                ...task,
+                taskName: "",
+                startTime: "",
+                endTime: "",
+                status: "",
+                totalHour: "",
+                additionalNotes: "",
+                assignedMembers: [],
+                assignedMembersNameId: [],
+                priority: "",
+                progress: "",
+                taskType: ""
+            })
+            setEdit(false)
+            setOpenModal(false)
+            return;
+        }
         let updatedData = {
             taskName: singleTask?.taskName,
             assignedMembers: singleTask?.assignedMembers,
@@ -450,7 +503,30 @@ const ProjectTaskBoard = ({ membersNameId }) => {
     }
 
     const deleateATask = async (data) => {
-
+        if (projectDetails.isCurrentlyActive ===  true) {
+            toast.warning("This Project is Locked ", {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 1000,
+                pauseOnHover: false,
+            });
+            setTask({
+                ...task,
+                taskName: "",
+                startTime: "",
+                endTime: "",
+                status: "",
+                totalHour: "",
+                additionalNotes: "",
+                assignedMembers: [],
+                assignedMembersNameId: [],
+                priority: "",
+                progress: "",
+                taskType: ""
+            })
+            setEdit(false)
+            setOpenModal(false)
+            return;
+        }
         const response = await deleteSingleTaskApi(data, jwt);
         // console.log("Delete Task",data);
         let responseData = await response.json();
@@ -461,9 +537,14 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 autoClose: 1000,
                 pauseOnHover: false,
             })
+            console.log({allTask});
+            
             const filteredData = allTask.filter((val) => val._id !== data.taskId)
-
-            await filterTask(pageNumber, filteredData)
+            console.log({filteredData});
+            
+            // await filterTask(pageNumber, filteredData)
+            setAllTask(filteredData)
+            
         } else {
             toast.warning(response?.data?.message || "Something went wrong", {
                 position: toast.POSITION.TOP_CENTER,
@@ -593,8 +674,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                                 renderValue={(selected) => <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                     {selected.map((value) => (
                                                         <Chip key={value} label={value.split("_")[1]}
-
-
                                                         />
                                                     ))}
 
@@ -662,30 +741,30 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                     {/* Search by status */}
                                     <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }} >
 
-                                            <FormControl fullWidth>  
-                                            <InputLabel id="demo-simple-select-label">Status</InputLabel>                                        
-                                                <Select
-                                                    sx={{ width: "50%" }}
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    // size="small"
-                                                    label="Select Type"
-                                                    value={query.status}
-                                                    onChange={(e) => {
-                                                        console.log(e.target.value);
-                                                         setQuery({ ...query, status: e.target.value })
-                                                    }}
-                                                >
-                                                    {[...taskStatus, "missed"].map((v, i) => (
-                                                        <MenuItem key={i} value={v} >{v}</MenuItem>
-                                                    ))
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                                            <Select
+                                                sx={{ width: "50%" }}
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                // size="small"
+                                                label="Select Type"
+                                                value={query.status}
+                                                onChange={(e) => {
+                                                    // console.log(e.target.value);
+                                                    setQuery({ ...query, status: e.target.value })
+                                                }}
+                                            >
+                                                {[...taskStatus, "missed"].map((v, i) => (
+                                                    <MenuItem key={i} value={v} >{v}</MenuItem>
+                                                ))
 
-                                                    }
+                                                }
 
-                                                </Select>
-                                            </FormControl>
+                                            </Select>
+                                        </FormControl>
 
-                                      
+
                                     </Box>
 
                                     <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center" }}>
@@ -764,7 +843,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                             <TaskSummary data={data} othersData={othersData} />
                         </AccordionDetails>
                     </Accordion>
-
                 </div>
 
                 <Board
@@ -773,12 +851,9 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                     allowRemoveCard
                     onCardDragEnd={handleCardMove}
                     disableColumnDrag
-                    
+
                     renderCard={(props) => (
                         <div
-
-                            
-
                             data-id={props?.assignedMembers?.join(",")} onDoubleClick={(e) => {
                                 getSingleTask({ taskId: props._id, projectCode: props.projectCode });
                                 setOpenModal(true);
@@ -844,7 +919,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                 // description: {...detail}
                             };
 
-                            console.log("card", card);
+                            // console.log("card", card);
 
                             const updatedBoard = addCard(board, props, card)
                             setBoard(updatedBoard)
@@ -868,8 +943,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
 
                                         if (user?.role?.name !== "admin") {
                                             setTask({
-
-
                                                 ...task,
                                                 status: props.title.toLowerCase(),
                                                 assignedMembers: [user._id],
@@ -883,7 +956,7 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                 />
                                 <AddTaskModal visible={modalOpened} handleCardAdd={handleCardAdd} status={props.title} projectCode={projectCode} membersNameId={membersNameId}
                                     setAllTask={setAllTask} allTask={allTask} filterTask={filterTask} pageNumber={pageNumber}
-                                    task={task} setTask={setTask} setPageNumber={setPageNumber} fetchSummary={fetchSummary}
+                                    task={task} setTask={setTask} setPageNumber={setPageNumber} fetchSummary={fetchSummary} projectDetails={projectDetails}
                                     onClose={() => {
 
                                         setModalOpened(false)
@@ -900,7 +973,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                                             progress: "",
                                             taskType: ""
                                         })
-
                                     }} />
                             </div>
                         )
@@ -909,8 +981,6 @@ const ProjectTaskBoard = ({ membersNameId }) => {
                 >
                     {board}
                 </Board>
-
-
 
                 < >
                     {/* <Button onClick={toggleDrawer(true)}>Add</Button> */}

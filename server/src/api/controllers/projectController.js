@@ -4,6 +4,8 @@ const { updateAProject } = require("../services/projectServices");
 const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { projectSuperVisorLookupSatge, projectLeadLookupSatge, projectMembersLookupSatge, projectStage } = require("../util/projectCommonTemplate");
+const SubProject = require("../models/subProjectModel");
+const ProjectContribution = require("../models/contributionModel");
 
 /********** Project query stages ***********/
 
@@ -23,6 +25,7 @@ function checkObjectValues(obj) {
 
 module.exports.createProject = async (req, res) => {
     try {
+        // console.log("Hitted");
         const erros = validationMessages(validationResult(req).mapped());
         if (isErrorFounds(erros)) return res.status(400).json({ "errors": erros })
 
@@ -54,7 +57,8 @@ module.exports.createProject = async (req, res) => {
 
         const project = await Project.create({ ...data });
 
-    
+        const subProject = await SubProject.create({...data, projectId:projectCode})
+
         const newProject = await Project.aggregate([
             {
                 $match: {
@@ -231,9 +235,8 @@ module.exports.getAPoroject = async (req, res) => {
 
 module.exports.getAllPoroject = async (req, res) => {
     try {
-
-
         const args = {};
+        const userId = new mongoose.Types.ObjectId(req.user._id);
         const matchStage = {
             $match: {
                 $or: [
@@ -243,6 +246,25 @@ module.exports.getAllPoroject = async (req, res) => {
                 ]
             }
         }
+
+        const lookupSubProjects = {
+            $lookup: {
+                from: 'subprojects',  // Ensure this matches the actual collection name
+                localField: 'projectCode',
+                foreignField: 'projectId',
+                as: 'subProjects'
+            }
+        };
+
+        const matchUserInSubProjects = {
+            $match: {
+                $or: [
+                    { 'subProjects.projectLead': userId },
+                    { 'subProjects.projectMembers': userId },
+                    { 'subProjects.projectSuperVisor': userId }
+                ]
+            }
+        };
   
         // const projects = await Project.find({$or: [{projectLead: {$eq: req.user._id}}, {projectSuperVisor: {$eq: req.user._id}}, {projectMembers: req.user._id} ]}).populate("firstName users").lean();
         if (req.user.role.alias === "Admin") {
@@ -260,8 +282,11 @@ module.exports.getAllPoroject = async (req, res) => {
             return res.status(200).json({ "message": "successfull", data: projects });
         }
 
+
         const projects = await Project.aggregate([
             matchStage,
+            // lookupSubProjects,
+            // matchUserInSubProjects,
             projectSuperVisorLookupSatge,
             // { $unwind: "$projectSuperVisorDetails" },
 
@@ -282,12 +307,13 @@ module.exports.getAllPoroject = async (req, res) => {
 }
 
 module.exports.deleteSingleProject = async (req, res) => {
-    const { projectId } = req.body;
+    const { projectId, projectCode } = req.body;
     const project = await Project.findOne({_id: projectId});
     if (!project) return res.status(400).json("project not found");
     await Project.findOneAndDelete({_id: projectId});
+    await SubProject.deleteMany({projectId: projectCode})
+    await ProjectContribution.deleteMany({projectCode})
     return res.status(200).json("successfully deleted");
-
 }
 
 module.exports.getProjectUsers = async (req, res) => {

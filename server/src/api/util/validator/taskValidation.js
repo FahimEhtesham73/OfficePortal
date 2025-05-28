@@ -151,7 +151,7 @@ module.exports.filterTaskValidation = [
         return true;
     }),
     body("query.priority").custom(v=>{
-        let list = TASKSTATUSTYPES
+        let list = TASKPRIORITIES
         if(v.length>0){
             return v.every(i=> list.includes(i))
         }

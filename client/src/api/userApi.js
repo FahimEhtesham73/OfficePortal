@@ -72,3 +72,22 @@ export const passwordChangeApi = async (data, token) => {
         credentials: 'include',
       })
 }
+
+export const getLateAttendences = async (data, token) => {
+    return await axios.get(`${process.env.REACT_APP_URL}/users/updatedisiplinaryactioncount?year=${data.year}&userId=${data.userId}`, {headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        
+    }})
+
+}
+
+export const updateLateAttendencesAction = async (data, token) => {
+    return await axios.post(`${process.env.REACT_APP_URL}/users/updatedisiplinaryactioncount`, data, {headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        
+    }})
+
+}
+

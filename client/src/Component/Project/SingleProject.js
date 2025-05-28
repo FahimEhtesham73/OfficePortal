@@ -38,9 +38,9 @@ const ExpandMore = styled((props) => {
 }));
 
 const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
- ".MuiCardHeader-title" : {
-  fontSize: "1.2rem"
- }
+  ".MuiCardHeader-title": {
+    fontSize: "1.2rem"
+  }
 }));
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -55,14 +55,14 @@ const Item = styled(Paper)(({ theme }) => ({
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
-      padding: theme.spacing(2),
-      overflowY: 'revert',
+    padding: theme.spacing(2),
+    overflowY: 'revert',
     marginTop: '20px'
   },
   '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-      overflowY: 'revert',
-      marginTop: '20px'
+    padding: theme.spacing(1),
+    overflowY: 'revert',
+    marginTop: '20px'
   },
 }));
 
@@ -70,23 +70,23 @@ function BootstrapDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-      <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-          {children}
-          {onClose ? (
-              <IconButton
-                  aria-label="close"
-                  onClick={onClose}
-                  sx={{
-                      position: 'absolute',
-                      right: 8,
-                      top: 8,
-                      color: (theme) => theme.palette.grey[500],
-                  }}
-              >
-                  {/* <CloseIcon /> */}
-              </IconButton>
-          ) : null}
-      </DialogTitle>
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          {/* <CloseIcon /> */}
+        </IconButton>
+      ) : null}
+    </DialogTitle>
   );
 }
 
@@ -95,10 +95,9 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-const SingleProject = ({project, deleteHandler}) => {
+const SingleProject = ({ project, deleteHandler }) => {
 
-  const jwt = Cookies.get("_token");
-  
+  const jwt = localStorage.getItem('_token');
 
   const navigate = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
@@ -114,49 +113,49 @@ const SingleProject = ({project, deleteHandler}) => {
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
-    console.log(event);
+    // console.log(event);
     setAnchorEl(event.currentTarget);
-};
-const handleClose = () => {
+  };
+  const handleClose = () => {
     setAnchorEl(null);
-};
+  };
 
-// For Modal open
-const handleClickOpen = () => {
+  // For Modal open
+  const handleClickOpen = () => {
     setModalOpen(true);
-};
-// For Modal Close
-const handleClickClose = () => {
+  };
+  // For Modal Close
+  const handleClickClose = () => {
     setModalOpen(false);
-};
+  };
 
-const settings = ['Delete Project'];
+  const settings = ['Delete Project'];
 
 
-const menu = (
-  <Menu
+  const menu = (
+    <Menu
       sx={{ mt: '45px' }}
       id="menu-appbar"
       anchorEl={anchorEl}
       anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+        vertical: 'top',
+        horizontal: 'right',
       }}
       keepMounted
       transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+        vertical: 'top',
+        horizontal: 'right',
       }}
       open={Boolean(anchorEl)}
       onClose={handleClose}
-  >
+    >
       {settings.map((setting) => (
-          <MenuItem key={setting} onClick={handleClose}>
-              <Typography textAlign="center" onClick={handleClickOpen}>{setting}</Typography>
-          </MenuItem>
+        <MenuItem key={setting} onClick={handleClose}>
+          <Typography textAlign="center" onClick={handleClickOpen}>{setting}</Typography>
+        </MenuItem>
       ))}
-  </Menu>
-)
+    </Menu>
+  )
 
   // useEffect(()=> {
   //   getAllProject("", )
@@ -193,136 +192,136 @@ const menu = (
   return (
     // <Box sx={{marginLeft:{sm:'30px',md:"280px"}}}>
     <div className='p-2'>
-    <Card  elevation={'4'} sx={{  width: '100%', padding: "1rem"}}>
-      <StyledCardHeader
-      sx={{cursor: "pointer"}}
-      // onClick={()=> {
-      //   navigate(`${project._id}`)
-      // }}
-        
-      action={
-        userRole() === "Admin" && (
+      <Card elevation={'4'} sx={{ width: '100%', padding: "1rem" }}>
+        <StyledCardHeader
+          sx={{ cursor: "pointer" }}
+          // onClick={()=> {
+          //   navigate(`${project._id}`)
+          // }}
 
-        <IconButton aria-label="settings" onClick={handleClick}>
-            <MoreVertIcon />
-        </IconButton>
-        )
-    }
-        title={ <p onClick={()=> {
-        navigate(`${project.projectCode}`)
+          action={
+            userRole() === "Admin" && (
 
-        }}> {project.projectName} </p> }
-        
-        
-      />
-       { menu}
+              <IconButton aria-label="settings" onClick={handleClick}>
+                <MoreVertIcon />
+              </IconButton>
+            )
+          }
+          title={<p onClick={() => {
+            navigate(`${project.projectCode}`)
 
-      <Divider />
-      
-      <CardContent>
-      <Typography variant="body2" color="text.secondary">
-          {/* Owner: {project?.projectOwner} */}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {project?.projectDescription.slice(0,30)} {project?.projectDescription?.length> 30? "...": ""}
-        </Typography>
-      </CardContent>
-      <Stack spacing={{ xs: 1, sm: 2 }} direction="row" justifyContent={"space-between"} useFlexGap flexWrap="wrap">
+          }}> {project.projectName} </p>}
+
+
+        />
+        {menu}
+
+        <Divider />
+
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {/* Owner: {project?.projectOwner} */}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {project?.projectDescription.slice(0, 30)} {project?.projectDescription?.length > 30 ? "..." : ""}
+          </Typography>
+        </CardContent>
+        <Stack spacing={{ xs: 1, sm: 2 }} direction="row" justifyContent={"space-between"} useFlexGap flexWrap="wrap">
+          <div className='p-2'>
+            <Typography color={""}>Started</Typography>
+            <Typography color={"GrayText"}>{new Date(project.projectStartTime).toDateString()}</Typography>
+          </div>
+          <div className='p-2'>
+            <Typography>Dead Line</Typography>
+            <Typography color={"GrayText"}>{new Date(project.projectEndTime).toDateString()}</Typography>
+          </div>
+        </Stack>
         <div className='p-2'>
-          <Typography color={""}>Started</Typography>
-          <Typography color={"GrayText"}>{new Date(project.projectStartTime).toDateString()}</Typography>
+          <Typography>Supervisor</Typography>
+          <Stack direction="row" spacing={2}>
+            {project?.projectSuperVisorDetails.map((m) => {
+              return (
+                <Tooltip title={m.firstName}>
+                  <Avatar imgProps={{ crossOrigin: "false" }} alt={m?.firstName} src={profileImg(m?.imagePath)} />
+                </Tooltip>
+              )
+            })}
+          </Stack>
         </div>
         <div className='p-2'>
-        <Typography>Dead Line</Typography>
-          <Typography color={"GrayText"}>{new Date(project.projectEndTime).toDateString()}</Typography>
+          <Typography>Leader</Typography>
+          <Stack direction="row" spacing={2}>
+            {project?.projectLeadDetails.map((m) => {
+              return (
+                <Tooltip title={m.firstName}>
+                  <Avatar imgProps={{ crossOrigin: "false" }} alt={m?.firstName} src={profileImg(m?.imagePath)} />
+                </Tooltip>
+              )
+            })}
+          </Stack>
+
         </div>
-      </Stack>
-      <div className='p-2'>
-        <Typography>Supervisor</Typography>
-        <Stack direction="row" spacing={2}>
-          {project?.projectSuperVisorDetails.map((m)=> {
-            return (
-        <Tooltip title={m.firstName}>
-            <Avatar imgProps={{crossOrigin: "false"}} alt={m?.firstName} src={profileImg(m?.imagePath)} />
-        </Tooltip>
-            )
-          })}
-          </Stack>
-      </div>
-      <div className='p-2'>
-        <Typography>Leader</Typography>
-        <Stack direction="row" spacing={2}>
-          {project?.projectLeadDetails.map((m)=> {
-            return (
-        <Tooltip title={m.firstName}>
-            <Avatar imgProps={{crossOrigin: "false"}} alt={m?.firstName} src={profileImg(m?.imagePath)} />
-        </Tooltip>
-            )
-          })}
-          </Stack>
+        <div className='p-2'>
+          <Typography>Members</Typography>
 
-      </div>
-      <div className='p-2'>
-        <Typography>Members</Typography>
+          <AvatarGroup total={project.projectMembersList.length} sx={{ display: "flex", justifyContent: "left" }}>
+            {project.projectMembersList.map((m) => {
+              return (
+                <Tooltip title={`${m.firstName}`}>
+                  <Avatar imgProps={{ crossOrigin: "false" }} alt="profile-img" src={profileImg(m.imagePath)} />
 
-        <AvatarGroup total={project.projectMembersList.length} sx={{display: "flex", justifyContent: "left"}}>
-          {project.projectMembersList.map((m)=> {
-            return (
-              <Tooltip title={`${m.firstName}`}>
-                <Avatar imgProps={{crossOrigin: "false"}} alt="profile-img" src={profileImg(m.imagePath)} />
+                </Tooltip>
 
-              </Tooltip>
+              )
 
-            )
+            })}
 
-          })}
-          
-        </AvatarGroup>
+          </AvatarGroup>
 
-      </div>
-      <Divider />
-      
-    </Card>
+        </div>
+        <Divider />
+
+      </Card>
 
 
 
-    <BootstrapDialog
-                onClose={handleClickClose}
-                aria-labelledby="customized-dialog-title"
-                open={modalOpen}
-                PaperProps={{
-                    sx: {
-                      width: "40%",
-                      height: 150,
-                      display:"flex",
-                      alignItems:"center"
-                    }
-                  }}
-            >
-                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
-                    Are you sure want to Delete {project.projectName} project
-                </BootstrapDialogTitle>
-                {/* <Box>
+      <BootstrapDialog
+        onClose={handleClickClose}
+        aria-labelledby="customized-dialog-title"
+        open={modalOpen}
+        PaperProps={{
+          sx: {
+            width: "40%",
+            height: 150,
+            display: "flex",
+            alignItems: "center"
+          }
+        }}
+      >
+        <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
+          Are you sure want to Delete {project.projectName} project
+        </BootstrapDialogTitle>
+        {/* <Box>
                     
                 </Box> */}
-                <DialogActions sx={{display:"flex",justifyContent:"center",marginTop:"10px"}}>
+        <DialogActions sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
 
-                    <Button variant="contained" color='error' sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={()=> {
-                      deleteHandler(project._id)
-                      setModalOpen(false);
-                    }}>
-                        Yes
-                    </Button>
-                    <Button variant="contained" sx={{borderRadius:"50px",width:150,bottom:0}}autoFocus onClick={handleClickClose}>
-                        No
-                    </Button>
-                </DialogActions>
+          <Button variant="contained" color='error' sx={{ borderRadius: "50px", width: 150, bottom: 0 }} autoFocus onClick={() => {
+           deleteHandler(project._id, project.projectCode)
+            setModalOpen(false);
+          }}>
+            Yes
+          </Button>
+          <Button variant="contained" sx={{ borderRadius: "50px", width: 150, bottom: 0 }} autoFocus onClick={handleClickClose}>
+            No
+          </Button>
+        </DialogActions>
 
-            </BootstrapDialog>
+      </BootstrapDialog>
 
     </div>
 
-//   </Box>
+    //   </Box>
   );
 }
 

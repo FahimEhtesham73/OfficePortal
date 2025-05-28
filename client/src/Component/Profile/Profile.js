@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import Loading from "../Hook/Loading/Loading.js";
 import { useParams } from "react-router-dom";
 import userInfo from "../Hook/useUseInfo.js";
+
 import dayjs from "dayjs";
 import imageSrc from "../../images/saimom.jpg";
-import { Avatar, Button, DialogContent, FormControl, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Button, DialogContent, FormControl, IconButton, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -18,8 +19,8 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { red } from "@mui/material/colors";
 import moment from "moment"
 import Cookies from 'js-cookie';
-import { makeStyles } from "@material-ui/core"
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { makeStyles, Paper } from "@material-ui/core"
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import { styled } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import Dialog from '@mui/material/Dialog';
@@ -28,13 +29,35 @@ import CloseIcon from '@mui/icons-material/Close';
 import DialogActions from '@mui/material/DialogActions';
 import UploadIcon from '@mui/icons-material/Upload';
 import Input from '@mui/material/Input';
-import { fileUpload, getCvApi } from "../../api/userApi.js";
+import { fileUpload, getCvApi, getLateAttendences, updateLateAttendencesAction } from "../../api/userApi.js";
 import { profileImg } from "../functions/commonFunc.js";
 import { getAllRoles } from "../../api/roleApi.js";
 import { createLeaveBoardApi, getUserLeaveBoardApi } from "../../api/leaveRequestApi.js";
+import RemoveIcon from '@mui/icons-material/Remove';
+
+const MONTHKEYVAL = {
+    "01": "January",
+    "02": "February",
+    "03": "March",
+    "04": "April",
+    "05": "May",
+    "06": "June",
+    "07": "July",
+    "08": "August",
+    "09": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+};
 
 
+function getFirstDayOfMonth(year, month) {
+    // console.log(year);
 
+    // console.log(new Date(year, month - 1, 5));
+
+    return new Date(year, month - 1, 5); // month - 1 to convert 1-indexed month to 0-indexed
+}
 // Modal Styling
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -131,7 +154,8 @@ const StyledTextarea = styled(TextareaAutosize)(
 );
 
 const Profile = () => {
-    const jwt = Cookies.get('_token')
+    // console.log("Profile");
+    const jwt = localStorage.getItem('_token')
     const styles = useStyles();
     const { id } = useParams();
     const [file, setFile] = useState();
@@ -151,6 +175,7 @@ const Profile = () => {
     const [openModal, setOpenModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [roles, setRoles] = useState([]);
+    const [year, setYear] = useState(new Date().toLocaleString())
     // For Modal open
     const handleModalOpen = () => {
         setOpenModal(true);
@@ -212,12 +237,15 @@ const Profile = () => {
         empId: userData?.empId,
         birthDate: userData?.birthDate,
         joiningDate: userData?.joiningDate,
-        role: userData?.role?._id
+        role: userData?.role?._id,
+        officeTimeSlot: userData?.officeTimeSlot
     })
 
     const [updateLeaveSettings, setUpdateLeaveSettings] = useState({
 
     })
+
+    const officeTime = ["9:00 AM", "11:00 AM", "2:00 PM"]
 
 
 
@@ -297,6 +325,7 @@ const Profile = () => {
             }
         );
         const data = await res.json();
+        // console.log({data});
         const tempInfo = data[0];
         if (res.status === 200) {
             setUserData(data[0]);
@@ -333,14 +362,16 @@ const Profile = () => {
         }
     };
 
+    // console.log("User Info",userInfoData?.role?.alias);
+
     const getImagePath = (imagePath) => {
         const pathArray = imagePath.split("/");
         const lastTwo = `${pathArray[pathArray.length - 2]}/${pathArray[pathArray.length - 1]}`
-        console.log("last two", lastTwo);
+        // console.log("last two", lastTwo);
         return lastTwo;
     }
     const updateUser = async (card) => {
-        console.log("Card Name", card);
+        // console.log("Card Name", card);
 
         var sentData;
         if (card === "intro") {
@@ -493,6 +524,82 @@ const Profile = () => {
         getSingleUser();
         getUsersLeave();
     }, [id]);
+    const [lateAttendance, setLateAttendece] = useState({})
+
+    const updatedisiplinaryactioncount = async (val, date) => {
+        try {
+            if (val < 0) {
+
+                toast.warning("Value can't be negetive", { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
+                return
+            }
+            const request = {
+                userId: id,
+                date: date,
+                lateAId: lateAttendance._id
+            }
+
+            // console.log(request);
+
+
+            const result = await updateLateAttendencesAction(request, jwt);
+            if (result.status === 200) {
+                await getLateAttendancessheet()
+            }
+        } catch (err) {
+
+        }
+    }
+    const getLateAttendancessheet = async () => {
+        try {
+            const request = {
+                year: new Date(year).getFullYear(),
+                userId: id
+            }
+
+
+            const data = await getLateAttendences(request, jwt);
+            if (data.status === 200) {
+                setLateAttendece(data.data.data)
+
+            }
+
+        } catch (err) {
+            console.log(err);
+
+        }
+    }
+
+    const disciplinaryCounts = lateAttendance?.disciplinaryActionCounts && normalizeDisciplinaryActionCounts(lateAttendance?.disciplinaryActionCounts) || {};
+
+    function normalizeDisciplinaryActionCounts(data) {
+
+        // Initialize the result with 0 for each group
+        const result = {
+            "0-2": 0,
+            "3-5": 0,
+            "6-8": 0,
+            "9-11": 0
+        };
+    
+        // Loop through the keys in the input data
+        for (const [key, value] of Object.entries(data)) {
+            // Check if the key contains a hyphen (indicating it's a year-specific entry)
+            const group = key.includes('-') ? key.split('-').slice(1).join('-') : key;
+    
+            // Add the value to the corresponding group if it exists
+            if (result.hasOwnProperty(group)) {
+                result[group] += value;
+            }
+        }
+    
+        return result;
+    }
+
+    useEffect(() => {
+        getLateAttendancessheet()
+
+    }, [id, year])
 
     useEffect(() => {
         getAllDesignations();
@@ -538,48 +645,48 @@ const Profile = () => {
                                                 <Avatar imgProps={{ crossOrigin: "false" }} alt='Employee' src={profileImg(userData?.imagePath)} sx={{ width: 120, height: 120 }} />
 
                                                 {(userInfoData?._id === id) ? (
-                                                <div class="middle">
-                                                    <label for="file-input" style={{ color: "#2776d3" }}>
-                                                        <UploadIcon sx={{ color: "#2776D3" }} />
-                                                        Upload
-                                                    </label>
-                                                    <input id="file-input" accept="image/*" type="file" style={{ display: "none" }}
+                                                    <div class="middle">
+                                                        <label for="file-input" style={{ color: "#2776d3" }}>
+                                                            <UploadIcon sx={{ color: "#2776D3" }} />
+                                                            Upload
+                                                        </label>
+                                                        <input id="file-input" accept="image/*" type="file" style={{ display: "none" }}
 
-                                                        onChange={(e) => {
+                                                            onChange={(e) => {
 
-                                                            let formData = new FormData();
-                                                            formData.append("type", "img")
-                                                            formData.append("userId", id)
-                                                            formData.append("file", e.target.files[0])
-                                                            fileUpload(formData, jwt).then(d => {
-                                                                // setOpenModal(false)
-                                                                if (d.status === 200) {
-                                                                    toast.success("img uploaded successfully", {
-                                                                        position: toast.POSITION.TOP_CENTER,
-                                                                        autoClose: 2000,
-                                                                        pauseOnHover: false,
-                                                                    })
-                                                                    getSingleUser()
-                                                                }
-                                                                else {
+                                                                let formData = new FormData();
+                                                                formData.append("type", "img")
+                                                                formData.append("userId", id)
+                                                                formData.append("file", e.target.files[0])
+                                                                fileUpload(formData, jwt).then(d => {
+                                                                    // setOpenModal(false)
+                                                                    if (d.status === 200) {
+                                                                        toast.success("img uploaded successfully", {
+                                                                            position: toast.POSITION.TOP_CENTER,
+                                                                            autoClose: 2000,
+                                                                            pauseOnHover: false,
+                                                                        })
+                                                                        getSingleUser()
+                                                                    }
+                                                                    else {
 
-                                                                    toast.warning("Something went wrong", {
+                                                                        toast.warning("Something went wrong", {
+                                                                            position: toast.POSITION.TOP_CENTER,
+                                                                            autoClose: 2000,
+                                                                            pauseOnHover: false,
+                                                                        });
+                                                                    }
+                                                                }).catch(err => {
+                                                                    console.log(err.response.data.message);
+                                                                    toast.warning(err?.response?.data?.message || "Something went wrong", {
                                                                         position: toast.POSITION.TOP_CENTER,
                                                                         autoClose: 2000,
                                                                         pauseOnHover: false,
                                                                     });
-                                                            }
-                                                            }).catch(err => {
-                                                                console.log(err.response.data.message);
-                                                                toast.warning(err?.response?.data?.message || "Something went wrong", {
-                                                                    position: toast.POSITION.TOP_CENTER,
-                                                                    autoClose: 2000,
-                                                                    pauseOnHover: false,
-                                                                });
-                                                            })
-                                                        }}
-                                                    />
-                                                </div>
+                                                                })
+                                                            }}
+                                                        />
+                                                    </div>
 
                                                 ) : null}
                                                 {/* </a> */}
@@ -632,7 +739,7 @@ const Profile = () => {
 
                                                             {/* {userData?.firstName} {userData?.lastName} */}
                                                         </h3>
-                                                        {!cardEdit.main ? (<small>{userData?.designation?.name} {`(${roles.length && roles?.find(r => userData.role._id === r._id).alias})`}</small>)
+                                                        {!cardEdit.main ? (<small>{userData?.designation?.name} { }</small>)
                                                             : (
                                                                 <>
                                                                     <br />
@@ -677,6 +784,60 @@ const Profile = () => {
                                                             )
                                                         }
 
+                                                        {/* Office Time Slot */}
+
+                                                        <div>
+                                                            {!cardEdit.main ?
+                                                                <>
+                                                                    Office Time : {userData?.officeTimeSlot || "9:00 AM"}
+                                                                </>
+                                                                : (
+                                                                    <>
+                                                                        <br />
+                                                                        <Select name="designation"
+                                                                            label="Select designation"
+                                                                            size="small"
+                                                                            sx={{ width: .7 }}
+                                                                            value={mainInfo?.officeTimeSlot}
+                                                                            onChange={(e) => {
+                                                                                setMainInfo({ ...mainInfo, officeTimeSlot: e.target.value })
+
+                                                                            }}
+                                                                        >
+
+                                                                            {officeTime.map((val, ind) => {
+                                                                                return (
+                                                                                    <MenuItem key={ind} value={val}>{val}</MenuItem>
+                                                                                )
+                                                                            })}
+                                                                        </Select>
+                                                                        <br />
+                                                                        <br />
+
+                                                                        <Select name="role"
+                                                                            label="Select Role"
+                                                                            size="small"
+                                                                            sx={{ width: .7 }}
+                                                                            value={mainInfo?.role}
+                                                                            onChange={(e) => {
+                                                                                setMainInfo({ ...mainInfo, role: e.target.value })
+
+                                                                            }}
+                                                                        >
+
+                                                                            {roles?.map((val, ind) => {
+                                                                                return (
+                                                                                    <MenuItem key={val._id} value={val?._id}>{val?.alias}</MenuItem>
+                                                                                )
+                                                                            })}
+                                                                        </Select>
+                                                                    </>
+                                                                )
+                                                            }
+                                                        </div>
+
+
+
                                                         <div class="staff-id">
                                                             {!cardEdit.main ? `Employee ID : ${userData?.empId}` : <>
                                                                 <TextField
@@ -697,7 +858,7 @@ const Profile = () => {
                                                         </div>
                                                         <div class="small doj ">
 
-                                                            {!cardEdit.main ? `Date of Join : ${moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")} ` : <>
+                                                            {!cardEdit.main ? `Date of Join : ${moment(mainInfo?.joiningDate).format("YYYY-MM-DD")} ` : <>
 
                                                                 <TextField
                                                                     style={{ marginTop: "10px" }}
@@ -706,7 +867,7 @@ const Profile = () => {
                                                                     type="date"
                                                                     name="joiningDate"
                                                                     label="Joining Date"
-                                                                    value={moment(mainInfo?.joiningDate).utc().format("YYYY-MM-DD")}
+                                                                    value={moment(mainInfo?.joiningDate).format("YYYY-MM-DD")}
                                                                     onChange={(e) => {
                                                                         // console.log(e.target.value);
                                                                         handleFields(e, "main");
@@ -750,7 +911,7 @@ const Profile = () => {
                                                                         {/* <div class="title">Birthday:</div> */}
                                                                         Birthday : {" "}
                                                                         <span class="__cf_email__">
-                                                                            {mainInfo?.birthDate ? moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD") : "N/A"}
+                                                                            {mainInfo?.birthDate ? moment(mainInfo?.birthDate).format("YYYY-MM-DD") : "N/A"}
                                                                         </span>
                                                                     </div> : <>
                                                                         <TextField
@@ -759,7 +920,7 @@ const Profile = () => {
                                                                             type="date"
                                                                             name="birthDate"
                                                                             size="small"
-                                                                            value={moment(mainInfo?.birthDate).utc().format("YYYY-MM-DD")}
+                                                                            value={moment(mainInfo?.birthDate).format("YYYY-MM-DD")}
                                                                             onChange={(e) => {
                                                                                 handleFields(e, "main");
                                                                             }}
@@ -1704,6 +1865,138 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) && (
+                                <div class="col-md-12 d-flex">
+                                    <div class="card profile-box flex-fill">
+                                        <div class="card-body">
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-around",
+                                                    alignItems: "center"
+                                                }}
+                                            >
+
+
+                                                <div>
+
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                        <DesktopDatePicker
+                                                            label="Select Year"
+                                                            value={dayjs(year)}
+                                                            onChange={(e) => {
+                                                                setYear(e['$d'])
+
+                                                            }}
+                                                            views={['year']}
+                                                            renderInput={(params) => <TextField {...params} />}
+                                                        />
+                                                    </LocalizationProvider>
+                                                </div>
+
+                                            </div>
+                                            <div className="row">
+
+
+                                                <div className="col-md-6">
+                                                    <Typography className="text-center">Late Attendance count</Typography>
+                                                    <TableContainer component={Box} sx={{
+                                                        border: "1px solid #b7adad",
+                                                        borderRadius: "5px"
+                                                    }}>
+                                                        <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell align="center">
+                                                                        Month </TableCell>
+                                                                    <TableCell align="center">Late Count</TableCell>
+                                                                    {(userInfoData?._id !== id && userInfoData.role.alias === "Admin") ? (
+                                                                        <TableCell align="center">Decrease Late Count</TableCell>
+
+                                                                    ) : ""}
+
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {Object.values(disciplinaryCounts).length > 0 ? (
+                                                                    lateAttendance.monthlyLateRecords.map((value, index) => (
+                                                                        <TableRow key={index} align="center">
+                                                                            <TableCell align="center">
+                                                                                {MONTHKEYVAL[value.month.split("-")[1]]}
+
+                                                                            </TableCell>
+                                                                            <TableCell align="center">
+                                                                                {value?.lateCount}
+                                                                            </TableCell>
+                                                                            {(userInfoData?._id !== id && userInfoData.role.alias === "Admin") ? (
+                                                                                <TableCell align="center" title="Decrease late count"><IconButton
+
+                                                                                    disabled={value.lateCount <= 0 ? true : false}
+                                                                                    onClick={(e) => {
+                                                                                        const date = `${new Date(year).getFullYear()}-${value.month.split("-")[1]}-05`
+
+                                                                                        updatedisiplinaryactioncount(value.lateCount, date)
+                                                                                    }}
+                                                                                ><RemoveIcon
+                                                                                        sx={{
+                                                                                            color: value.lateCount <= 0 ? "inherit" : "red"
+                                                                                        }}
+                                                                                    /></IconButton></TableCell>
+
+                                                                            ) : ""}
+                                                                        </TableRow>
+                                                                    ))
+                                                                ) : (
+                                                                    <TableCell colSpan={4} align="center">No data available</TableCell> // Placeholder if no data
+                                                                )}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+
+                                                </div>
+                                                <div className="col-md-6">
+                                                    <Typography className="text-center">Disiplinary Action Count</Typography>
+                                                    <TableContainer component={Box} sx={{
+                                                        border: "1px solid #b7adad",
+                                                        borderRadius: "5px"
+                                                    }}>
+                                                        <Table sx={{ minWidth: 300 }} aria-label="simple table">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell align="center">
+                                                                        January-March </TableCell>
+                                                                    <TableCell align="center">April-June</TableCell>
+                                                                    <TableCell align="center">July-September</TableCell>
+                                                                    <TableCell align="center">October-December
+                                                                    </TableCell>
+
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                <TableRow>
+                                                                    {Object.values(disciplinaryCounts).length > 0 ? (
+                                                                        Object.values(disciplinaryCounts).map((value, index) => (
+                                                                            <TableCell key={index} align="center">
+                                                                                {value}
+                                                                            </TableCell>
+                                                                        ))
+                                                                    ) : (
+                                                                        <TableCell colSpan={4} align="center">No data available</TableCell>
+                                                                    )}
+                                                                </TableRow>
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
+
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             {/* Leave Setting */}
                             {(userInfoData?.role?.alias === "Admin" || userInfoData?._id === id) &&
                                 (
@@ -1824,8 +2117,16 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                         </div>
+
+
+
                                     </div>
                                 )}
+
+
+
+
+
                         </div>
                     </div>
                 </div>

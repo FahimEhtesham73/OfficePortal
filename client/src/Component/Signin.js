@@ -15,6 +15,7 @@ import { addUser } from '../store/slices/UserSlice';
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import CryptoJS from 'crypto-js'
 
 const theme = createTheme();
 
@@ -22,8 +23,6 @@ const Signin = () => {
     const dispatch = useDispatch()
     const data = useSelector((state)=>{
         return state.users 
-        //Here users is userSlice which we defined as users in store  
-        //Here state represents the whole state of the project which is store 
     })
     // console.log("User Data",data);
     const [showPassword, setShowPassword] = React.useState(false);
@@ -50,21 +49,23 @@ const Signin = () => {
             withCredentials: true
         })
         const data = await res.json()
-        // console.log(data);
         
         if (res.status !== 200) {
             toast.success('Invalid credentials', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
         }
         else {
-            // localStorage.setItem("userData", JSON.stringify(data))
             dispatch(addUser(data))
+            // const encryptedToken = CryptoJS.AES.encrypt(data._token, "secretkey").toString();
+            // console.log({encryptedToken});
+            localStorage.setItem('_token',data._token)
+            localStorage.setItem('_info',data._info)
             toast.success('Log in successfully', { position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false })
             navigate('/')
         }
     };
     return (
         <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs" sx={{ marginTop: "150px" }}>
+            <Container component="main" maxWidth="xs" >
                 <CssBaseline />
                 <Box
                     sx={{

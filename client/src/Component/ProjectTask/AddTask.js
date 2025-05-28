@@ -9,15 +9,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 import userInfo from '../Hook/useUseInfo';
-import { createProjectTaskApi } from '../../api/projectApi';
+import { createProjectTaskApi, getAllTaskApi } from '../../api/projectApi';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { taskDataPrepration } from '../functions/commonFunc';
+import useBoard from './Board';
 
 export const taskStatus = ['todo', 'in progress', 'pause', 'done'];
 export const priorityStat = ['high', 'medium', 'low']
 
-const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, membersNameId, task, setTask, setAllTask, allTask, pageNumber,filterTask, setPageNumber, fetchSummary }) => {
-    const jwt = Cookies.get("_token")
+const AddTaskModal = ({ visible, onClose, status, projectCode, membersNameId, task, setTask, fetchSummary, projectDetails, setAllTask }) => {
+    const jwt = localStorage.getItem('_token')
     const customStyles = {
         // background: "rgb(58 58 58)",
         padding: "20px",
@@ -27,18 +29,51 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
         maxWidth: "40rem",
         maxHeight: "38rem",
         overflowY: "scroll",
-        
     }
 
     const user = userInfo();
     const [newTaskData, setNewTask] = useState({})
 
+    const getAllTask = async () => {
+        try {
+            const response = await getAllTaskApi(projectCode, jwt);
+            if (response.status === 200) {
+                let data = await response.json()
+                // console.log(data);
+                // setTasks(taskDataPrepration(data.data));
+                // setBoard(taskDataPrepration(data?.data))
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
-
-
+    // console.log({ projectDetails });
     const addTask = async () => {
         try {
-
+            if (projectDetails.isCurrentlyActive ===  true) {
+                toast.warning("This Project is Locked ", {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 1000,
+                    pauseOnHover: false,
+                });
+                setTask({
+                    ...task,
+                    taskName: "",
+                    startTime: "",
+                    endTime: "",
+                    status: "",
+                    totalHour: "",
+                    additionalNotes: "",
+                    assignedMembers: [],
+                    assignedMembersNameId: [],
+                    priority: "",
+                    progress: "",
+                    taskType: ""
+                })
+                onClose(true)
+                return;
+            }
             const data = {
                 projectCode,
                 status: status.toLowerCase(),
@@ -57,7 +92,8 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
             const newTask = await response.json();
             if (response.status === 200) {
                 fetchSummary()
-                setTask({...task, 
+                setTask({
+                    ...task,
                     taskName: "",
                     startTime: "",
                     endTime: "",
@@ -80,6 +116,15 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                     pauseOnHover: false,
                 });
                 onClose(true)
+                // getAllTask()
+                // setBoard()
+                // if(newTask.data.[0].assignedMembers.includes())
+                console.log(user._id, Object.values(newTask.data[0].assignedMembers));
+                
+                if(Object.values(newTask.data[0].assignedMembers).includes(user._id)){                    
+                    setAllTask((prev)=> [...prev, newTask.data[0]])
+                }
+                
             }
             else {
                 toast.warning("Task not added" || "No Update", {
@@ -94,9 +139,9 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
     }
 
     return (
-        <Rodal customStyles={customStyles}  visible={visible} onClose={onClose}>
-            <div className={styles.container} style={{ margin: "1rem 0",  }}>
-                <TextField sx={{ width: "100%", m: "1",  ".MuiOutlinedInput-root ": { width: "100%" } }} type="text" label="Task Name" placeholder="Task" className={styles.input} value={task.taskName} onChange={(e) => setTask({
+        <Rodal customStyles={customStyles} visible={visible} onClose={onClose}>
+            <div className={styles.container} style={{ margin: "1rem 0", }}>
+                <TextField sx={{ width: "100%", m: "1", ".MuiOutlinedInput-root ": { width: "100%" } }} type="text" label="Task Name" placeholder="Task" className={styles.input} value={task.taskName} onChange={(e) => setTask({
                     ...task,
                     taskName: e.target.value
                 })} />
@@ -164,9 +209,11 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
 
                 {/* start - end time */}
-                <Box sx={{ minWidth: 120, m: ".5rem 0", display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between", flexDirection: {
-                    sm: "column", md: "row"
-                } }}>
+                <Box sx={{
+                    minWidth: 120, m: ".5rem 0", display: { xs: "inline-block", sm: "flex" }, justifyContent: "space-between", flexDirection: {
+                        sm: "column", md: "row"
+                    }
+                }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}  >
                         <DemoContainer components={['DatePicker']} sx={{ ".MuiInputBase-input": { height: "39px", p: ".5rem", } }} >
                             <DatePicker label="Start Time *" slotProps={{
@@ -203,7 +250,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
                                         setTask({
                                             ...task,
-                                            endTime: new Date(new Date(e?.['$d']).setHours(23,59,59,999))
+                                            endTime: new Date(new Date(e?.['$d']).setHours(23, 59, 59, 999))
                                         })
                                     }
                                 }}
@@ -214,7 +261,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
                 </Box>
 
                 {/* approx hour  & assigned members*/}
-                <Box sx={{ display: { xs: "block", md: "flex" }, alignItems: "end", justifyContent: "space-between", margin: {gap: {sm: "10px"}}}}>
+                <Box sx={{ display: { xs: "block", md: "flex" }, alignItems: "end", justifyContent: "space-between", margin: { gap: { sm: "10px" } } }}>
                     <Box sx={{ width: { xs: "100%", md: "45%" } }}>
                         <TextField label="Total hour" type="text" placeholder="Total hour" className={styles.input} value={task.totalHour} onChange={(e) => {
 
@@ -230,7 +277,7 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
                     </Box>
 
-                    <Box sx={{ width: { xs: "100%", md: "45%" }, marginTop: {xs: "10px", md: "0"} }}>
+                    <Box sx={{ width: { xs: "100%", md: "45%" }, marginTop: { xs: "10px", md: "0" } }}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Assign To</InputLabel>
 
@@ -330,13 +377,6 @@ const AddTaskModal = ({ visible, onClose, handleCardAdd, status, projectCode, me
 
                     </Box> */}
                 </Box>
-
-
-
-
-
-
-
 
 
                 <div>

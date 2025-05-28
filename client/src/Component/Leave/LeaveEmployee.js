@@ -43,6 +43,11 @@ import LeaveDataTable from './LeaveDataTable';
 import { TextareaAutosize } from '@mui/material';
 import { getAllHoildaysApi } from '../../api/holidayApi';
 import Loading from "../Hook/Loading/Loading";
+
+import { useForm, Controller } from 'react-hook-form';
+import InputAdornment from '@mui/material/InputAdornment';
+import Autocomplete from '@mui/material/Autocomplete';
+
 const daysCount = (date_1, date_2) => {
     if (date_1 && date_2) {
         let difference = date_1.getTime() - date_2.getTime();
@@ -137,7 +142,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogActions-root': {
         padding: theme.spacing(1),
         overflowY: 'revert',
-    marginTop: '20px'
+        marginTop: '20px'
     },
 }));
 
@@ -193,10 +198,8 @@ const leaveStat = [
 ]
 const YEAR = new Date().getFullYear()
 
-// const yearStartDate = new Date(`03/01/${year}`)
-// const yearEndDate = new Date(`02/28/${year+1}`)
 const LeaveEmployee = () => {
-    const jwt = Cookies.get('_token');
+    const jwt = localStorage.getItem('_token');
 
     const [isLoading, setIsLoading] = useState(false);
     const [allHoliday, setAllHoliday] = useState([])
@@ -230,9 +233,28 @@ const LeaveEmployee = () => {
     const getAllHoilday = async () => {
         const respnse = await getAllHoildaysApi(jwt);
         if (respnse.status === 200) {
-            setAllHolidayDate(respnse?.data?.map(v => new Date(v.date).toISOString().split("T")[0]));
+            const allHolidayDate = [...respnse?.data?.map(v => getDatesBetween(v?.startDate, v?.endDate))]
+            setAllHolidayDate(allHolidayDate.flat());
             setAllHoliday(respnse.data)
         }
+    }
+    function getDatesBetween(startDateStr, endDateStr) {
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        const dates = [];
+
+        // Adjust for time zone differences
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+
+        let currentDate = startDate;
+
+        while (currentDate <= endDate) {
+            dates.push(currentDate.toISOString().split('T')[0]);
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return dates;
     }
     // For Action icon open
     const handleClick = (event) => {
@@ -250,12 +272,13 @@ const LeaveEmployee = () => {
             leaveReason: ""
 
         })
-
     };
+
     // For Modal open
     const handleClickOpen = () => {
         setOpen(true);
     };
+
     // For Modal Close
     const handleClickClose = () => {
         setOpen(false);
@@ -269,10 +292,6 @@ const LeaveEmployee = () => {
 
         })
     };
-    function createData(type, from, to, day, reason, status, approvedby) {
-        return { type, from, to, day, reason, status, approvedby };
-    }
-
 
     const createALeaveRequest = async () => {
         try {
@@ -322,7 +341,7 @@ const LeaveEmployee = () => {
                     })
                     getLeaveData()
 
-                }else{
+                } else {
                     const responseData = await response.json()
                     toast.warning(responseData?.message || "Request not submitted", {
                         position: toast.POSITION.TOP_CENTER, autoClose: 2000, pauseOnHover: false
@@ -365,6 +384,8 @@ const LeaveEmployee = () => {
         const dateString = date.toISOString().split('T')[0];
         return allHolidayDate.includes(dateString) || (new Date(date).getDay() === 6 || new Date(date).getDay() === 0);
     };
+
+
     const getLeaveData = async () => {
         setIsLoading(true)
         const response = await getLeaveApi({ usersId: [], ...search }, jwt);
@@ -375,11 +396,64 @@ const LeaveEmployee = () => {
                 type: leaveReducerState.GET_DATA,
                 payload: responseData?.data
             })
-        }else{
+        } else {
             setIsLoading(false)
         }
     }
 
+    const { control, watch, setValue, trigger } = useForm();
+    const watchTime = watch('time');
+
+    const validateTime = (value) => {
+        // console.log({ value });
+        const [hours, minutes] = value.split(':').map(Number);
+        return (
+            hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59
+        ) || 'Invalid time format';
+    };
+
+    const generateTimeSuggestions = () => {
+        const times = [];
+        for (let h = 0; h < 4; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                const hour = h.toString().padStart(2, '0');
+                const minute = m.toString().padStart(2, '0');
+                times.push(`${hour}:${minute}`);
+            }
+        }
+        return times;
+    };
+
+    const timeSuggestions = generateTimeSuggestions();
+
+    const timeRangeDayConvert = (watchTime) => {
+        const [inputHours, inputMinutes] = watchTime.split(':').map(Number);
+
+        // Convert the input time to total minutes
+        const totalMinutes = (inputHours * 60) + inputMinutes;
+
+        // Convert total minutes to days (8 hours = 1 day, 1 hour = 1/8 day)
+        const minutesPerDay = 8 * 60;
+        const daysSpent = totalMinutes / minutesPerDay;
+        return daysSpent
+    }
+
+    useEffect(() => {
+        const checkTimeValidity = async () => {
+            const isValid = await trigger('time');
+            if (isValid) {
+                // console.log("Valid time:", watchTime);
+                // Call your save function here
+                setLeaveRequest({ ...leaveRequest, totalDay: parseFloat(timeRangeDayConvert(watchTime)).toFixed(2) })
+            }
+        };
+
+        if (watchTime) {
+            checkTimeValidity();
+        }
+    }, [watchTime, trigger]);
+
+    // console.log({timeSuggestions});
     useEffect(() => {
         getLeaveData()
         getLeaveSummary()
@@ -414,21 +488,19 @@ const LeaveEmployee = () => {
         </Menu>
     )
     return (
+        <>
+            {isLoading ? <Loading /> : (
 
-    <>
-    {isLoading? <Loading /> : (
+                <Box sx={{ marginLeft: { sm: '20px', md: "280px", xs: '20px' }, marginRight: "30px", maxWidth: '2618px' }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
+                        <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
+                            Apply Leave
+                        </Button>
+                    </Box>
 
-
-        <Box sx={{ marginLeft: { sm: '30px', md: "280px" } }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: '24px', fontWeight: 'bold' }}>Leave</Typography>
-                <Button variant="contained" startIcon={<AddIcon />} sx={{ borderRadius: "50px" }} onClick={handleClickOpen}>
-                    Apply Leave
-                </Button>
-            </Box>
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                {/* <Grid container spacing={3} >
+                    <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+                        {/* <Grid container spacing={3} >
                     {leaveSummery?.totalYearlyLeave?.map((val, ind) => {
                         // margin: "10px 20px 20px 0px",
                         return (
@@ -445,87 +517,85 @@ const LeaveEmployee = () => {
                         )
                     })}
                 </Grid> */}
-                <Grid container spacing={3} >
-                    {leaveStat?.map((val, ind) => {
-                        // margin: "10px 20px 20px 0px",
-                        return (
+                        <Grid container spacing={3} >
+                            {leaveStat?.map((val, ind) => {
+                                // margin: "10px 20px 20px 0px",
+                                return (
 
-                            <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
-                                <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
-                                    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.name}</Typography>
-                                        <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{leaveSummery?.totalTaken?.find(v => v._id === val._id)?.total || 0}</Typography>
-                                    </Box>
-                                </Card>
+                                    <Grid item xs={12} sm={6} md={4} sx={{ width: '100%' }}>
+                                        <Card elevation='4' sx={{ maxHeight: 345, padding: "10px 0px 10px 0px" }}>
+                                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: 'center', marginBottom: "15px" }}>
+                                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{val?.name}</Typography>
+                                                <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{leaveSummery?.totalTaken?.find(v => v._id === val._id)?.total || 0}</Typography>
+                                            </Box>
+                                        </Card>
+                                    </Grid>
+
+                                )
+                            })}
+                        </Grid>
+
+                    </Box>
+
+
+                    {/* Searching Div */}
+                    <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
+                        <Grid container spacing={3}>
+
+                            {/* Leave type */}
+                            <Grid item xs={12} sm={4} md={2} >
+                                <FormControl sx={{ width: '100%' }}>
+                                    <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        // value={age}
+                                        label="Select leave type"
+                                        onChange={(e) => setSearch({ ...search, leaveType: e.target.value })}
+                                    >
+                                        <MenuItem value={"Casual"}>Casual</MenuItem>
+                                        <MenuItem value={"Sick"}>Sick</MenuItem>
+                                        <MenuItem value={"Special"}>Special Leave</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
+                            {/* Leave Status */}
+                            <Grid item xs={12} sm={4} md={2} >
 
-                        )
-                    })}
-                </Grid>
+                                <FormControl sx={{ maxHeight: 345, width: '100%' }}>
+                                    <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        // value={age}
 
-            </Box>
-
-    
-            {/* Searching Div */}
-            <Box sx={{ display: "flex", flexWrap: "wrap", marginTop: "40px", maxWidth: '2618px' }}>
-                <Grid container spacing={3}>
-
-                    {/* Leave type */}
-                    <Grid item xs={12} sm={4} md={2} >
-                        <FormControl sx={{ width: '100%' }}>
-                            <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Select leave type"
-                                onChange={(e) => setSearch({ ...search, leaveType: e.target.value })}
-                            >
-                                <MenuItem value={"Casual"}>Casual</MenuItem>
-                                <MenuItem value={"Sick"}>Sick</MenuItem>
-                                <MenuItem value={"Special"}>Special Leave</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    {/* Leave Status */}
-                    <Grid item xs={12} sm={4} md={2} >
-
-                        <FormControl sx={{ maxHeight: 345, width: '100%' }}>
-                            <InputLabel id="demo-simple-select-label">Select Leave Status</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-
-                                label="Select leave type"
-                                onChange={(e) => setSearch({ ...search, leaveStatus: e.target.value })}
-                            >
-                                <MenuItem value={"pending"}>Pending</MenuItem>
-                                <MenuItem value={"approved"}>Accepted</MenuItem>
-                                <MenuItem value={"declined"}>Declined</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    {/* Date From */}
-                    <Grid item xs={12} sm={4} md={2} >
-
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
-                                <DatePicker
-
-                                    onChange={(e) => {
-                                        if (e?.['$y']) {
-                                            setSearch({
-                                                ...search,
-                                                startDate: new Date(`03/01/${e?.['$y']}`),
-                                                endDate: checkLeapYear(e?.['$y'] + 1) ? new Date(`02/29/${e?.['$y'] + 1}`) : new Date(`02/28/${e?.['$y'] + 1}`)
-                                            })
-                                        }
-                                    }} label="Year" views={['year']} sx={{ width: '100%', maxHeight: 345 }} />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                    </Grid>
-                    {/* date To
+                                        label="Select leave type"
+                                        onChange={(e) => setSearch({ ...search, leaveStatus: e.target.value })}
+                                    >
+                                        <MenuItem value={"pending"}>Pending</MenuItem>
+                                        <MenuItem value={"approved"}>Accepted</MenuItem>
+                                        <MenuItem value={"declined"}>Declined</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            {/* Date From */}
+                            <Grid item xs={12} sm={4} md={2} >
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker']} sx={{ marginTop: "-8px" }}>
+                                        <DatePicker
+                                            onChange={(e) => {
+                                                if (e?.['$y']) {
+                                                    setSearch({
+                                                        ...search,
+                                                        startDate: new Date(`03/01/${e?.['$y']}`),
+                                                        endDate: checkLeapYear(e?.['$y'] + 1) ? new Date(`02/29/${e?.['$y'] + 1}`) : new Date(`02/28/${e?.['$y'] + 1}`)
+                                                    })
+                                                }
+                                            }} label="Year" views={['year']} sx={{ width: '100%', maxHeight: 345 }} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Grid>
+                            {/* date To
                     <Grid item xs={12} sm={4} md={2} >
 
                         <LocalizationProvider dateAdapter={AdapterDayjs} sx={{ width: '100%' }}>
@@ -535,196 +605,252 @@ const LeaveEmployee = () => {
                         </LocalizationProvider>
 
                     </Grid> */}
-                    <Grid item xs={12} sm={4} md={2} >
-                        <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={() => { getLeaveData(); getLeaveSummary() }}>Search</Button>
-                    </Grid>
-                </Grid>
-            </Box>
-
-            <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
-
-
-            {/* Modal */}
-            <BootstrapDialog
-                onClose={handleClickClose}
-                aria-labelledby="customized-dialog-title"
-                open={open}
-            >
-                <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
-                    Apply Leave
-                </BootstrapDialogTitle>
-                <DialogContent sx={{
-                    display: "flex", justifyContent: "center", flexDirection: "column",
-                    transition: 'all 03.s'
-
-                }}>
-                    <Box sx={{ minWidth: 120 }}>
-                        <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
-                            <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Select leave type"
-                                onChange={(e) => {
-                                    setLeaveRequest({ ...leaveRequest, leaveType: e.target.value, })
-
-                                }
-                                }
-                            >
-                                <MenuItem value={"Casual"}>Casual</MenuItem>
-                                {/* <MenuItem value={"unpaid"}>UnPaid</MenuItem> */}
-                                <MenuItem value={"Sick"}>Sick</MenuItem>
-                                <MenuItem value={"Special"}>Special</MenuItem>
-                            </Select>
-                        </FormControl>
+                            <Grid item xs={12} sm={4} md={2} >
+                                <Button variant="contained" sx={{ height: '50px', width: '100%' }} onClick={() => { getLeaveData(); getLeaveSummary() }}>Search</Button>
+                            </Grid>
+                        </Grid>
                     </Box>
-                    <Box sx={{ minWidth: 120 }}>
-                        <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
-                            <InputLabel id="demo-simple-select-label">Select leave duration</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                // value={age}
-                                label="Select leave duration"
-                                onChange={(e) => {
-                                    if (e.target.value === "halfday") {
-                                        setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: leaveRequest.startDate, totalDay: 0.5 })
 
-                                    } else {
+                    <Grid container xs={12} sm={12} md={12}>
+                        <LeaveDataTable data={state} dispatch={dispatch} getLeaveData={getLeaveData} />
+                    </Grid>
 
-                                        setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: "", })
 
+
+                    {/* Modal */}
+                    <BootstrapDialog
+                        onClose={handleClickClose}
+                        aria-labelledby="customized-dialog-title"
+                        open={open}
+                    >
+                        <BootstrapDialogTitle id="customized-dialog-title" className="text-center" onClose={handleClickClose}>
+                            Apply Leave
+                        </BootstrapDialogTitle>
+                        <DialogContent sx={{
+                            display: "flex", justifyContent: "center", flexDirection: "column",
+                            transition: 'all 03.s'
+
+                        }}>
+                            <Box sx={{ minWidth: 120 }}>
+                                <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
+                                    <InputLabel id="demo-simple-select-label">Select leave type</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        // value={age}
+                                        label="Select leave type"
+                                        onChange={(e) => {
+                                            setLeaveRequest({ ...leaveRequest, leaveType: e.target.value, })
+
+                                        }
+                                        }
+                                    >
+                                        <MenuItem value={"Casual"}>Casual</MenuItem>
+                                        {/* <MenuItem value={"unpaid"}>UnPaid</MenuItem> */}
+                                        <MenuItem value={"Sick"}>Sick</MenuItem>
+                                        <MenuItem value={"Special"}>Special</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            <Box sx={{ minWidth: 120 }}>
+                                <FormControl sx={{ minWidth: 365, maxHeight: 345, margin: "10px 0px 0px 0px" }}>
+                                    <InputLabel id="demo-simple-select-label">Select leave duration</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        // value={age}
+                                        label="Select leave duration"
+                                        onChange={(e) => {
+                                            if (e.target.value === "halfday") {
+                                                setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: leaveRequest.startDate, totalDay: 0.5 })
+
+                                            } else if (e.target.value === "daterange") {
+                                                setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: "", })
+                                            } else {
+                                                setLeaveRequest({ ...leaveRequest, duration: e.target.value, endDate: "", })
+                                            }
+
+                                        }
+
+                                        }
+                                    >
+                                        <MenuItem value={"halfday"}>Half Day</MenuItem>
+                                        <MenuItem value={"daterange"}>Date Range</MenuItem>
+                                        <MenuItem value={"timerange"}>Time Range</MenuItem>
+
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                            {leaveRequest?.duration && leaveRequest.duration.length > 0 ? (
+                                <>
+                                    {leaveRequest?.duration === "halfday" ? (
+                                        <Box sx={{ minWidth: 120 }}>
+
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                                <DemoContainer components={['DatePicker']}  >
+                                                    <DatePicker
+                                                        shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
+
+                                                        slotProps={{
+                                                            textField: {
+                                                                error: false,
+                                                            },
+                                                        }}
+                                                        label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
+                                                            if (e?.['$d']) {
+                                                                setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
+
+                                                            }
+                                                        }} />
+                                                </DemoContainer>
+                                            </LocalizationProvider>
+                                        </Box>
+
+                                    ) : leaveRequest?.duration === "daterange" ? (
+                                        <>
+
+                                            <Box sx={{ minWidth: 120 }}>
+
+                                                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                                    <DemoContainer components={['DatePicker']} >
+                                                        <DatePicker
+
+                                                            shouldDisableDate={shouldDisableDate}
+
+                                                            slotProps={{
+                                                                textField: {
+                                                                    error: false,
+                                                                },
+                                                            }}
+                                                            label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                            onChange={(e) => {
+                                                                if (e?.['$d']) {
+                                                                    setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
+
+                                                                }
+
+
+                                                            }}
+                                                        />
+                                                    </DemoContainer>
+                                                </LocalizationProvider>
+                                            </Box>
+                                            <Box sx={{ minWidth: 120 }}>
+
+
+                                                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                                    <DemoContainer components={['DateTimePicker']}  >
+                                                        <DatePicker
+                                                            disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0) ? false : true}
+                                                            shouldDisableDate={shouldDisableDate}
+                                                            slotProps={{
+                                                                textField: {
+                                                                    error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
+                                                                },
+                                                            }}
+                                                            label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
+                                                            onChange={(e) => {
+                                                                if (e?.['$d']) {
+                                                                    let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
+                                                                    let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
+                                                                    let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
+                                                                    let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
+
+                                                                    setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
+
+                                                                }
+
+                                                            }}
+                                                        />
+                                                    </DemoContainer>
+                                                </LocalizationProvider>
+                                            </Box>
+                                        </>
+                                    ) :
+
+                                        (
+                                            <>
+                                                <Box sx={{ minWidth: 120 }}>
+
+                                                    <LocalizationProvider dateAdapter={AdapterDayjs}  >
+                                                        <DemoContainer components={['DatePicker']}  >
+                                                            <DatePicker
+                                                                shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
+
+                                                                slotProps={{
+                                                                    textField: {
+                                                                        error: false,
+                                                                    },
+                                                                }}
+                                                                label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
+                                                                    if (e?.['$d']) {
+                                                                        setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"] })
+                                                                    }
+                                                                }} />
+                                                        </DemoContainer>
+                                                    </LocalizationProvider>
+                                                </Box>
+                                                <Box sx={{ maxWidth: 365, marginTop: '15px' }} component="form" noValidate autoComplete="off">
+                                                    <Controller
+                                                        name="time"
+                                                        control={control}
+                                                        defaultValue=""
+                                                        rules={{ required: 'Time is required', validate: validateTime }}
+                                                        render={({ field, fieldState }) => (
+                                                            <Autocomplete
+                                                                freeSolo
+                                                                options={timeSuggestions}
+                                                                inputValue={field !== null && field.value}
+                                                                onInputChange={(_, value) => setValue('time', value && value, { shouldValidate: true })}
+                                                                onChange={(_, value) => setValue('time', value && value, { shouldValidate: true })}
+                                                                renderInput={(params) => (
+                                                                    <TextField
+                                                                        {...params}
+                                                                        label="Time"
+                                                                        placeholder="HH:MM"
+                                                                        error={!!fieldState.error}
+                                                                        helperText={fieldState.error ? fieldState.error.message : ''}
+                                                                    />
+                                                                )}
+                                                            // onChange={(_, value) => field.onChange(value)}
+                                                            />
+                                                        )}
+                                                    />
+                                                </Box>
+                                            </>
+                                        )
                                     }
 
-                                }
-
-                                }
-                            >
-                                <MenuItem value={"halfday"}>Half Day</MenuItem>
-                                <MenuItem value={"range"}>Range</MenuItem>
-
-                            </Select>
-                        </FormControl>
-                    </Box>
-                    {leaveRequest?.duration && leaveRequest.duration.length > 0 ? (
-                        <>
-                            {leaveRequest?.duration === "halfday" ? (
-                                <Box sx={{ minWidth: 120 }}>
-
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}  >
-                                        <DemoContainer components={['DatePicker']}  >
-                                            <DatePicker
-                                                shouldDisableDate={userInfo().role.name === "admin" ? null : shouldDisableDate}
-
-                                                slotProps={{
-                                                    textField: {
-                                                        error: false,
-                                                    },
-                                                }}
-                                                label="From *" sx={{ width: 365, maxHeight: 345, }} value={dayjs(leaveRequest.startDate)} onChange={(e) => {
-                                                    if (e?.['$d']) {
-                                                        setLeaveRequest({ ...leaveRequest, startDate: e["$d"], endDate: e["$d"], totalDay: 0.5 })
-
-                                                    }
-                                                }} />
-                                        </DemoContainer>
-                                    </LocalizationProvider>
-                                </Box>
-
-                            ) : (
-                                <>
-
-                                    <Box sx={{ minWidth: 120 }}>
-
-                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                            <DemoContainer components={['DatePicker']} >
-                                                <DatePicker
-
-                                                    shouldDisableDate={shouldDisableDate}
-
-                                                    slotProps={{
-                                                        textField: {
-                                                            error: false,
-                                                        },
-                                                    }}
-                                                    label="From *" value={dayjs(leaveRequest.startDate)} sx={{ width: 365, maxHeight: 345, }}
-                                                    onChange={(e) => {
-                                                        if (e?.['$d']) {
-                                                            setLeaveRequest({ ...leaveRequest, startDate: new Date(new Date(e['$d']).setHours(0, 0, 0, 0)) })
-
-                                                        }
-
-
-                                                    }}
-                                                />
-                                            </DemoContainer>
-                                        </LocalizationProvider>
-                                    </Box>
-                                    <Box sx={{ minWidth: 120 }}>
-
-
-                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                            <DemoContainer components={['DateTimePicker']}  >
-                                                <DatePicker
-                                                    disabled={(leaveRequest.startDate && new Date(leaveRequest.startDate).getTime() > 0) ? false : true}
-                                                    shouldDisableDate={shouldDisableDate}
-                                                    slotProps={{
-                                                        textField: {
-                                                            error: (leaveRequest.startDate && leaveRequest.endDate && leaveRequest.startDate > leaveRequest.endDate) ? true : false,
-                                                        },
-                                                    }}
-                                                    label="To *" value={dayjs(leaveRequest.endDate)} sx={{ width: 365, maxHeight: 345, }}
-                                                    onChange={(e) => {
-                                                        if (e?.['$d']) {
-                                                            let endDate = new Date(new Date(e['$d']).setHours(23, 59, 59, 999));
-                                                            let startDate = new Date(new Date(leaveRequest.startDate).setHours(0, 0, 0, 0));
-                                                            let holidaysCount = totalHolidaysCustomize(startDate, endDate, allHolidayDate)
-                                                            let total = daysCount(new Date(endDate), new Date(leaveRequest.startDate)) - holidaysCount || 0;
-
-                                                            setLeaveRequest({ ...leaveRequest, endDate: new Date(new Date(e['$d']).setHours(23, 59, 59, 999)), totalDay: total === 'NaN' ? "Invaid date time" : total, isHoliday: holidaysCount > 0 ? true : false })
-
-                                                        }
-
-                                                    }}
-                                                />
-                                            </DemoContainer>
-                                        </LocalizationProvider>
-                                    </Box>
                                 </>
-                            )
-                            }
+                            ) : null}
 
-                        </>
-                    ) : null}
+                            <TextField id="outlined-search" label="Number of Days *"
+                                error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
+                                value={leaveRequest.duration === "halfday" ? 0.5 : leaveRequest.duration === "timerange" ? watchTime && parseFloat(timeRangeDayConvert(watchTime)).toFixed(2) : (leaveRequest.startDate && leaveRequest.endDate) && leaveRequest.totalDay}
+                                readOnly
+                                type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px" }} />
+                            {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with holiday or weekend</span>}
+                            <Box sx={{ minWidth: 120 }}>
 
-                    <TextField id="outlined-search" label="Number of Days *"
-                        error={(leaveRequest?.totalDay && parseFloat(leaveRequest?.totalDay) <= 0) ? true : false}
-                        value={leaveRequest.duration === "halfday" ? 0.5 : (leaveRequest.startDate && leaveRequest.endDate) && leaveRequest.totalDay}
-                        readOnly
-                        type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 10px 0px" }} />
-                    {leaveRequest.isHoliday && <span style={{ color: "#FF5252" }}>You are selecting date with holiday or weekend</span>}
-                    <Box sx={{ minWidth: 120 }}>
+                                <StyledTextarea id="outlined-search" label="Reason *" minRows={3}
+                                    onChange={(e) => {
+                                        setLeaveRequest({ ...leaveRequest, leaveReason: e.target.value })
+                                    }}
+                                    type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
+                            </Box>
+                        </DialogContent>
+                        <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={createALeaveRequest}>
+                                Apply
+                            </Button>
+                        </DialogActions>
+                    </BootstrapDialog>
 
-                    <StyledTextarea  id="outlined-search" label="Reason *" minRows={3}
-                        onChange={(e) => {
-                            setLeaveRequest({ ...leaveRequest, leaveReason: e.target.value })
-                        }}
-                        type="search" sx={{ minWidth: 365, maxHeight: 345, margin: "10px 20px 40px 0px" }} />
-                        </Box>
-                </DialogContent>
-                <DialogActions sx={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ borderRadius: "50px", width: 150 }} autoFocus onClick={createALeaveRequest}>
-                        Apply
-                    </Button>
-                </DialogActions>
-            </BootstrapDialog>
-    
 
-        </Box>
+                </Box>
 
-    )}
-    </>
+            )}
+        </>
 
     )
 }

@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const { verifyToken, tokenGeneration } = require("../services/userServices");
 
 async function Authorize (req, res, next){
-    console.log("Header Token",req.header("Authorization"));
         try{
             let headerToken = req.header("Authorization").split(" ")[1].trim();
             

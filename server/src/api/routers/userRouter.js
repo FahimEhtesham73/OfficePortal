@@ -3,13 +3,19 @@ const path = require("path");
 const fs = require("fs");
 const express = require("express");
 const router = express.Router();
-const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage, getUserUnderSuperVisorOrTemlead, passwordReset, resetConfirmation } = require("../controllers/userController");
+const { createUser, deleteSingleUser, allUser, signinUser, getSingleUser,updateSingleUser,searchUser, profileImgUpload, fileUpload, viewCv, viewImage, getUserUnderSuperVisorOrTemlead, passwordReset, resetConfirmation, sendEmail, checkLatenessAndSendEmails, updateDisiplinaryActions, getDisiplinaryActions } = require("../controllers/userController");
 const { hasPermission,Authorize, isAdminTeamLeadProjectLead, isAdmin } = require("../middleware/commonMilddleware");
-const { createEmployeeValidation, signinValidation, signinDataValidation,searchEmployeeValidation, updateSingleUserValidation, resetPasswordValidation, changePasswordValidation } = require("../util/validator/userValidation");
+const { createEmployeeValidation, signinValidation, signinDataValidation,searchEmployeeValidation, updateSingleUserValidation, resetPasswordValidation, changePasswordValidation, updateDisiplinaryActionValidaion } = require("../util/validator/userValidation");
 
+// router.route('/').get((req,res)=>{
+//     return res.json({"message":"Hi, I'm Called and changed"})
+// })
 router.route("/getalluser").get(Authorize,allUser); // get all user
 router.route("/create").post(Authorize,isAdmin, createEmployeeValidation, createUser); // create a user
 router.route("/signin").post(signinDataValidation ,signinUser);
+router.route("/updatedisiplinaryactioncount")
+    .post(updateDisiplinaryActionValidaion,updateDisiplinaryActions)
+    .get(getDisiplinaryActions)
 router.route("/getsingleuser/:id").get(Authorize,getSingleUser)
 router.route("/updateUser/:id").put(Authorize,updateSingleUserValidation,updateSingleUser)
 router.route("/searchuser").post(Authorize,searchEmployeeValidation,searchUser)
@@ -19,6 +25,8 @@ router.route("/viewcv").post(Authorize, viewCv)
 router.route("/userlist").get(Authorize, isAdminTeamLeadProjectLead,  getUserUnderSuperVisorOrTemlead);
 router.route("/resetpassword").post(resetPasswordValidation, passwordReset);
 router.route("/passwordchange").post(Authorize, changePasswordValidation ,passwordReset);
+router.route("/sendmail/:id").post(Authorize,checkLatenessAndSendEmails);
+
 
 
 const storage = multer.diskStorage({

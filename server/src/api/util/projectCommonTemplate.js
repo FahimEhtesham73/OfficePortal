@@ -43,3 +43,12 @@ module.exports.projectStage = {
         projectMembersList: { _id: 1, firstName: 1, lastName: 1, imagePath: 1 }
     }
 }
+
+module.exports.lookupSubProjects = {
+    $lookup: {
+        from: 'subprojects', 
+        localField: 'projectCode',
+        foreignField: 'projectId',
+        as: 'subProjects'
+    }
+};

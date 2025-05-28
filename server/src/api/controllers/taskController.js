@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const { validationMessages, isErrorFounds } = require("../util/errorMessageHelper");
 const { default: mongoose } = require("mongoose");
 const { taskLookupStage, taskProjectStage } = require("../util/taskCommonTemplate");
+const subProject = require("../models/subProjectModel");
 module.exports.createATask = async (req, res) => {
     try {
 
@@ -26,7 +27,7 @@ module.exports.createATask = async (req, res) => {
         } = req.body;
 
 
-        const isPojectAvialable = await Project.findOne({ projectCode: projectCode }).lean();
+        const isPojectAvialable = await subProject.findOne({ projectCode: projectCode }).lean();
         if (!isPojectAvialable) return res.status(400).json({ "message": "Project not found" });
         const isSameNameTaskAvialble = await ProjectTask.findOne({ projectCode: projectCode, taskName: taskName }).lean();
         if (isSameNameTaskAvialble) return res.status(400).json({ "message": "Task already added" });
@@ -71,7 +72,7 @@ module.exports.getAllTaskForAProject = async (req, res) => {
 
         let projectCode = req.query.pid;
         if (!projectCode) return res.status(400).json({ 'message': 'invalid request' })
-        const isProjectAvialable = await Project.findOne({ projectCode: projectCode }).lean();
+        const isProjectAvialable = await subProject.findOne({ projectCode: projectCode }).lean();
         if (!isProjectAvialable) return res.status(400).json({ 'message': 'no data' })
         projectCode = projectCode.trim().toUpperCase()
         const isUserIn = await isUserInthisProject(projectCode, req.user._id);
@@ -148,10 +149,10 @@ module.exports.updateATask = async (req, res) => {
 
         const isUserIn = await isUserInthisProject(projectCode, req.user._id);
 
-        if ((isUserIn.length > 0 && (task.assignedMembers.map(v=> v.toString()).includes(req.user._id) ||
-         isUserIn[0]?.projectSuperVisor?.map(v=> v.toString()).includes(req.user._id)
-         || isUserIn[0]?.projectLead?.map(v=> v.toString()).includes(req.user._id)
-         )) || req.user.role.name === "admin") {
+        if ((isUserIn.length > 0 && (task.assignedMembers.map(v => v.toString()).includes(req.user._id) ||
+            isUserIn[0]?.projectSuperVisor?.map(v => v.toString()).includes(req.user._id)
+            || isUserIn[0]?.projectLead?.map(v => v.toString()).includes(req.user._id)
+        )) || req.user.role.name === "admin") {
 
             for (let arg in updatedData) {
                 if (arg == "taskName") {
@@ -165,11 +166,9 @@ module.exports.updateATask = async (req, res) => {
                 }
                 if (arg == "endTime") {
                     args['endTime'] = updatedData['endTime']
-
                 }
                 if (arg == "status") {
                     args['status'] = updatedData['status']
-
                 }
                 if (arg == "additionalNotes") {
                     args['additionalNotes'] = updatedData['additionalNotes']
@@ -236,7 +235,6 @@ module.exports.deleteATask = async (req, res) => {
     }
 }
 
-
 module.exports.filterTask = async (req, res) => {
     try {
 
@@ -247,10 +245,10 @@ module.exports.filterTask = async (req, res) => {
         const isUserIn = await isUserInthisProject(projectCode, req.user._id);
         let args = {}
         let matchQuery = {}
-        let sortBy =  query.sortBy === "asc" ?  1: -1 ;
+        let sortBy = query.sortBy === "asc" ? 1 : -1;
         const LIMIT = parseInt(query.limit) || 10;
         const Page = parseInt(query.page) || 1;
-        if(isUserIn.length) {
+        if (isUserIn.length) {
 
             matchQuery['assignedMembers'] = { $in: [new mongoose.Types.ObjectId(req.user._id)] }
         }
@@ -308,19 +306,17 @@ module.exports.filterTask = async (req, res) => {
                 matchQuery['taskType'] = { $in: args.taskType };
 
             }
-            if(args?.status?.length && args?.status === "missed"){
+            if (args?.status?.length && args?.status === "missed") {
                 // matchQuery['status'] = { $in: args.status };
-                matchQuery['endTime'] = {$lt: new Date() }
-                matchQuery.status = {$nin: ["done", "pause"]}
+                matchQuery['endTime'] = { $lt: new Date() }
+                matchQuery.status = { $nin: ["done", "pause"] }
                 // matchQuery['status'] = {$nin: ["done", "pause"]},
 
             }
-            else if(args?.status?.length){
+            else if (args?.status?.length) {
                 matchQuery['status'] = { $eq: args.status };
 
             }
-
-
 
             const allTask = await ProjectTask.aggregate([
                 {
@@ -342,7 +338,7 @@ module.exports.filterTask = async (req, res) => {
                 {
                     $limit: LIMIT
                 }
-               
+
             ]);
 
             return res.status(200).json({ "message": "success", data: allTask });
@@ -357,20 +353,20 @@ module.exports.filterTask = async (req, res) => {
 }
 
 
-module.exports.projectTaskSummery = async(req, res, next) => {
-    try{
+module.exports.projectTaskSummery = async (req, res, next) => {
+    try {
         const projectCode = req.query.projectCode;
         const query = req.body.query;
         const args = {};
         const matchQuery = {};
-        if(!projectCode) return res.status(400).json({"message": "Invalid query"});
-        
+        if (!projectCode) return res.status(400).json({ "message": "Invalid query" });
+
         const isUserIn = await isUserInthisProject(projectCode, req.user._id);
 
-        if(isUserIn.length) {
+        if (isUserIn.length) {
             matchQuery['assignedMembers'] = { $in: [new mongoose.Types.ObjectId(req.user._id)] }
         }
-        if(isUserIn.length || req.user.role.name === "admin"){
+        if (isUserIn.length || req.user.role.name === "admin") {
             for (let q in query) {
                 if (q === "userId" && query['userId'].length) {
                     args.assignedMembers = query.userId.map(v => new mongoose.Types.ObjectId(v))
@@ -414,19 +410,19 @@ module.exports.projectTaskSummery = async(req, res, next) => {
 
             }
             //new changes
-            if(args?.status?.length && args?.status === "missed"){
+            if (args?.status?.length && args?.status === "missed") {
                 // matchQuery['status'] = { $in: args.status };
-                matchQuery['endTime'] = {$lt: new Date() }
-                matchQuery.status = {$nin: ["done", "pause"]}
+                matchQuery['endTime'] = { $lt: new Date() }
+                matchQuery.status = { $nin: ["done", "pause"] }
                 // matchQuery['status'] = {$nin: ["done", "pause"]},
 
             }
-            else if(args?.status?.length){
+            else if (args?.status?.length) {
                 matchQuery['status'] = { $eq: args.status };
 
             }
 
-            
+
             console.log("match", matchQuery);
 
 
@@ -441,56 +437,58 @@ module.exports.projectTaskSummery = async(req, res, next) => {
                 {
 
                     $facet: {
-                        "totalCount": [ {$count: "total" }, ],
+                        "totalCount": [{ $count: "total" },],
                         "totalDeadelineToday": [
                             {
                                 $match: {
-                                    status: {$nin: ["done", "pause"]},
-                            endTime: {
-                              $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
-                              $lte: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
+                                    status: { $nin: ["done", "pause"] },
+                                    endTime: {
+                                        $gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
+                                        $lte: new Date(new Date().setHours(23, 59, 59, 999)) // End of today
+                                    }
+                                }
                             }
-                          }
-                        }
-                        , 
-                        {
-                          $count: "total"
-                        }
-                    ],
-                        "totalTodo": [{$match: {status: "todo"}}, {$count: "total"}],
-                        "totalInProgress": [{$match: {status: "in progress"}}, {$count: "total"}],
-                        "totalInPause": [{$match: {status: "pause"}}, {$count: "total"}],
-                        "totalDone": [{$match: {status: "done"}}, {$count: "total"}],
+                            ,
+                            {
+                                $count: "total"
+                            }
+                        ],
+                        "totalTodo": [{ $match: { status: "todo" } }, { $count: "total" }],
+                        "totalInProgress": [{ $match: { status: "in progress" } }, { $count: "total" }],
+                        "totalInPause": [{ $match: { status: "pause" } }, { $count: "total" }],
+                        "totalDone": [{ $match: { status: "done" } }, { $count: "total" }],
                         "deadline": [
                             {
                                 $match: {
-                                    endTime: {$lt: new Date()  },
-                                     status: {$nin: ["done", "pause"]}
+                                    endTime: { $lt: new Date() },
+                                    status: { $nin: ["done", "pause"] }
                                 }
-                            }, 
+                            },
                             {
                                 $count: "total"
                             }
                         ]
                     }
                 },
-              
-                {$project:  {
-                    "totalDeadelineToday": { $ifNull: [{ $arrayElemAt: ["$totalDeadelineToday.total", 0] }, 0] },
-                    "totalTasks": { $ifNull: [{ $arrayElemAt: ["$totalCount.total", 0] }, 0] },
-                    "summary.totalTodoTasks": { $ifNull: [{ $arrayElemAt: ["$totalTodo.total", 0] }, 0] },
-                    "summary.totalInProgressTasks": { $ifNull: [{ $arrayElemAt: ["$totalInProgress.total", 0] }, 0] },
-                    "summary.totalPasueTask": { $ifNull: [{ $arrayElemAt: ["$totalInPause.total", 0] }, 0] },
-                    "summary.totalDoneTasks": { $ifNull: [{ $arrayElemAt: ["$totalDone.total", 0] }, 0] },
-                    "summary.totalDeadlineMissedTasks": { $ifNull: [{ $arrayElemAt: ["$deadline.total", 0] }, 0] },
-                  }}
+
+                {
+                    $project: {
+                        "totalDeadelineToday": { $ifNull: [{ $arrayElemAt: ["$totalDeadelineToday.total", 0] }, 0] },
+                        "totalTasks": { $ifNull: [{ $arrayElemAt: ["$totalCount.total", 0] }, 0] },
+                        "summary.totalTodoTasks": { $ifNull: [{ $arrayElemAt: ["$totalTodo.total", 0] }, 0] },
+                        "summary.totalInProgressTasks": { $ifNull: [{ $arrayElemAt: ["$totalInProgress.total", 0] }, 0] },
+                        "summary.totalPasueTask": { $ifNull: [{ $arrayElemAt: ["$totalInPause.total", 0] }, 0] },
+                        "summary.totalDoneTasks": { $ifNull: [{ $arrayElemAt: ["$totalDone.total", 0] }, 0] },
+                        "summary.totalDeadlineMissedTasks": { $ifNull: [{ $arrayElemAt: ["$deadline.total", 0] }, 0] },
+                    }
+                }
             ]);
-            return res.status(200).json({"message": "Success" , "data":taskSummery})
+            return res.status(200).json({ "message": "Success", "data": taskSummery })
         }
 
-        return res.status(404).json({"message": "Invalid Request"})
+        return res.status(404).json({ "message": "Invalid Request" })
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
         next(err)
     }
@@ -500,7 +498,7 @@ module.exports.projectTaskSummery = async(req, res, next) => {
 /************ helper function **************/
 
 const isUserInthisProject = async (projectCode, userId) => {
-    return await Project.aggregate([
+    return await subProject.aggregate([
         {
             $match: {
                 projectCode: projectCode,

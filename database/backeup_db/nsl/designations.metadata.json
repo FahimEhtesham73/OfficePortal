@@ -1,0 +1,1 @@
+{"options":{"validator":{"name":"Lead SQA Engineer"},"validationLevel":"moderate","validationAction":"error"},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"71029965534944608567859e1dc5521c","collectionName":"designations","type":"collection"}

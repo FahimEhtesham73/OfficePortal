@@ -10,15 +10,18 @@ module.exports.createHoliday = async (req, res) => {
     try {
         const holidayName = req.body.holidayName
         const holidayDate = req.body.holidayDate
+        const holidayEndDate = req.body.holidayEndDate
 
-        if (holidayName === "" || holidayDate === "") {
+        if (holidayName === "" || holidayDate === ("" || null) || holidayEndDate === ("" || null)) {
             return res.status(400).json({ message: "Fill all the fields" })
         }
 
 
         const newHoliday = await new Holiday({
             holidayName: holidayName,
-            date: holidayDate
+            date: holidayDate,
+            startDate: holidayDate,
+            endDate: holidayEndDate
         }).save()
 
         return res.status(201).json({ "message": "Created Successfully" })
@@ -31,28 +34,45 @@ module.exports.createHoliday = async (req, res) => {
 }
 
 module.exports.allHoliday = async (req, res) => {
+    
     try {
-        const holidays = await Holiday.find().sort({date:1})
+        let holidays = []
+        if (req.query.year === undefined) {
+            holidays = await Holiday.find()
+            console.log({ holidays });
+
+        } else {
+            const year = parseInt(req.query.year, 10);
+            holidays = await Holiday.find({
+                $expr: {
+                    $eq: [{ $year: "$startDate" }, year],
+                },
+            }).sort({ date: 1 });
+        }
+
+        // Query to find holidays where the year matches the startDate
+
         return res.status(200).json(holidays)
     } catch (e) {
         console.log(e);
-        return res.status(500).json({message:"something went wrong on all user get function"})
+        return res.status(500).json({ message: "something went wrong " })
     }
 }
 
 module.exports.singleHoliday = async (req, res) => {
     try {
         const id = req.params.id
-        console.log("Param Id",id);
-        const holidays = await Holiday.find({_id:id})
+        console.log("Param Id", id);
+        const holidays = await Holiday.find({ _id: id })
         return res.status(200).json(holidays)
     } catch (e) {
         console.log(e);
-        return res.status(500).json({message:"something went wrong on all user get function"})
+        return res.status(500).json({ message: "something went wrong on all user get function" })
     }
 }
 
 module.exports.updateHoliday = async (req, res) => {
+    console.log("Entered");
     try {
         // const errors = validationMessages(validationResult(req).mapped());
         // console.log(errors);
@@ -60,27 +80,26 @@ module.exports.updateHoliday = async (req, res) => {
 
         const holidayName = req.body.holidayName;
         const holidayDate = req.body.holidayDate
+        const endDate = req.body.holidayEndDate
         if (holidayName === "" || holidayDate === "") {
             return res.status(400).json({ message: "Fill all the fields" })
         }
         const id = req.params.id;
-        console.log("ID",holidayDate,holidayName);
-        const updateHoliday = await Holiday.findByIdAndUpdate({ _id: id }, { $set: { holidayName, date: holidayDate } }, { new: true })
+        console.log("ID", holidayDate, holidayName);
+        const updateHoliday = await Holiday.findByIdAndUpdate({ _id: id }, { $set: { holidayName, date: holidayDate, endDate, startDate: holidayDate } }, { new: true })
         // console.log(updateHoliday);
         return res.status(200).send(updateHoliday)
-
-
     } catch (e) {
         console.log(e);
-        return res.status(500).json({message:"something went wrong on all user get function"})
+        return res.status(500).json({ message: "something went wrong on all user get function" })
     }
 }
 
 module.exports.deleteHoliday = async (req, res) => {
-    const  id  = req.params.id;
-    const holiday = await Holiday.findOne({_id:id});
-    if (!holiday) return res.status(400).json({message:"Day not found"});
-    const deletedHoliday = await Holiday.findOneAndDelete({_id:holiday._id});
-    return res.status(200).json({message:"successfully deleted"});
+    const id = req.params.id;
+    const holiday = await Holiday.findOne({ _id: id });
+    if (!holiday) return res.status(400).json({ message: "Day not found" });
+    const deletedHoliday = await Holiday.findOneAndDelete({ _id: holiday._id });
+    return res.status(200).json({ message: "successfully deleted" });
 
 }
